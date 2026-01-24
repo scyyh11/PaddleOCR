@@ -1,34 +1,62 @@
 #!/usr/bin/env python
 
-# TODO:
-# 1. Concurrency control
-# 2. Timeout control
-# 3. Seperate infer and non-infer operations
-# 4. Fix FastAPI encoding bug
-# 5. Add exception handlers for a standardized error response
+# Copyright (c) 2025 PaddlePaddle Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
+import asyncio
+import json
 import logging
+import os
+from contextlib import asynccontextmanager
 from typing import Optional
 
 import fastapi
+import numpy as np
+from fastapi import Request
 from fastapi.responses import JSONResponse
-from paddlex_hps_client import triton_request
 from paddlex.inference.serving.infra.models import AIStudioNoResultResponse
 from paddlex.inference.serving.infra.utils import generate_log_id
 from paddlex.inference.serving.schemas import paddleocr_vl as schema
-from tritonclient import grpc as triton_grpc
+from tritonclient.grpc import aio as triton_grpc_aio
 
-TRITONSERVER_URL = "paddleocr-vl-tritonserver:8001"
+# =============================================================================
+# Configuration
+# =============================================================================
+
+TRITON_URL = os.getenv("HPS_TRITON_URL", "paddleocr-vl-tritonserver:8001")
+MAX_CONCURRENT_REQUESTS = int(os.getenv("HPS_MAX_CONCURRENT_REQUESTS", "16"))
+INFERENCE_TIMEOUT = int(os.getenv("HPS_INFERENCE_TIMEOUT", "600"))
+LOG_LEVEL = os.getenv("HPS_LOG_LEVEL", "INFO")
+
+# Triton constants
+INPUT_NAME = "input"
+OUTPUT_NAME = "output"
+
+# =============================================================================
+# Logging
+# =============================================================================
 
 logger = logging.getLogger(__name__)
 
 
-def _configure_logger(logger: logging.Logger):
-    logger.setLevel(logging.INFO)
+def _configure_logger(logger: logging.Logger) -> None:
+    level = getattr(logging, LOG_LEVEL.upper(), logging.INFO)
+    logger.setLevel(level)
     handler = logging.StreamHandler()
-    handler.setLevel(logging.INFO)
+    handler.setLevel(level)
     formatter = logging.Formatter(
-        "%(asctime)s - %(funcName)s - %(levelname)s - %(message)s"
+        "%(asctime)s - %(name)s - %(funcName)s - %(levelname)s - %(message)s"
     )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
@@ -37,9 +65,64 @@ def _configure_logger(logger: logging.Logger):
 _configure_logger(logger)
 
 
-def _create_aistudio_output_without_result(
-    error_code: str, error_msg: str, *, log_id: Optional[str] = None
+# =============================================================================
+# Triton Async Request Helper
+# =============================================================================
+
+
+def _create_triton_input(data: dict) -> np.ndarray:
+    """Serialize request data to Triton input format."""
+    data_bytes = json.dumps(data, separators=(",", ":")).encode("utf-8")
+    return np.array([[data_bytes]], dtype=np.object_)
+
+
+def _parse_triton_output(data: np.ndarray) -> dict:
+    """Deserialize Triton output to response dict."""
+    return json.loads(data[0, 0].decode("utf-8"))
+
+
+async def triton_request_async(
+    client: triton_grpc_aio.InferenceServerClient,
+    model_name: str,
+    data: dict,
+    *,
+    timeout: float = 600,
 ) -> dict:
+    """
+    Make an async request to Triton Inference Server.
+
+    Args:
+        client: Async Triton gRPC client
+        model_name: Name of the model to call
+        data: Request payload dict
+        timeout: Request timeout in seconds
+
+    Returns:
+        Response dict from Triton
+    """
+    input_tensor = triton_grpc_aio.InferInput(INPUT_NAME, [1, 1], "BYTES")
+    input_tensor.set_data_from_numpy(_create_triton_input(data))
+
+    results = await client.infer(
+        model_name,
+        inputs=[input_tensor],
+        timeout=timeout,
+        client_timeout=timeout,
+    )
+
+    output = results.as_numpy(OUTPUT_NAME)
+    return _parse_triton_output(output)
+
+
+# =============================================================================
+# Response Helpers
+# =============================================================================
+
+
+def _create_aistudio_output_without_result(
+    error_code: int, error_msg: str, *, log_id: Optional[str] = None
+) -> dict:
+    """Create a standardized error response in AIStudio format."""
     resp = AIStudioNoResultResponse(
         logId=log_id if log_id is not None else generate_log_id(),
         errorCode=error_code,
@@ -48,125 +131,257 @@ def _create_aistudio_output_without_result(
     return resp.model_dump()
 
 
-def _add_primary_operations(app: fastapi.FastAPI) -> None:
-    def _create_handler(model_name: str):
-        def _handler(request: dict):
-            request_log_id = request.get("logId", generate_log_id())
-            logger.info(
-                "Gateway server starts processing %r request %s",
-                model_name,
-                request_log_id,
+# =============================================================================
+# Application Lifespan
+# =============================================================================
+
+
+@asynccontextmanager
+async def lifespan(app: fastapi.FastAPI):
+    """
+    Manage application lifecycle:
+    - Initialize Triton client and semaphore on startup
+    - Clean up resources on shutdown
+    """
+    logger.info("Initializing gateway...")
+    logger.info("Triton URL: %s", TRITON_URL)
+    logger.info("Max concurrent requests: %d", MAX_CONCURRENT_REQUESTS)
+    logger.info("Inference timeout: %ds", INFERENCE_TIMEOUT)
+
+    # Initialize async Triton client
+    app.state.triton_client = triton_grpc_aio.InferenceServerClient(
+        url=TRITON_URL,
+        keepalive_options=triton_grpc_aio.KeepAliveOptions(
+            keepalive_timeout_ms=INFERENCE_TIMEOUT * 1000,
+        ),
+    )
+
+    # Initialize semaphore for concurrency control
+    app.state.semaphore = asyncio.Semaphore(MAX_CONCURRENT_REQUESTS)
+
+    logger.info("Gateway initialized successfully")
+
+    yield
+
+    # Cleanup
+    logger.info("Shutting down gateway...")
+    await app.state.triton_client.close()
+    logger.info("Gateway shutdown complete")
+
+
+# =============================================================================
+# FastAPI Application
+# =============================================================================
+
+app = fastapi.FastAPI(
+    title="PaddleOCR-VL HPS Gateway",
+    description="High Performance Server Gateway for PaddleOCR-VL",
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+
+# =============================================================================
+# Health Endpoints
+# =============================================================================
+
+
+@app.get("/health", operation_id="checkHealth")
+async def health():
+    """Liveness check - returns healthy if the gateway process is running."""
+    return _create_aistudio_output_without_result(0, "Healthy")
+
+
+@app.get("/health/ready", operation_id="checkReady")
+async def ready(request: Request):
+    """Readiness check - verifies Triton server connectivity."""
+    try:
+        is_ready = await request.app.state.triton_client.is_server_ready()
+        if not is_ready:
+            return JSONResponse(
+                status_code=503,
+                content=_create_aistudio_output_without_result(
+                    503, "Triton server not ready"
+                ),
             )
-            if "logId" in request:
-                logger.warning(
-                    "Duplicate 'logId' field found in %r request %s",
-                    model_name,
-                    request_log_id,
-                )
-            request["logId"] = request_log_id
-
-            try:
-                output = triton_request(
-                    triton_client,
-                    model_name,
-                    request,
-                    request_kwargs=dict(
-                        timeout=600,
-                        client_timeout=600,
-                    ),
-                )
-            except triton_grpc.InferenceServerException as e:
-                if e.message() == "Deadline Exceeded":
-                    logger.warning(
-                        "Timeout when processing %r request %s",
-                        model_name,
-                        request_log_id,
-                    )
-                    is_timedout = True
-                    status_code = 504
-                    output = _create_aistudio_output_without_result(
-                        504,
-                        "Gateway timeout",
-                        log_id=request_log_id,
-                    )
-                    output = output.model_dump()
-                else:
-                    logger.error(
-                        "Failed to process %r request %s due to `InferenceServerException`: %s",
-                        model_name,
-                        request_log_id,
-                        e,
-                    )
-                    status_code = 500
-                    output = _create_aistudio_output_without_result(
-                        500,
-                        "Internal server error",
-                        log_id=request_log_id,
-                    )
-                    output = output.model_dump()
-            except Exception as e:
-                logger.error(
-                    "Failed to process %r request %s",
-                    model_name,
-                    request_log_id,
-                    exc_info=True,
-                )
-                status_code = 500
-                output = _create_aistudio_output_without_result(
-                    500,
-                    "Internal server error",
-                    log_id=request_log_id,
-                )
-                output = output.model_dump()
-                return JSONResponse(status_code=500, content=output)
-            if output["errorCode"] != 0:
-                output = _create_aistudio_output_without_result(
-                    output["errorCode"],
-                    output["errorMsg"],
-                    log_id=request_log_id,
-                )
-                output = output.model_dump()
-            else:
-                status_code = 200
-            return JSONResponse(status_code=status_code, content=output)
-
-        return _handler
-
-    for operation_name, (endpoint, _, _) in schema.PRIMARY_OPERATIONS.items():
-        # TODO: API docs
-        app.post(
-            endpoint,
-            operation_id=operation_name,
-        )(
-            _create_handler(endpoint[1:]),
+        return _create_aistudio_output_without_result(0, "Ready")
+    except Exception as e:
+        logger.error("Health check failed: %s", e)
+        return JSONResponse(
+            status_code=503,
+            content=_create_aistudio_output_without_result(
+                503, f"Triton server unavailable: {e}"
+            ),
         )
 
 
-app = fastapi.FastAPI()
+# =============================================================================
+# Primary Operations (Inference Endpoints)
+# =============================================================================
 
 
-@app.get(
-    "/health",
-    operation_id="checkHealth",
-)
-def check_health():
-    return _create_aistudio_output_without_result(0, "Healthy")
+def _add_primary_operations(app: fastapi.FastAPI) -> None:
+    """Register inference endpoints for each primary operation."""
+
+    def _create_handler(model_name: str):
+        async def _handler(request: Request, body: dict):
+            request_log_id = body.get("logId", generate_log_id())
+            logger.info(
+                "Processing %r request %s",
+                model_name,
+                request_log_id,
+            )
+
+            if "logId" in body:
+                logger.warning(
+                    "Duplicate 'logId' field in %r request %s",
+                    model_name,
+                    request_log_id,
+                )
+            body["logId"] = request_log_id
+
+            # Get client and semaphore from app state
+            client = request.app.state.triton_client
+            semaphore = request.app.state.semaphore
+
+            try:
+                # Acquire semaphore to limit concurrency
+                async with semaphore:
+                    output = await triton_request_async(
+                        client,
+                        model_name,
+                        body,
+                        timeout=INFERENCE_TIMEOUT,
+                    )
+            except asyncio.TimeoutError:
+                logger.warning(
+                    "Timeout processing %r request %s",
+                    model_name,
+                    request_log_id,
+                )
+                return JSONResponse(
+                    status_code=504,
+                    content=_create_aistudio_output_without_result(
+                        504, "Gateway timeout", log_id=request_log_id
+                    ),
+                )
+            except triton_grpc_aio.InferenceServerException as e:
+                if "Deadline Exceeded" in str(e):
+                    logger.warning(
+                        "Triton timeout for %r request %s",
+                        model_name,
+                        request_log_id,
+                    )
+                    return JSONResponse(
+                        status_code=504,
+                        content=_create_aistudio_output_without_result(
+                            504, "Gateway timeout", log_id=request_log_id
+                        ),
+                    )
+                logger.error(
+                    "Triton error for %r request %s: %s",
+                    model_name,
+                    request_log_id,
+                    e,
+                )
+                return JSONResponse(
+                    status_code=500,
+                    content=_create_aistudio_output_without_result(
+                        500, "Internal server error", log_id=request_log_id
+                    ),
+                )
+            except Exception:
+                logger.exception(
+                    "Unexpected error for %r request %s",
+                    model_name,
+                    request_log_id,
+                )
+                return JSONResponse(
+                    status_code=500,
+                    content=_create_aistudio_output_without_result(
+                        500, "Internal server error", log_id=request_log_id
+                    ),
+                )
+
+            # Check for errors in Triton response
+            if output.get("errorCode", 0) != 0:
+                error_code = output.get("errorCode", 500)
+                error_msg = output.get("errorMsg", "Unknown error")
+                logger.warning(
+                    "Triton returned error for %r request %s: %s",
+                    model_name,
+                    request_log_id,
+                    error_msg,
+                )
+                return JSONResponse(
+                    status_code=error_code if 400 <= error_code < 600 else 500,
+                    content=_create_aistudio_output_without_result(
+                        error_code, error_msg, log_id=request_log_id
+                    ),
+                )
+
+            logger.info(
+                "Completed %r request %s",
+                model_name,
+                request_log_id,
+            )
+            return JSONResponse(status_code=200, content=output)
+
+        return _handler
+
+    # Register endpoints for all primary operations
+    for operation_name, (endpoint, _, _) in schema.PRIMARY_OPERATIONS.items():
+        model_name = endpoint[1:]  # Remove leading "/"
+        app.post(
+            endpoint,
+            operation_id=operation_name,
+            summary=f"Invoke {model_name} model",
+            response_class=JSONResponse,
+        )(
+            _create_handler(model_name)
+        )
 
 
 _add_primary_operations(app)
 
 
-# HACK
-# https://github.com/encode/starlette/issues/864
-class _EndpointFilter(logging.Filter):
+# =============================================================================
+# Exception Handlers
+# =============================================================================
+
+
+@app.exception_handler(asyncio.TimeoutError)
+async def timeout_exception_handler(request: Request, exc: asyncio.TimeoutError):
+    """Handle timeout errors."""
+    logger.warning("Request timed out: %s", request.url.path)
+    return JSONResponse(
+        status_code=504,
+        content=_create_aistudio_output_without_result(504, "Gateway timeout"),
+    )
+
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    """Handle unexpected errors."""
+    logger.exception("Unhandled exception for %s", request.url.path)
+    return JSONResponse(
+        status_code=500,
+        content=_create_aistudio_output_without_result(500, "Internal server error"),
+    )
+
+
+# =============================================================================
+# Uvicorn Access Log Filter (optional, cleaner logs)
+# =============================================================================
+
+
+class HealthEndpointFilter(logging.Filter):
+    """Filter out health check endpoints from access logs."""
+
     def filter(self, record: logging.LogRecord) -> bool:
-        return record.getMessage().find("/health") == -1
+        message = record.getMessage()
+        return "/health" not in message
 
 
-logging.getLogger("uvicorn.access").addFilter(_EndpointFilter())
-
-# HACK
-triton_client: triton_grpc.InferenceServerClient = triton_grpc.InferenceServerClient(
-    TRITONSERVER_URL,
-    keepalive_options=triton_grpc.KeepAliveOptions(keepalive_timeout_ms=600000),
-)
+# Apply filter to reduce log noise from health checks
+logging.getLogger("uvicorn.access").addFilter(HealthEndpointFilter())

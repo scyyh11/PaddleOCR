@@ -1,43 +1,192 @@
-# PaddleOCR-VL 高性能服务化部署（Beta）
+# PaddleOCR-VL High Performance Server (HPS)
 
-本目录提供一套支持并发请求处理的 PaddleOCR-VL 高性能服务化部署方案。
+A high-performance deployment solution for PaddleOCR-VL with support for concurrent request processing.
 
-## 环境要求
+## Architecture
 
-- x64 CPU
-- NVIDIA GPU，Compute Capability >= 8.0 且 < 12.0
-- NVIDIA 驱动支持 CUDA 12.6
-- Docker >= 19.03
-
-## 快速开始
-
-拉取 PaddleOCR 源码并切换到当前目录：
-
-```shell
-git clone https://github.com/PaddlePaddle/PaddleOCR.git
-cd deploy/paddleocr_vl_docker/hps
+```
+┌──────────┐     ┌─────────────────┐     ┌────────────────┐     ┌─────────────┐
+│  Client  │────►│ FastAPI Gateway │────►│ Triton Server  │────►│ vLLM Server │
+└──────────┘     └─────────────────┘     └────────────────┘     └─────────────┘
+                   - Async I/O            - Dynamic batching    - Continuous batching
+                   - Concurrency control  - GPU scheduling      - VLM inference
+                   - Rate limiting        - Model management
 ```
 
-下载并拷贝必要文件到当前目录：
+## System Requirements
 
-```shell
+- x64 CPU
+- NVIDIA GPU, Compute Capability >= 8.0 and < 12.0
+- NVIDIA driver supporting CUDA 12.6
+- Docker >= 19.03
+- Docker Compose >= 2.0
+
+## Quick Start
+
+1. Clone the repository and navigate to the HPS directory:
+
+```bash
+git clone https://github.com/PaddlePaddle/PaddleOCR.git
+cd PaddleOCR/deploy/paddleocr_vl_docker/hps
+```
+
+2. Download and prepare the required SDK files:
+
+```bash
 bash prepare.sh
 ```
 
-启动服务：
+3. Start the services:
 
-```shell
+```bash
 docker compose up
 ```
 
-上述命令将依次启动 3 个容器，每个容器对应一个服务：
+This will start 3 containers:
 
-- **`paddleocr-vlm-server`**：基于 vLLM 的 VLM 推理服务。
-- **`paddleocr-vl-tritonserver`**：基于 Triton Inference Server 的 PaddleOCR-VL 产线推理服务。
-- **`paddleocr-vl-api`**：使用 FastAPI 实现的网关服务，用于将 HTTP 请求转发至 Triton Inference Server，并封装返回结果，简化客户端调用流程。**该服务为对外入口**，客户端可直接通过 HTTP 调用。
+| Service | Description | Port |
+|---------|-------------|------|
+| `paddleocr-vl-api` | FastAPI gateway (entry point) | 8080 |
+| `paddleocr-vl-tritonserver` | Triton Inference Server | 8000 (internal) |
+| `paddleocr-vlm-server` | vLLM-based VLM inference | 8080 (internal) |
 
-> 首次启动会自动下载并构建镜像，耗时较长；从第二次启动起将直接使用本地镜像，启动速度更快。
+> **Note**: First startup will download and build images, which takes longer. Subsequent starts use cached images.
 
-## 调整服务配置
+## Configuration
 
-tbd
+### Environment Variables
+
+Copy `.env.example` to `.env` and modify as needed:
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `HPS_MAX_CONCURRENT_REQUESTS` | 16 | Max concurrent requests to Triton |
+| `HPS_INFERENCE_TIMEOUT` | 600 | Request timeout in seconds |
+| `HPS_LOG_LEVEL` | INFO | Log level (DEBUG, INFO, WARNING, ERROR) |
+| `UVICORN_WORKERS` | 4 | Number of gateway worker processes |
+| `GPU_DEVICE_ID` | 0 | GPU device to use |
+
+### Example: High Throughput Configuration
+
+```bash
+# .env
+HPS_MAX_CONCURRENT_REQUESTS=32
+UVICORN_WORKERS=8
+```
+
+### Example: Low Latency Configuration
+
+```bash
+# .env
+HPS_MAX_CONCURRENT_REQUESTS=8
+HPS_INFERENCE_TIMEOUT=300
+UVICORN_WORKERS=2
+```
+
+## API Usage
+
+### Health Check
+
+```bash
+# Liveness check
+curl http://localhost:8080/health
+
+# Readiness check (verifies Triton connectivity)
+curl http://localhost:8080/health/ready
+```
+
+### Layout Parsing
+
+```bash
+curl -X POST http://localhost:8080/layout-parsing \
+  -H "Content-Type: application/json" \
+  -d '{
+    "file": "base64_encoded_image_or_pdf",
+    "fileType": 1
+  }'
+```
+
+### API Documentation
+
+When the service is running, access the interactive API documentation at:
+
+- Swagger UI: http://localhost:8080/docs
+- ReDoc: http://localhost:8080/redoc
+
+## Performance Tuning
+
+### Concurrency Settings
+
+The gateway uses a semaphore to limit concurrent requests to Triton:
+
+- **Too low** (`HPS_MAX_CONCURRENT_REQUESTS=4`): Underutilizes GPU, requests queue unnecessarily
+- **Too high** (`HPS_MAX_CONCURRENT_REQUESTS=64`): May overwhelm Triton, causing OOM or timeouts
+- **Recommended**: Start with 16, adjust based on GPU memory and workload
+
+### Worker Processes
+
+Each Uvicorn worker is a separate process with its own event loop:
+
+- **1 worker**: Simple, but limited by single process
+- **4 workers**: Good balance for most cases
+- **8+ workers**: For high-concurrency scenarios with many small requests
+
+### Triton Dynamic Batching
+
+Triton automatically batches requests for efficient GPU utilization. The batch size is configured in the model repository (default: 8).
+
+## Troubleshooting
+
+### Service Won't Start
+
+```bash
+# Check logs
+docker compose logs paddleocr-vl-api
+docker compose logs paddleocr-vl-tritonserver
+docker compose logs paddleocr-vlm-server
+
+# Check health
+curl http://localhost:8080/health/ready
+```
+
+### Timeout Errors
+
+- Increase `HPS_INFERENCE_TIMEOUT` for complex documents
+- Check GPU memory usage: `nvidia-smi`
+- Reduce `HPS_MAX_CONCURRENT_REQUESTS` if GPU is overloaded
+
+### Out of Memory
+
+- Reduce `HPS_MAX_CONCURRENT_REQUESTS`
+- Ensure only one service uses each GPU
+- Check `shm_size` in compose.yaml (default: 4GB)
+
+## Development
+
+### Running Locally (without Docker)
+
+```bash
+cd gateway
+pip install -r requirements.txt
+uvicorn app:app --host 0.0.0.0 --port 8080 --workers 4
+```
+
+### Running Tests
+
+```bash
+# Concurrent request test
+for i in {1..20}; do
+  curl -X POST http://localhost:8080/layout-parsing \
+    -H "Content-Type: application/json" \
+    -d '{"file": "...", "fileType": 1}' &
+done
+wait
+```
+
+## License
+
+Apache License 2.0

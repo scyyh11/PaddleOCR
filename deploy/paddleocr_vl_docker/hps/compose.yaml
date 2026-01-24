@@ -9,9 +9,18 @@ services:
     depends_on:
       paddleocr-vl-tritonserver:
         condition: service_healthy
+    environment:
+      - HPS_TRITON_URL=paddleocr-vl-tritonserver:8001
+      - HPS_MAX_CONCURRENT_REQUESTS=${HPS_MAX_CONCURRENT_REQUESTS:-16}
+      - HPS_INFERENCE_TIMEOUT=${HPS_INFERENCE_TIMEOUT:-600}
+      - HPS_LOG_LEVEL=${HPS_LOG_LEVEL:-INFO}
+      - UVICORN_WORKERS=${UVICORN_WORKERS:-4}
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   paddleocr-vl-tritonserver:
     build:
@@ -26,12 +35,16 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              device_ids: ["0"]
+              device_ids: ["${GPU_DEVICE_ID:-0}"]
               capabilities: [gpu]
     shm_size: 4gb
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8000/v2/health/ready || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
 
   paddleocr-vlm-server:
     image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-offline
@@ -41,11 +54,14 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              device_ids: ["0"]
+              device_ids: ["${GPU_DEVICE_ID:-0}"]
               capabilities: [gpu]
     # TODO: Allow using a regular user
     user: root
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
       start_period: 300s
