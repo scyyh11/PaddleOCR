@@ -30,9 +30,6 @@ from paddlex.inference.serving.infra.utils import generate_log_id
 from paddlex.inference.serving.schemas import paddleocr_vl as schema
 from tritonclient.grpc import aio as triton_grpc_aio
 
-# =============================================================================
-# Configuration
-# =============================================================================
 
 TRITON_URL = os.getenv("HPS_TRITON_URL", "paddleocr-vl-tritonserver:8001")
 MAX_CONCURRENT_REQUESTS = int(os.getenv("HPS_MAX_CONCURRENT_REQUESTS", "16"))
@@ -43,9 +40,6 @@ LOG_LEVEL = os.getenv("HPS_LOG_LEVEL", "INFO")
 INPUT_NAME = "input"
 OUTPUT_NAME = "output"
 
-# =============================================================================
-# Logging
-# =============================================================================
 
 logger = logging.getLogger(__name__)
 
@@ -64,10 +58,6 @@ def _configure_logger(logger: logging.Logger) -> None:
 
 _configure_logger(logger)
 
-
-# =============================================================================
-# Triton Async Request Helper
-# =============================================================================
 
 
 def _create_triton_input(data: dict) -> np.ndarray:
@@ -114,11 +104,6 @@ async def triton_request_async(
     return _parse_triton_output(output)
 
 
-# =============================================================================
-# Response Helpers
-# =============================================================================
-
-
 def _create_aistudio_output_without_result(
     error_code: int, error_msg: str, *, log_id: Optional[str] = None
 ) -> dict:
@@ -130,10 +115,6 @@ def _create_aistudio_output_without_result(
     )
     return resp.model_dump()
 
-
-# =============================================================================
-# Application Lifespan
-# =============================================================================
 
 
 @asynccontextmanager
@@ -169,21 +150,12 @@ async def lifespan(app: fastapi.FastAPI):
     logger.info("Gateway shutdown complete")
 
 
-# =============================================================================
-# FastAPI Application
-# =============================================================================
-
 app = fastapi.FastAPI(
     title="PaddleOCR-VL HPS Gateway",
     description="High Performance Server Gateway for PaddleOCR-VL",
     version="1.0.0",
     lifespan=lifespan,
 )
-
-
-# =============================================================================
-# Health Endpoints
-# =============================================================================
 
 
 @app.get("/health", operation_id="checkHealth")
@@ -213,11 +185,6 @@ async def ready(request: Request):
                 503, f"Triton server unavailable: {e}"
             ),
         )
-
-
-# =============================================================================
-# Primary Operations (Inference Endpoints)
-# =============================================================================
 
 
 def _add_primary_operations(app: fastapi.FastAPI) -> None:
@@ -345,11 +312,6 @@ def _add_primary_operations(app: fastapi.FastAPI) -> None:
 _add_primary_operations(app)
 
 
-# =============================================================================
-# Exception Handlers
-# =============================================================================
-
-
 @app.exception_handler(asyncio.TimeoutError)
 async def timeout_exception_handler(request: Request, exc: asyncio.TimeoutError):
     """Handle timeout errors."""
@@ -368,11 +330,6 @@ async def general_exception_handler(request: Request, exc: Exception):
         status_code=500,
         content=_create_aistudio_output_without_result(500, "Internal server error"),
     )
-
-
-# =============================================================================
-# Uvicorn Access Log Filter (optional, cleaner logs)
-# =============================================================================
 
 
 class HealthEndpointFilter(logging.Filter):
