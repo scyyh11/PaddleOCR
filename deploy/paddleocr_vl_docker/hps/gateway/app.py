@@ -24,6 +24,7 @@ from typing import Optional
 import fastapi
 import numpy as np
 from fastapi import Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from paddlex.inference.serving.infra.models import AIStudioNoResultResponse
 from paddlex.inference.serving.infra.utils import generate_log_id
@@ -310,6 +311,39 @@ def _add_primary_operations(app: fastapi.FastAPI) -> None:
 
 
 _add_primary_operations(app)
+
+
+@app.exception_handler(json.JSONDecodeError)
+async def json_decode_exception_handler(request: Request, exc: json.JSONDecodeError):
+    """Handle invalid JSON in request body."""
+    logger.warning("Invalid JSON for %s: %s", request.url.path, exc.msg)
+    return JSONResponse(
+        status_code=400,
+        content=_create_aistudio_output_without_result(
+            400, f"Invalid JSON: {exc.msg}"
+        ),
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(
+    request: Request, exc: RequestValidationError
+):
+    """Handle request validation errors (malformed JSON, missing fields, etc.)."""
+    error_details = exc.errors()
+    # Format error messages for readability
+    error_messages = []
+    for error in error_details:
+        loc = ".".join(str(x) for x in error.get("loc", []))
+        msg = error.get("msg", "Unknown error")
+        error_messages.append(f"{loc}: {msg}" if loc else msg)
+    error_msg = "; ".join(error_messages)
+
+    logger.warning("Validation error for %s: %s", request.url.path, error_msg)
+    return JSONResponse(
+        status_code=422,
+        content=_create_aistudio_output_without_result(422, error_msg),
+    )
 
 
 @app.exception_handler(asyncio.TimeoutError)
