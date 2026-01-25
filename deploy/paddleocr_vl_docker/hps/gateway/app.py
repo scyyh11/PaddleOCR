@@ -60,7 +60,6 @@ def _configure_logger(logger: logging.Logger) -> None:
 _configure_logger(logger)
 
 
-
 def _create_triton_input(data: dict) -> np.ndarray:
     """Serialize request data to Triton input format."""
     data_bytes = json.dumps(data, separators=(",", ":")).encode("utf-8")
@@ -115,7 +114,6 @@ def _create_aistudio_output_without_result(
         errorMsg=error_msg,
     )
     return resp.model_dump()
-
 
 
 @asynccontextmanager
@@ -305,9 +303,7 @@ def _add_primary_operations(app: fastapi.FastAPI) -> None:
             operation_id=operation_name,
             summary=f"Invoke {model_name} model",
             response_class=JSONResponse,
-        )(
-            _create_handler(model_name)
-        )
+        )(_create_handler(model_name))
 
 
 _add_primary_operations(app)
@@ -319,16 +315,12 @@ async def json_decode_exception_handler(request: Request, exc: json.JSONDecodeEr
     logger.warning("Invalid JSON for %s: %s", request.url.path, exc.msg)
     return JSONResponse(
         status_code=400,
-        content=_create_aistudio_output_without_result(
-            400, f"Invalid JSON: {exc.msg}"
-        ),
+        content=_create_aistudio_output_without_result(400, f"Invalid JSON: {exc.msg}"),
     )
 
 
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(
-    request: Request, exc: RequestValidationError
-):
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
     """Handle request validation errors (malformed JSON, missing fields, etc.)."""
     error_details = exc.errors()
     # Format error messages for readability
