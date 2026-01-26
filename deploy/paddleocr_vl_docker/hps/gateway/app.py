@@ -22,13 +22,13 @@ from contextlib import asynccontextmanager
 from typing import Optional
 
 import fastapi
-import numpy as np
 from fastapi import Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from paddlex.inference.serving.infra.models import AIStudioNoResultResponse
 from paddlex.inference.serving.infra.utils import generate_log_id
 from paddlex.inference.serving.schemas import paddleocr_vl as schema
+from paddlex_hps_client import triton_request_async
 from tritonclient.grpc import aio as triton_grpc_aio
 
 
@@ -36,10 +36,6 @@ TRITON_URL = os.getenv("HPS_TRITON_URL", "paddleocr-vl-tritonserver:8001")
 MAX_CONCURRENT_REQUESTS = int(os.getenv("HPS_MAX_CONCURRENT_REQUESTS", "16"))
 INFERENCE_TIMEOUT = int(os.getenv("HPS_INFERENCE_TIMEOUT", "600"))
 LOG_LEVEL = os.getenv("HPS_LOG_LEVEL", "INFO")
-
-# Triton constants
-INPUT_NAME = "input"
-OUTPUT_NAME = "output"
 
 
 logger = logging.getLogger(__name__)
@@ -58,50 +54,6 @@ def _configure_logger(logger: logging.Logger) -> None:
 
 
 _configure_logger(logger)
-
-
-def _create_triton_input(data: dict) -> np.ndarray:
-    """Serialize request data to Triton input format."""
-    data_bytes = json.dumps(data, separators=(",", ":")).encode("utf-8")
-    return np.array([[data_bytes]], dtype=np.object_)
-
-
-def _parse_triton_output(data: np.ndarray) -> dict:
-    """Deserialize Triton output to response dict."""
-    return json.loads(data[0, 0].decode("utf-8"))
-
-
-async def triton_request_async(
-    client: triton_grpc_aio.InferenceServerClient,
-    model_name: str,
-    data: dict,
-    *,
-    timeout: float = 600,
-) -> dict:
-    """
-    Make an async request to Triton Inference Server.
-
-    Args:
-        client: Async Triton gRPC client
-        model_name: Name of the model to call
-        data: Request payload dict
-        timeout: Request timeout in seconds
-
-    Returns:
-        Response dict from Triton
-    """
-    input_tensor = triton_grpc_aio.InferInput(INPUT_NAME, [1, 1], "BYTES")
-    input_tensor.set_data_from_numpy(_create_triton_input(data))
-
-    results = await client.infer(
-        model_name,
-        inputs=[input_tensor],
-        timeout=timeout,
-        client_timeout=timeout,
-    )
-
-    output = results.as_numpy(OUTPUT_NAME)
-    return _parse_triton_output(output)
 
 
 def _create_aistudio_output_without_result(
