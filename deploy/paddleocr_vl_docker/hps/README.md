@@ -5,13 +5,21 @@
 ## 架构
 
 ```
-┌──────────┐     ┌─────────────────┐     ┌────────────────┐     ┌─────────────┐
-│   客户端  │────►│    FastAPI 网关  │────►│  Triton 服务器  │────►│  vLLM 服务器 │
-└──────────┘     └─────────────────┘     └────────────────┘     └─────────────┘
-                   - 统一访问入口          - 动态批处理           - 连续批处理
-                   - 并发控制              - 模型管理             - VLM 推理
-                   - 协议转换              - GPU 调度
+客户端 → FastAPI 网关 → Triton 服务器 → vLLM 服务器
 ```
+
+| 组件 | 说明 |
+|------|------|
+| FastAPI 网关 | 统一访问入口、并发控制、协议转换 |
+| Triton 服务器 | 模型管理、动态批处理、GPU 调度 |
+| vLLM 服务器 | 连续批处理、VLM 推理 |
+
+**Triton 模型：**
+
+| 模型 | 设备 | 说明 |
+|------|------|------|
+| `layout-parsing` | GPU | 版面解析推理 |
+| `restructure-pages` | CPU | 多页结果后处理（跨页表格合并、标题层级重分配） |
 
 ## 环境要求
 
@@ -110,6 +118,40 @@ curl -X POST http://localhost:8080/layout-parsing \
   }'
 ```
 
+### 多页结果重组
+
+对多页文档的版面解析结果进行后处理，支持跨页表格合并和标题层级重新分配。
+
+```bash
+curl -X POST http://localhost:8080/restructure-pages \
+  -H "Content-Type: application/json" \
+  -d '{
+    "pages": [
+      {
+        "prunedResult": {
+          "parsing_res_list": [...],
+          "layout_det_res": [...]
+        },
+        "markdownImages": {"img_0": "base64..."}
+      }
+    ],
+    "mergeTables": true,
+    "relevelTitles": true,
+    "concatenatePages": false
+  }'
+```
+
+**请求参数说明：**
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `pages` | array | 必填 | 各页的版面解析结果列表 |
+| `mergeTables` | bool | true | 是否合并跨页表格 |
+| `relevelTitles` | bool | true | 是否重新分配标题层级 |
+| `concatenatePages` | bool | false | 是否生成合并后的 Markdown |
+
+> 注意：此接口为 CPU 操作，不占用 GPU 资源。
+
 ### API 文档
 
 服务启动后，可访问交互式 API 文档：
@@ -128,7 +170,6 @@ curl -X POST http://localhost:8080/layout-parsing \
 - **默认值 16 的选择依据**：
   - Triton 动态批处理的默认最大批大小为 8
   - 16 允许在当前批次处理时有足够请求排队形成下一批次
-  - 基于 A100（80GB）GPU 的实测表明，16 可在吞吐量和延迟间取得良好平衡
   - 如使用显存较小的 GPU，建议适当降低此值
 
 ### Worker 进程数
@@ -190,11 +231,3 @@ for i in {1..20}; do
 done
 wait
 ```
-
-## 更多文档
-
-- [部署指南](DEPLOYMENT_GUIDE.md) - Docker 基础知识和详细部署说明
-
-## 许可证
-
-Apache License 2.0
