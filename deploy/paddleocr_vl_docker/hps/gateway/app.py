@@ -31,11 +31,18 @@ from paddlex.inference.serving.schemas import paddleocr_vl as schema
 from paddlex_hps_client import triton_request_async
 from tritonclient.grpc import aio as triton_grpc_aio
 
-
 TRITON_URL = os.getenv("HPS_TRITON_URL", "paddleocr-vl-tritonserver:8001")
 MAX_CONCURRENT_REQUESTS = int(os.getenv("HPS_MAX_CONCURRENT_REQUESTS", "16"))
 INFERENCE_TIMEOUT = int(os.getenv("HPS_INFERENCE_TIMEOUT", "600"))
 LOG_LEVEL = os.getenv("HPS_LOG_LEVEL", "INFO")
+HEALTH_CHECK_TIMEOUT = int(os.getenv("HPS_HEALTH_CHECK_TIMEOUT", "5"))
+FILTER_HEALTH_ACCESS_LOG = os.getenv(
+    "HPS_FILTER_HEALTH_ACCESS_LOG", "true"
+).lower() in (
+    "true",
+    "1",
+    "yes",
+)
 
 
 logger = logging.getLogger(__name__)
@@ -69,7 +76,7 @@ def _create_aistudio_output_without_result(
 
 
 @asynccontextmanager
-async def lifespan(app: fastapi.FastAPI):
+async def _lifespan(app: fastapi.FastAPI):
     """
     Manage application lifecycle:
     - Initialize Triton client and semaphore on startup
@@ -105,7 +112,7 @@ app = fastapi.FastAPI(
     title="PaddleOCR-VL HPS Gateway",
     description="High Performance Server Gateway for PaddleOCR-VL",
     version="1.0.0",
-    lifespan=lifespan,
+    lifespan=_lifespan,
 )
 
 
@@ -117,17 +124,46 @@ async def health():
 
 @app.get("/health/ready", operation_id="checkReady")
 async def ready(request: Request):
-    """Readiness check - verifies Triton server connectivity."""
+    """Readiness check - verifies Triton server and model availability."""
     try:
-        is_ready = await request.app.state.triton_client.is_server_ready()
-        if not is_ready:
+        client = request.app.state.triton_client
+
+        # Check server readiness with timeout
+        is_server_ready = await asyncio.wait_for(
+            client.is_server_ready(),
+            timeout=HEALTH_CHECK_TIMEOUT,
+        )
+        if not is_server_ready:
             return JSONResponse(
                 status_code=503,
                 content=_create_aistudio_output_without_result(
                     503, "Triton server not ready"
                 ),
             )
+
+        # Check if required models are ready
+        for model_name in ("layout-parsing", "restructure-pages"):
+            is_model_ready = await asyncio.wait_for(
+                client.is_model_ready(model_name),
+                timeout=HEALTH_CHECK_TIMEOUT,
+            )
+            if not is_model_ready:
+                return JSONResponse(
+                    status_code=503,
+                    content=_create_aistudio_output_without_result(
+                        503, f"Model '{model_name}' not ready"
+                    ),
+                )
+
         return _create_aistudio_output_without_result(0, "Ready")
+    except asyncio.TimeoutError:
+        logger.error("Health check timed out after %ds", HEALTH_CHECK_TIMEOUT)
+        return JSONResponse(
+            status_code=503,
+            content=_create_aistudio_output_without_result(
+                503, "Health check timed out"
+            ),
+        )
     except Exception as e:
         logger.error("Health check failed: %s", e)
         return JSONResponse(
@@ -310,7 +346,7 @@ async def _general_exception_handler(request: Request, exc: Exception):
     )
 
 
-class HealthEndpointFilter(logging.Filter):
+class _HealthEndpointFilter(logging.Filter):
     """Filter out health check endpoints from access logs."""
 
     def filter(self, record: logging.LogRecord) -> bool:
@@ -318,5 +354,6 @@ class HealthEndpointFilter(logging.Filter):
         return "/health" not in message
 
 
-# Apply filter to reduce log noise from health checks
-logging.getLogger("uvicorn.access").addFilter(HealthEndpointFilter())
+# Apply filter to reduce log noise from health checks (controllable via env var)
+if FILTER_HEALTH_ACCESS_LOG:
+    logging.getLogger("uvicorn.access").addFilter(_HealthEndpointFilter())

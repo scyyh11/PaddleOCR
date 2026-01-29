@@ -8,11 +8,11 @@
 客户端 → FastAPI 网关 → Triton 服务器 → vLLM 服务器
 ```
 
-| 组件 | 说明 |
-|------|------|
-| FastAPI 网关 | 统一访问入口、并发控制、协议转换 |
-| Triton 服务器 | 模型管理、动态批处理、GPU 调度 |
-| vLLM 服务器 | 连续批处理、VLM 推理 |
+| 组件           | 说明                                   |
+|----------------|----------------------------------------|
+| FastAPI 网关   | 统一访问入口、简化客户端调用、并发控制 |
+| Triton 服务器  | 模型管理、动态批处理、GPU 调度         |
+| vLLM 服务器    | 连续批处理、VLM 推理                   |
 
 **Triton 模型：**
 
@@ -74,7 +74,9 @@ cp .env.example .env
 |------|--------|------|
 | `HPS_MAX_CONCURRENT_REQUESTS` | 16 | 最大并发请求数 |
 | `HPS_INFERENCE_TIMEOUT` | 600 | 请求超时时间（秒） |
+| `HPS_HEALTH_CHECK_TIMEOUT` | 5 | 健康检查超时时间（秒） |
 | `HPS_LOG_LEVEL` | INFO | 日志级别（DEBUG, INFO, WARNING, ERROR） |
+| `HPS_FILTER_HEALTH_ACCESS_LOG` | true | 是否过滤健康检查的访问日志 |
 | `UVICORN_WORKERS` | 4 | 网关 Worker 进程数 |
 | `GPU_DEVICE_ID` | 0 | 使用的 GPU 设备 ID |
 
