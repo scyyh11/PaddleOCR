@@ -187,8 +187,8 @@ def _add_primary_operations(app: fastapi.FastAPI) -> None:
             )
 
             if "logId" in body:
-                logger.warning(
-                    "Duplicate 'logId' field in %r request %s",
+                logger.debug(
+                    "Using external logId for %r request: %s",
                     model_name,
                     request_log_id,
                 )
