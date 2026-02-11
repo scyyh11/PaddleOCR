@@ -72,7 +72,8 @@ cp .env.example .env
 
 | 变量 | 默认值 | 说明 |
 |------|--------|------|
-| `HPS_MAX_CONCURRENT_REQUESTS` | 16 | 最大并发请求数 |
+| `HPS_MAX_CONCURRENT_GPU_REQUESTS` | 16 | GPU 操作（版面解析）最大并发请求数 |
+| `HPS_MAX_CONCURRENT_CPU_REQUESTS` | 64 | CPU 操作（多页重组）最大并发请求数 |
 | `HPS_INFERENCE_TIMEOUT` | 600 | 请求超时时间（秒） |
 | `HPS_HEALTH_CHECK_TIMEOUT` | 5 | 健康检查超时时间（秒） |
 | `HPS_VLM_URL` | http://paddleocr-vlm-server:8080 | VLM 服务器地址（用于健康检查） |
@@ -85,7 +86,8 @@ cp .env.example .env
 
 ```bash
 # .env
-HPS_MAX_CONCURRENT_REQUESTS=32
+HPS_MAX_CONCURRENT_GPU_REQUESTS=32
+HPS_MAX_CONCURRENT_CPU_REQUESTS=128
 UVICORN_WORKERS=8
 ```
 
@@ -93,7 +95,8 @@ UVICORN_WORKERS=8
 
 ```bash
 # .env
-HPS_MAX_CONCURRENT_REQUESTS=8
+HPS_MAX_CONCURRENT_GPU_REQUESTS=8
+HPS_MAX_CONCURRENT_CPU_REQUESTS=32
 HPS_INFERENCE_TIMEOUT=300
 UVICORN_WORKERS=2
 ```
@@ -166,14 +169,16 @@ curl -X POST http://localhost:8080/restructure-pages \
 
 ### 并发设置
 
-网关使用信号量限制到 Triton 的并发请求数：
+网关对 GPU 操作和 CPU 操作使用独立的信号量进行并发控制：
 
-- **过低**（`HPS_MAX_CONCURRENT_REQUESTS=4`）：GPU 利用率不足，请求不必要地排队
-- **过高**（`HPS_MAX_CONCURRENT_REQUESTS=64`）：可能导致 Triton 过载，出现 OOM 或超时
-- **默认值 16 的选择依据**：
-  - Triton 动态批处理的默认最大批大小为 8
-  - 16 允许在当前批次处理时有足够请求排队形成下一批次
+- **`HPS_MAX_CONCURRENT_GPU_REQUESTS`**（默认 16）：控制 `layout-parsing`（版面解析）的并发数
+  - 过低（4）：GPU 利用率不足，请求不必要地排队
+  - 过高（64）：可能导致 Triton 过载，出现 OOM 或超时
+  - 默认值 16 允许在当前批次处理时有足够请求排队形成下一批次
   - 如使用显存较小的 GPU，建议适当降低此值
+- **`HPS_MAX_CONCURRENT_CPU_REQUESTS`**（默认 64）：控制 `restructure-pages`（多页重组）的并发数
+  - CPU 操作不占用 GPU 资源，可以设置更高的并发数
+  - 可根据 CPU 核数和内存情况调整
 
 ### Worker 进程数
 
@@ -205,11 +210,11 @@ curl http://localhost:8080/health/ready
 
 - 增加 `HPS_INFERENCE_TIMEOUT`（针对复杂文档）
 - 检查 GPU 显存使用：`nvidia-smi`
-- 如果 GPU 过载，减少 `HPS_MAX_CONCURRENT_REQUESTS`
+- 如果 GPU 过载，减少 `HPS_MAX_CONCURRENT_GPU_REQUESTS`
 
 ### 显存不足
 
-- 减少 `HPS_MAX_CONCURRENT_REQUESTS`
+- 减少 `HPS_MAX_CONCURRENT_GPU_REQUESTS`
 - 确保每个 GPU 只运行一个服务
 - 检查 compose.yaml 中的 `shm_size`（默认：4GB）
 

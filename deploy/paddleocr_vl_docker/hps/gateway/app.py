@@ -32,7 +32,8 @@ from paddlex_hps_client import triton_request_async
 from tritonclient.grpc import aio as triton_grpc_aio
 
 TRITON_URL = os.getenv("HPS_TRITON_URL", "paddleocr-vl-tritonserver:8001")
-MAX_CONCURRENT_REQUESTS = int(os.getenv("HPS_MAX_CONCURRENT_REQUESTS", "16"))
+MAX_CONCURRENT_GPU_REQUESTS = int(os.getenv("HPS_MAX_CONCURRENT_GPU_REQUESTS", "16"))
+MAX_CONCURRENT_CPU_REQUESTS = int(os.getenv("HPS_MAX_CONCURRENT_CPU_REQUESTS", "64"))
 INFERENCE_TIMEOUT = int(os.getenv("HPS_INFERENCE_TIMEOUT", "600"))
 LOG_LEVEL = os.getenv("HPS_LOG_LEVEL", "INFO")
 HEALTH_CHECK_TIMEOUT = int(os.getenv("HPS_HEALTH_CHECK_TIMEOUT", "5"))
@@ -85,12 +86,13 @@ def _create_aistudio_output_without_result(
 async def _lifespan(app: fastapi.FastAPI):
     """
     Manage application lifecycle:
-    - Initialize Triton client and semaphore on startup
+    - Initialize Triton client and semaphores on startup
     - Clean up resources on shutdown
     """
     logger.info("Initializing gateway...")
     logger.info("Triton URL: %s", TRITON_URL)
-    logger.info("Max concurrent requests: %d", MAX_CONCURRENT_REQUESTS)
+    logger.info("Max concurrent GPU requests: %d", MAX_CONCURRENT_GPU_REQUESTS)
+    logger.info("Max concurrent CPU requests: %d", MAX_CONCURRENT_CPU_REQUESTS)
     logger.info("Inference timeout: %ds", INFERENCE_TIMEOUT)
 
     # Initialize async Triton client
@@ -101,8 +103,9 @@ async def _lifespan(app: fastapi.FastAPI):
         ),
     )
 
-    # Initialize semaphore for concurrency control
-    app.state.semaphore = asyncio.Semaphore(MAX_CONCURRENT_REQUESTS)
+    # Separate semaphores for GPU-bound and CPU-bound operations
+    app.state.gpu_semaphore = asyncio.Semaphore(MAX_CONCURRENT_GPU_REQUESTS)
+    app.state.cpu_semaphore = asyncio.Semaphore(MAX_CONCURRENT_CPU_REQUESTS)
 
     logger.info("Gateway initialized successfully")
 
@@ -208,6 +211,7 @@ async def _process_triton_request(
     request: Request,
     body: dict,
     model_name: str,
+    semaphore: asyncio.Semaphore,
 ) -> JSONResponse:
     """Process a request through Triton inference server."""
     request_log_id = body.get("logId", generate_log_id())
@@ -226,9 +230,6 @@ async def _process_triton_request(
     body["logId"] = request_log_id
 
     client = request.app.state.triton_client
-    # TODO: Use separate semaphores for GPU-bound (infer) and
-    # CPU-bound (restructurePages) operations.
-    semaphore = request.app.state.semaphore
 
     try:
         async with semaphore:
@@ -320,7 +321,9 @@ async def _process_triton_request(
 )
 async def _handle_infer(request: Request, body: dict):
     """Handle layout-parsing inference request (GPU-bound)."""
-    return await _process_triton_request(request, body, TRITON_MODEL_LAYOUT_PARSING)
+    return await _process_triton_request(
+        request, body, TRITON_MODEL_LAYOUT_PARSING, request.app.state.gpu_semaphore
+    )
 
 
 @app.post(
@@ -332,7 +335,7 @@ async def _handle_infer(request: Request, body: dict):
 async def _handle_restructure_pages(request: Request, body: dict):
     """Handle restructure-pages request (CPU-bound)."""
     return await _process_triton_request(
-        request, body, TRITON_MODEL_RESTRUCTURE_PAGES
+        request, body, TRITON_MODEL_RESTRUCTURE_PAGES, request.app.state.cpu_semaphore
     )
 
 
