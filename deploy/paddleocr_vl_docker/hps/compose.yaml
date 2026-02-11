@@ -11,6 +11,7 @@ services:
         condition: service_healthy
     environment:
       - HPS_TRITON_URL=paddleocr-vl-tritonserver:8001
+      - HPS_VLM_URL=${HPS_VLM_URL:-http://paddleocr-vlm-server:8080}
       - HPS_MAX_CONCURRENT_REQUESTS=${HPS_MAX_CONCURRENT_REQUESTS:-16}
       - HPS_INFERENCE_TIMEOUT=${HPS_INFERENCE_TIMEOUT:-600}
       - HPS_LOG_LEVEL=${HPS_LOG_LEVEL:-INFO}
@@ -47,8 +48,9 @@ services:
       start_period: 60s
 
   paddleocr-vlm-server:
-    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-offline
+    image: ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu
     container_name: paddleocr-vlm-server
+    command: paddleocr genai_server --model_name PaddleOCR-VL-1.5-0.9B --host 0.0.0.0 --port 8080 --backend vllm
     deploy:
       resources:
         reservations:
@@ -56,8 +58,6 @@ services:
             - driver: nvidia
               device_ids: ["${GPU_DEVICE_ID:-0}"]
               capabilities: [gpu]
-    # TODO: Allow using a regular user
-    user: root
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]

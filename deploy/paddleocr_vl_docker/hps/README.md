@@ -75,6 +75,7 @@ cp .env.example .env
 | `HPS_MAX_CONCURRENT_REQUESTS` | 16 | 最大并发请求数 |
 | `HPS_INFERENCE_TIMEOUT` | 600 | 请求超时时间（秒） |
 | `HPS_HEALTH_CHECK_TIMEOUT` | 5 | 健康检查超时时间（秒） |
+| `HPS_VLM_URL` | http://paddleocr-vlm-server:8080 | VLM 服务器地址（用于健康检查） |
 | `HPS_LOG_LEVEL` | INFO | 日志级别（DEBUG, INFO, WARNING, ERROR） |
 | `HPS_FILTER_HEALTH_ACCESS_LOG` | true | 是否过滤健康检查的访问日志 |
 | `UVICORN_WORKERS` | 4 | 网关 Worker 进程数 |
@@ -105,7 +106,7 @@ UVICORN_WORKERS=2
 # 存活检查
 curl http://localhost:8080/health
 
-# 就绪检查（验证 Triton 连接）
+# 就绪检查（验证 Triton 和 VLM 服务）
 curl http://localhost:8080/health/ready
 ```
 

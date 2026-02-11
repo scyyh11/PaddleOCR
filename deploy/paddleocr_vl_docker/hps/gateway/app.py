@@ -18,6 +18,7 @@ import asyncio
 import json
 import logging
 import os
+import urllib.request
 from contextlib import asynccontextmanager
 from typing import Optional
 
@@ -27,7 +28,6 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from paddlex.inference.serving.infra.models import AIStudioNoResultResponse
 from paddlex.inference.serving.infra.utils import generate_log_id
-from paddlex.inference.serving.schemas import paddleocr_vl as schema
 from paddlex_hps_client import triton_request_async
 from tritonclient.grpc import aio as triton_grpc_aio
 
@@ -43,6 +43,12 @@ FILTER_HEALTH_ACCESS_LOG = os.getenv(
     "1",
     "yes",
 )
+
+VLM_URL = os.getenv("HPS_VLM_URL", "http://paddleocr-vlm-server:8080")
+
+TRITON_MODEL_LAYOUT_PARSING = "layout-parsing"
+TRITON_MODEL_RESTRUCTURE_PAGES = "restructure-pages"
+TRITON_MODELS = (TRITON_MODEL_LAYOUT_PARSING, TRITON_MODEL_RESTRUCTURE_PAGES)
 
 
 logger = logging.getLogger(__name__)
@@ -122,13 +128,27 @@ async def health():
     return _create_aistudio_output_without_result(0, "Healthy")
 
 
+async def _check_vlm_ready() -> bool:
+    """Check if the VLM server is ready by querying its health endpoint."""
+
+    def _do_check():
+        req = urllib.request.Request(f"{VLM_URL}/health")
+        try:
+            with urllib.request.urlopen(req, timeout=HEALTH_CHECK_TIMEOUT) as resp:
+                return resp.status == 200
+        except Exception:
+            return False
+
+    return await asyncio.to_thread(_do_check)
+
+
 @app.get("/health/ready", operation_id="checkReady")
 async def ready(request: Request):
-    """Readiness check - verifies Triton server and model availability."""
+    """Readiness check - verifies Triton server, models, and VLM server."""
     try:
         client = request.app.state.triton_client
 
-        # Check server readiness with timeout
+        # Check Triton server readiness with timeout
         is_server_ready = await asyncio.wait_for(
             client.is_server_ready(),
             timeout=HEALTH_CHECK_TIMEOUT,
@@ -142,7 +162,7 @@ async def ready(request: Request):
             )
 
         # Check if required models are ready
-        for model_name in ("layout-parsing", "restructure-pages"):
+        for model_name in TRITON_MODELS:
             is_model_ready = await asyncio.wait_for(
                 client.is_model_ready(model_name),
                 timeout=HEALTH_CHECK_TIMEOUT,
@@ -154,6 +174,16 @@ async def ready(request: Request):
                         503, f"Model '{model_name}' not ready"
                     ),
                 )
+
+        # Check VLM server readiness
+        vlm_ready = await _check_vlm_ready()
+        if not vlm_ready:
+            return JSONResponse(
+                status_code=503,
+                content=_create_aistudio_output_without_result(
+                    503, "VLM server not ready"
+                ),
+            )
 
         return _create_aistudio_output_without_result(0, "Ready")
     except asyncio.TimeoutError:
@@ -169,132 +199,141 @@ async def ready(request: Request):
         return JSONResponse(
             status_code=503,
             content=_create_aistudio_output_without_result(
-                503, f"Triton server unavailable: {e}"
+                503, f"Service unavailable: {e}"
             ),
         )
 
 
-def _add_primary_operations(app: fastapi.FastAPI) -> None:
-    """Register inference endpoints for each primary operation."""
+async def _process_triton_request(
+    request: Request,
+    body: dict,
+    model_name: str,
+) -> JSONResponse:
+    """Process a request through Triton inference server."""
+    request_log_id = body.get("logId", generate_log_id())
+    logger.info(
+        "Processing %r request %s",
+        model_name,
+        request_log_id,
+    )
 
-    def _create_handler(model_name: str):
-        async def _handler(request: Request, body: dict):
-            request_log_id = body.get("logId", generate_log_id())
-            logger.info(
-                "Processing %r request %s",
+    if "logId" in body:
+        logger.debug(
+            "Using external logId for %r request: %s",
+            model_name,
+            request_log_id,
+        )
+    body["logId"] = request_log_id
+
+    client = request.app.state.triton_client
+    # TODO: Use separate semaphores for GPU-bound (infer) and
+    # CPU-bound (restructurePages) operations.
+    semaphore = request.app.state.semaphore
+
+    try:
+        async with semaphore:
+            output = await triton_request_async(
+                client,
+                model_name,
+                body,
+                timeout=INFERENCE_TIMEOUT,
+            )
+    except asyncio.TimeoutError:
+        logger.warning(
+            "Timeout processing %r request %s",
+            model_name,
+            request_log_id,
+        )
+        return JSONResponse(
+            status_code=504,
+            content=_create_aistudio_output_without_result(
+                504, "Gateway timeout", log_id=request_log_id
+            ),
+        )
+    except triton_grpc_aio.InferenceServerException as e:
+        if "Deadline Exceeded" in str(e):
+            logger.warning(
+                "Triton timeout for %r request %s",
                 model_name,
                 request_log_id,
             )
-
-            if "logId" in body:
-                logger.debug(
-                    "Using external logId for %r request: %s",
-                    model_name,
-                    request_log_id,
-                )
-            body["logId"] = request_log_id
-
-            # Get client and semaphore from app state
-            client = request.app.state.triton_client
-            semaphore = request.app.state.semaphore
-
-            try:
-                # Acquire semaphore to limit concurrency
-                async with semaphore:
-                    output = await triton_request_async(
-                        client,
-                        model_name,
-                        body,
-                        timeout=INFERENCE_TIMEOUT,
-                    )
-            except asyncio.TimeoutError:
-                logger.warning(
-                    "Timeout processing %r request %s",
-                    model_name,
-                    request_log_id,
-                )
-                return JSONResponse(
-                    status_code=504,
-                    content=_create_aistudio_output_without_result(
-                        504, "Gateway timeout", log_id=request_log_id
-                    ),
-                )
-            except triton_grpc_aio.InferenceServerException as e:
-                if "Deadline Exceeded" in str(e):
-                    logger.warning(
-                        "Triton timeout for %r request %s",
-                        model_name,
-                        request_log_id,
-                    )
-                    return JSONResponse(
-                        status_code=504,
-                        content=_create_aistudio_output_without_result(
-                            504, "Gateway timeout", log_id=request_log_id
-                        ),
-                    )
-                logger.error(
-                    "Triton error for %r request %s: %s",
-                    model_name,
-                    request_log_id,
-                    e,
-                )
-                return JSONResponse(
-                    status_code=500,
-                    content=_create_aistudio_output_without_result(
-                        500, "Internal server error", log_id=request_log_id
-                    ),
-                )
-            except Exception:
-                logger.exception(
-                    "Unexpected error for %r request %s",
-                    model_name,
-                    request_log_id,
-                )
-                return JSONResponse(
-                    status_code=500,
-                    content=_create_aistudio_output_without_result(
-                        500, "Internal server error", log_id=request_log_id
-                    ),
-                )
-
-            # Check for errors in Triton response
-            if output.get("errorCode", 0) != 0:
-                error_code = output.get("errorCode", 500)
-                error_msg = output.get("errorMsg", "Unknown error")
-                logger.warning(
-                    "Triton returned error for %r request %s: %s",
-                    model_name,
-                    request_log_id,
-                    error_msg,
-                )
-                return JSONResponse(
-                    status_code=error_code,
-                    content=_create_aistudio_output_without_result(
-                        error_code, error_msg, log_id=request_log_id
-                    ),
-                )
-
-            logger.info(
-                "Completed %r request %s",
-                model_name,
-                request_log_id,
+            return JSONResponse(
+                status_code=504,
+                content=_create_aistudio_output_without_result(
+                    504, "Gateway timeout", log_id=request_log_id
+                ),
             )
-            return JSONResponse(status_code=200, content=output)
+        logger.error(
+            "Triton error for %r request %s: %s",
+            model_name,
+            request_log_id,
+            e,
+        )
+        return JSONResponse(
+            status_code=500,
+            content=_create_aistudio_output_without_result(
+                500, "Internal server error", log_id=request_log_id
+            ),
+        )
+    except Exception:
+        logger.exception(
+            "Unexpected error for %r request %s",
+            model_name,
+            request_log_id,
+        )
+        return JSONResponse(
+            status_code=500,
+            content=_create_aistudio_output_without_result(
+                500, "Internal server error", log_id=request_log_id
+            ),
+        )
 
-        return _handler
+    if output.get("errorCode", 0) != 0:
+        error_code = output.get("errorCode", 500)
+        error_msg = output.get("errorMsg", "Unknown error")
+        logger.warning(
+            "Triton returned error for %r request %s: %s",
+            model_name,
+            request_log_id,
+            error_msg,
+        )
+        return JSONResponse(
+            status_code=error_code,
+            content=_create_aistudio_output_without_result(
+                error_code, error_msg, log_id=request_log_id
+            ),
+        )
 
-    # Register endpoints for all primary operations
-    for operation_name, (endpoint, _, _) in schema.PRIMARY_OPERATIONS.items():
-        model_name = endpoint[1:]  # Remove leading "/"
-        app.post(
-            endpoint,
-            operation_id=operation_name,
-            summary=f"Invoke {model_name} model",
-            response_class=JSONResponse,
-        )(_create_handler(model_name))
+    logger.info(
+        "Completed %r request %s",
+        model_name,
+        request_log_id,
+    )
+    return JSONResponse(status_code=200, content=output)
 
 
-_add_primary_operations(app)
+@app.post(
+    "/layout-parsing",
+    operation_id="infer",
+    summary=f"Invoke {TRITON_MODEL_LAYOUT_PARSING} model",
+    response_class=JSONResponse,
+)
+async def _handle_infer(request: Request, body: dict):
+    """Handle layout-parsing inference request (GPU-bound)."""
+    return await _process_triton_request(request, body, TRITON_MODEL_LAYOUT_PARSING)
+
+
+@app.post(
+    "/restructure-pages",
+    operation_id="restructurePages",
+    summary=f"Invoke {TRITON_MODEL_RESTRUCTURE_PAGES} model",
+    response_class=JSONResponse,
+)
+async def _handle_restructure_pages(request: Request, body: dict):
+    """Handle restructure-pages request (CPU-bound)."""
+    return await _process_triton_request(
+        request, body, TRITON_MODEL_RESTRUCTURE_PAGES
+    )
 
 
 @app.exception_handler(json.JSONDecodeError)
