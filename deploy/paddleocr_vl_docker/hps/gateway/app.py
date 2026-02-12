@@ -322,7 +322,10 @@ async def _process_triton_request(
 async def _handle_infer(request: Request, body: dict):
     """Handle layout-parsing inference request (GPU-bound)."""
     return await _process_triton_request(
-        request, body, TRITON_MODEL_LAYOUT_PARSING, request.app.state.gpu_semaphore
+        request,
+        body,
+        TRITON_MODEL_LAYOUT_PARSING,
+        request.app.state.gpu_semaphore,
     )
 
 
@@ -335,7 +338,10 @@ async def _handle_infer(request: Request, body: dict):
 async def _handle_restructure_pages(request: Request, body: dict):
     """Handle restructure-pages request (CPU-bound)."""
     return await _process_triton_request(
-        request, body, TRITON_MODEL_RESTRUCTURE_PAGES, request.app.state.cpu_semaphore
+        request,
+        body,
+        TRITON_MODEL_RESTRUCTURE_PAGES,
+        request.app.state.cpu_semaphore,
     )
 
 
@@ -351,7 +357,7 @@ async def _json_decode_exception_handler(request: Request, exc: json.JSONDecodeE
 
 @app.exception_handler(RequestValidationError)
 async def _validation_exception_handler(request: Request, exc: RequestValidationError):
-    """Handle request validation errors (malformed JSON, missing fields, etc.)."""
+    """Handle request validation errors."""
     error_details = exc.errors()
     # Format error messages for readability
     error_messages = []
@@ -396,6 +402,6 @@ class _HealthEndpointFilter(logging.Filter):
         return "/health" not in message
 
 
-# Apply filter to reduce log noise from health checks (controllable via env var)
+# Apply filter to reduce log noise from health checks
 if FILTER_HEALTH_ACCESS_LOG:
     logging.getLogger("uvicorn.access").addFilter(_HealthEndpointFilter())
