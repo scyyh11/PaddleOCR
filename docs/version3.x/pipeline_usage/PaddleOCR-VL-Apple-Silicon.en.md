@@ -2,9 +2,9 @@
 comments: true
 ---
 
-# PaddleOCR-VL Apple Silicon Environment Configuration Tutorial
+# PaddleOCR-VL Apple Silicon Usage Tutorial
 
-This tutorial is a guide for configuring the PaddleOCR-VL Apple Silicon environment. The purpose is to complete the relevant environment setup. After the environment configuration is complete, please refer to the [PaddleOCR-VL Usage Tutorial](./PaddleOCR-VL.en.md) to use PaddleOCR-VL.
+This tutorial is a guide for using PaddleOCR-VL on Apple Silicon, covering the complete workflow from environment preparation to service deployment.
 
 Apple Silicon include, but are not limited to:
 
@@ -12,6 +12,8 @@ Apple Silicon include, but are not limited to:
 - Apple M2
 - Apple M3
 - Apple M4
+
+PaddleOCR-VL has been verified for accuracy and speed on the Apple M4. However, due to hardware diversity, compatibility with other Apple Silicon has not yet been confirmed. We welcome the community to test on different hardware setups and share your results.
 
 ## 1. Environment Preparation
 
@@ -35,7 +37,7 @@ python -m pip install -U "paddleocr[doc-parser]"
 
 ## 2. Quick Start
 
-Please refer to the corresponding section in the [PaddleOCR-VL Usage Tutorial](./PaddleOCR-VL.en.md).
+Please refer to [PaddleOCR-VL Usage Tutorial - 2. Quick Start](./PaddleOCR-VL.en.md#2-quick-start).
 
 ## 3. Improving VLM Inference Performance Using Inference Acceleration Frameworks
 
@@ -46,9 +48,7 @@ The inference performance under default configurations is not fully optimized an
 Install the MLX-VLM inference framework:
 
 ```shell
-git clone https://github.com/Blaizzy/mlx-vlm.git
-cd mlx-vlm
-pip install -e .
+python -m pip install -U mlx-vlm
 ```
 
 Start the MLX-VLM inference service:
@@ -85,7 +85,7 @@ pipeline = PaddleOCRVL(
 
 ### 3.3 Performance Tuning
 
-Please refer to the corresponding section in the [PaddleOCR-VL Usage Tutorial](./PaddleOCR-VL.en.md).
+Please refer to [PaddleOCR-VL Usage Tutorial - 3.3 Performance Tuning](./PaddleOCR-VL.en.md#33-performance-tuning).
 
 ## 4. Service Deployment
 
@@ -93,12 +93,12 @@ Currently, only **manual deployment** is supported. Please refer to **Section 4.
 
 ### 4.3 Client Invocation Methods
 
-Please refer to the corresponding section in the [PaddleOCR-VL Usage Tutorial](./PaddleOCR-VL.en.md).
+Please refer to [PaddleOCR-VL Usage Tutorial - 4.3 Client Invocation Methods](./PaddleOCR-VL.en.md#43-client-invocation-methods).
 
 ### 4.4 Pipeline Configuration Adjustment Instructions
 
-Please refer to the corresponding section in the [PaddleOCR-VL Usage Tutorial](./PaddleOCR-VL.en.md).
+Please refer to [PaddleOCR-VL Usage Tutorial - 4.4 Pipeline Configuration Adjustment Instructions](./PaddleOCR-VL.en.md#44-pipeline-configuration-adjustment-instructions).
 
 ## 5. Model Fine-Tuning
 
-Please refer to the corresponding section in the [PaddleOCR-VL Usage Tutorial](./PaddleOCR-VL.en.md).
+Please refer to [PaddleOCR-VL Usage Tutorial - 5. Model Fine-Tuning](./PaddleOCR-VL.en.md#5-model-fine-tuning).

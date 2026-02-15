@@ -2,9 +2,9 @@
 comments: true
 ---
 
-# PaddleOCR-VL NVIDIA Blackwell 架构 GPU 环境配置教程
+# PaddleOCR-VL NVIDIA Blackwell 架构 GPU 使用教程
 
-本教程是 NVIDIA Blackwell 架构 GPU 的环境配置教程，目的是完成相关的环境配置，环境配置完毕后请参考 [PaddleOCR-VL 使用教程](./PaddleOCR-VL.md) 使用 PaddleOCR-VL。
+本教程是 PaddleOCR-VL 在 NVIDIA Blackwell 架构 GPU 上的使用指南，涵盖了从环境准备到服务化部署的完整流程。
 
 NVIDIA Blackwell 架构 GPU 包括但不限于以下几种：
 
@@ -13,6 +13,8 @@ NVIDIA Blackwell 架构 GPU 包括但不限于以下几种：
 - RTX 5070、RTX 5070 Ti
 - RTX 5060、RTX 5060 Ti
 - RTX 5050
+
+目前 PaddleOCR-VL 已在 RTX 5070 上完成精度、速度验证；鉴于硬件环境的多样性，其他 NVIDIA Blackwell 架构 GPU 的兼容性尚未验证。我们诚挚欢迎社区用户在不同硬件上进行测试并反馈您的运行结果。
 
 教程开始前，**请确认您的 NVIDIA 驱动支持 CUDA 12.9 或以上版本**。
 
@@ -41,7 +43,7 @@ docker run \
 # 在容器中调用 PaddleOCR CLI 或 Python API
 ```
 
-如果您希望在无法连接互联网的环境中使用 PaddleOCR-VL，请将上述命令中的 `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-vl:latest-nvidia-gpu-sm120` 更换为离线版本镜像 `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-vl:latest-nvidia-gpu-sm120-offline`。
+如果您希望在无法连接互联网的环境中使用 PaddleOCR-VL，请将上述命令中的 `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-vl:latest-nvidia-gpu-sm120`（镜像的大小约为 10 GB）更换为离线版本镜像 `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-vl:latest-nvidia-gpu-sm120-offline`（镜像的大小约为 12 GB）。
 
 > TIP:
 > 标签后缀为 `latest-xxx` 的镜像对应 PaddleOCR 的最新版本。如果希望使用特定版本的 PaddleOCR 镜像，可以将标签中的 `latest` 替换为对应版本号：`paddleocr<major>.<minor>`。
@@ -73,7 +75,7 @@ python -m pip install -U "paddleocr[doc-parser]"
 
 ## 2. 快速开始
 
-请参考 [PaddleOCR-VL 使用教程](./PaddleOCR-VL.md) 相同章节。
+请参考 [PaddleOCR-VL 使用教程 - 2. 快速开始](./PaddleOCR-VL.md#2-快速开始)。
 
 ## 3. 使用推理加速框架提升 VLM 推理性能
 
@@ -102,9 +104,9 @@ docker run \
     paddleocr genai_server --model_name PaddleOCR-VL-1.5-0.9B --host 0.0.0.0 --port 8118 --backend vllm
 ```
 
-如果您希望在无法连接互联网的环境中启动服务，请将上述命令中的 `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu-sm120`更换为离线版本镜像 `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu-sm120-offline`。
+如果您希望在无法连接互联网的环境中启动服务，请将上述命令中的 `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu-sm120`（镜像的大小约为 13 GB）更换为离线版本镜像 `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-nvidia-gpu-sm120-offline`（镜像的大小约为 15 GB）。
 
-启动 vLLM 推理服务时，我们提供了一套默认参数设置。如果您有调整显存占用等更多参数的需求，可以自行配置更多参数。请参考 [3.3.1 服务端参数调整](#331-服务端参数调整) 创建配置文件，然后将该文件挂载到容器中，并在启动服务的命令中使用 `backend_config` 指定配置文件，例如：
+启动 vLLM 推理服务时，我们提供了一套默认参数设置。如果您有调整显存占用等更多参数的需求，可以自行配置更多参数。请参考 [3.3.1 服务端参数调整](./PaddleOCR-VL.md#331-服务端参数调整) 创建配置文件，然后将该文件挂载到容器中，并在启动服务的命令中使用 `backend_config` 指定配置文件，例如：
 
 ```shell
 docker run \
@@ -172,11 +174,11 @@ paddleocr genai_server --model_name PaddleOCR-VL-1.5-0.9B --backend vllm --port 
 
 ### 3.2 客户端使用方法
 
-请参考[PaddleOCR-VL 使用教程](./PaddleOCR-VL.md) 相同章节。
+请参考[PaddleOCR-VL 使用教程 - 3.2 客户端使用方法](./PaddleOCR-VL.md#32-客户端使用方法)。
 
 ### 3.3 性能调优
 
-请参考[PaddleOCR-VL 使用教程](./PaddleOCR-VL.md) 相同章节。
+请参考[PaddleOCR-VL 使用教程 - 3.3 性能调优](./PaddleOCR-VL.md#33-性能调优)。
 
 ## 4. 服务化部署
 
@@ -296,16 +298,16 @@ Docker Compose 通过读取 `.env` 和 `compose.yaml` 文件中配置，先后�
 
 ### 4.2 方法二：手动部署
 
-请参考[PaddleOCR-VL 使用教程](./PaddleOCR-VL.md) 相同章节。
+请参考[PaddleOCR-VL 使用教程 - 4.2 方法二：手动部署](./PaddleOCR-VL.md#42-方法二手动部署)。
 
 ### 4.3 客户端调用方式
 
-请参考[PaddleOCR-VL 使用教程](./PaddleOCR-VL.md) 相同章节。
+请参考[PaddleOCR-VL 使用教程 - 4.3 客户端调用方式](./PaddleOCR-VL.md#43-客户端调用方式)。
 
 ### 4.4 产线配置调整说明
 
-请参考[PaddleOCR-VL 使用教程](./PaddleOCR-VL.md) 相同章节。
+请参考[PaddleOCR-VL 使用教程 - 4.4 产线配置调整说明](./PaddleOCR-VL.md#44-产线配置调整说明)。
 
 ## 5. 模型微调
 
-请参考[PaddleOCR-VL 使用教程](./PaddleOCR-VL.md) 相同章节。
+请参考[PaddleOCR-VL 使用教程 - 5. 模型微调](./PaddleOCR-VL.md#5-模型微调)。
