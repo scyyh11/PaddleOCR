@@ -32,8 +32,12 @@ from paddlex_hps_client import triton_request_async
 from tritonclient.grpc import aio as triton_grpc_aio
 
 TRITON_URL = os.getenv("HPS_TRITON_URL", "paddleocr-vl-tritonserver:8001")
-MAX_CONCURRENT_GPU_REQUESTS = int(os.getenv("HPS_MAX_CONCURRENT_GPU_REQUESTS", "16"))
-MAX_CONCURRENT_CPU_REQUESTS = int(os.getenv("HPS_MAX_CONCURRENT_CPU_REQUESTS", "64"))
+MAX_CONCURRENT_INFERENCE_REQUESTS = int(
+    os.getenv("HPS_MAX_CONCURRENT_INFERENCE_REQUESTS", "16")
+)
+MAX_CONCURRENT_NON_INFERENCE_REQUESTS = int(
+    os.getenv("HPS_MAX_CONCURRENT_NON_INFERENCE_REQUESTS", "64")
+)
 INFERENCE_TIMEOUT = int(os.getenv("HPS_INFERENCE_TIMEOUT", "600"))
 LOG_LEVEL = os.getenv("HPS_LOG_LEVEL", "INFO")
 HEALTH_CHECK_TIMEOUT = int(os.getenv("HPS_HEALTH_CHECK_TIMEOUT", "5"))
@@ -91,8 +95,13 @@ async def _lifespan(app: fastapi.FastAPI):
     """
     logger.info("Initializing gateway...")
     logger.info("Triton URL: %s", TRITON_URL)
-    logger.info("Max concurrent GPU requests: %d", MAX_CONCURRENT_GPU_REQUESTS)
-    logger.info("Max concurrent CPU requests: %d", MAX_CONCURRENT_CPU_REQUESTS)
+    logger.info(
+        "Max concurrent inference requests: %d", MAX_CONCURRENT_INFERENCE_REQUESTS
+    )
+    logger.info(
+        "Max concurrent non-inference requests: %d",
+        MAX_CONCURRENT_NON_INFERENCE_REQUESTS,
+    )
     logger.info("Inference timeout: %ds", INFERENCE_TIMEOUT)
 
     # Initialize async Triton client
@@ -103,9 +112,11 @@ async def _lifespan(app: fastapi.FastAPI):
         ),
     )
 
-    # Separate semaphores for GPU-bound and CPU-bound operations
-    app.state.gpu_semaphore = asyncio.Semaphore(MAX_CONCURRENT_GPU_REQUESTS)
-    app.state.cpu_semaphore = asyncio.Semaphore(MAX_CONCURRENT_CPU_REQUESTS)
+    # Separate semaphores for inference and non-inference operations
+    app.state.inference_semaphore = asyncio.Semaphore(MAX_CONCURRENT_INFERENCE_REQUESTS)
+    app.state.non_inference_semaphore = asyncio.Semaphore(
+        MAX_CONCURRENT_NON_INFERENCE_REQUESTS
+    )
 
     logger.info("Gateway initialized successfully")
 
@@ -320,12 +331,12 @@ async def _process_triton_request(
     response_class=JSONResponse,
 )
 async def _handle_infer(request: Request, body: dict):
-    """Handle layout-parsing inference request (GPU-bound)."""
+    """Handle layout-parsing inference request."""
     return await _process_triton_request(
         request,
         body,
         TRITON_MODEL_LAYOUT_PARSING,
-        request.app.state.gpu_semaphore,
+        request.app.state.inference_semaphore,
     )
 
 
@@ -336,12 +347,12 @@ async def _handle_infer(request: Request, body: dict):
     response_class=JSONResponse,
 )
 async def _handle_restructure_pages(request: Request, body: dict):
-    """Handle restructure-pages request (CPU-bound)."""
+    """Handle restructure-pages request (non-inference)."""
     return await _process_triton_request(
         request,
         body,
         TRITON_MODEL_RESTRUCTURE_PAGES,
-        request.app.state.cpu_semaphore,
+        request.app.state.non_inference_semaphore,
     )
 
 
