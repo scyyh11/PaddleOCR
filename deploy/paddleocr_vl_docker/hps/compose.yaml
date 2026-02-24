@@ -37,7 +37,7 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              device_ids: ["${GPU_DEVICE_ID:-0}"]
+              device_ids: ["${DEVICE_ID:-0}"]
               capabilities: [gpu]
     shm_size: 4gb
     restart: unless-stopped
@@ -57,7 +57,7 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              device_ids: ["${GPU_DEVICE_ID:-0}"]
+              device_ids: ["${DEVICE_ID:-0}"]
               capabilities: [gpu]
     restart: unless-stopped
     healthcheck:

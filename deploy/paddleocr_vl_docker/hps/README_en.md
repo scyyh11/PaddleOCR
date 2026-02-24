@@ -13,14 +13,14 @@ Client → FastAPI Gateway → Triton Server → vLLM Server
 | Component       | Description                                          |
 |-----------------|------------------------------------------------------|
 | FastAPI Gateway | Unified access point, simplified client calls, concurrency control |
-| Triton Server   | Model management, dynamic batching, inference scheduling |
+| Triton Server   | Model management, dynamic batching, inference scheduling  |
 | vLLM Server     | Continuous batching, VLM inference                   |
 
 **Triton Models:**
 
 | Model | Device | Description |
 |-------|--------|-------------|
-| `layout-parsing` | GPU | Layout parsing inference |
+| `layout-parsing` | Inference device | Layout parsing inference |
 | `restructure-pages` | CPU | Multi-page result post-processing (cross-page table merging, title level reassignment) |
 
 ## Requirements
@@ -82,7 +82,7 @@ cp .env.example .env
 | `HPS_LOG_LEVEL` | INFO | Log level (DEBUG, INFO, WARNING, ERROR) |
 | `HPS_FILTER_HEALTH_ACCESS_LOG` | true | Whether to filter health check access logs |
 | `UVICORN_WORKERS` | 4 | Number of gateway worker processes |
-| `GPU_DEVICE_ID` | 0 | GPU device ID to use |
+| `DEVICE_ID` | 0 | Inference device ID to use |
 
 ### High-Throughput Configuration Example
 
@@ -115,57 +115,7 @@ curl http://localhost:8080/health
 curl http://localhost:8080/health/ready
 ```
 
-### Layout Parsing
-
-```bash
-curl -X POST http://localhost:8080/layout-parsing \
-  -H "Content-Type: application/json" \
-  -d '{
-    "file": "base64-encoded image or PDF",
-    "fileType": 1
-  }'
-```
-
-### Multi-Page Result Restructuring
-
-Post-processes layout parsing results for multi-page documents, supporting cross-page table merging and title level reassignment.
-
-```bash
-curl -X POST http://localhost:8080/restructure-pages \
-  -H "Content-Type: application/json" \
-  -d '{
-    "pages": [
-      {
-        "prunedResult": {
-          "parsing_res_list": [...],
-          "layout_det_res": [...]
-        },
-        "markdownImages": {"img_0": "base64..."}
-      }
-    ],
-    "mergeTables": true,
-    "relevelTitles": true,
-    "concatenatePages": false
-  }'
-```
-
-**Request Parameters:**
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `pages` | array | required | List of layout parsing results for each page |
-| `mergeTables` | bool | true | Whether to merge cross-page tables |
-| `relevelTitles` | bool | true | Whether to reassign title levels |
-| `concatenatePages` | bool | false | Whether to generate merged Markdown |
-
-> Note: This endpoint is a non-inference operation and does not consume inference device resources.
-
-### API Documentation
-
-After starting the service, you can access the interactive API documentation:
-
-- Swagger UI: http://localhost:8080/docs
-- ReDoc: http://localhost:8080/redoc
+The API format of the High-Performance Service Deployment is fully compatible with the standard PaddleOCR-VL service deployment. For more invocation methods and pipeline configuration instructions, please refer to the Client-Side Invocation and Pipeline Configuration sections in the [PaddleOCR-VL Usage Tutorial](https://github.com/PaddlePaddle/PaddleOCR/blob/main/docs/version3.x/pipeline_usage/PaddleOCR-VL.en.md).
 
 ## Performance Tuning
 
@@ -222,7 +172,9 @@ curl http://localhost:8080/health/ready
 
 ## Development & Debugging
 
-### Running Locally (Without Docker)
+### Running the Gateway Locally (Without Docker)
+
+The following command only starts the gateway service. Ensure that the Triton server and VLM service are already running elsewhere:
 
 ```bash
 cd gateway

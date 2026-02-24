@@ -29,11 +29,12 @@ For some inference hardware, you may need to refer to other usage tutorials we p
 
 3. **Want to deploy PaddleOCR-VL as an API service**:
 
-    If you want to deploy PaddleOCR-VL as a web service (API) so that other devices or applications can access and call it through a specific URL without configuring the environment, we offer three methods:
+    If you want to deploy PaddleOCR-VL as a web service (API) so that other devices or applications can access and call it through a specific URL without configuring the environment, we offer two methods:
 
-    - Deployment using Docker Compose (one-click start, handles one request at a time, recommended): Please read [4.1 Method 1: Deploy Using Docker Compose](#41-method-1-deploy-using-docker-compose-recommended) and [4.4 Client-Side Invocation](#44-client-side-invocation), or the corresponding chapters in documentation for other hardware.
-    - Manual deployment (handles one request at a time): Please read [1. Environment Preparation](#1-environment-preparation), [4.2 Method 2: Manual Deployment](#42-method-2-manual-deployment), and [4.4 Client-Side Invocation](#44-client-side-invocation), or the corresponding chapters in documentation for other hardware.
-    - High-Performance Service Deployment (Docker Compose based, supports concurrent requests, recommended for production): Please read [4.3 Method 3: High-Performance Service Deployment](#43-method-3-high-performance-service-deployment-supports-concurrent-requests) and [4.4 Client-Side Invocation](#44-client-side-invocation).
+    - Deployment using Docker Compose (one-click start, recommended): Please read [4.1 Method 1: Deploy Using Docker Compose](#41-method-1-deploy-using-docker-compose-recommended) and [4.3 Client-Side Invocation](#43-client-side-invocation), or the corresponding chapters in documentation for other hardware.
+    - Manual deployment: Please read [1. Environment Preparation](#1-environment-preparation), [4.2 Method 2: Manual Deployment](#42-method-2-manual-deployment), and [4.3 Client-Side Invocation](#43-client-side-invocation), or the corresponding chapters in documentation for other hardware.
+
+    Additionally, if you need concurrent request processing, we provide a [High-Performance Service Deployment solution](https://github.com/PaddlePaddle/PaddleOCR/blob/main/deploy/paddleocr_vl_docker/hps/README_en.md) based on FastAPI Gateway + Triton + vLLM, suitable for production environments with high throughput requirements.
 
 4. **Want to fine-tune PaddleOCR-VL to adapt to specific business needs**:
 
@@ -1782,15 +1783,13 @@ The following configurations are for scenarios with a 1:1 client-to-VLM inferenc
 
 ## 4. Service Deployment
 
-This step mainly introduces how to deploy PaddleOCR-VL as a service and invoke it. There are three methods; choose any one:
+This step mainly introduces how to deploy PaddleOCR-VL as a service and invoke it. There are two methods; choose either one:
 
 - Method 1: Deploy using Docker Compose (recommended).
 
 - Method 2: Manual Deployment.
 
-- Method 3: High-Performance Service Deployment (supports concurrent requests).
-
-> Note that the PaddleOCR-VL service described in this section differs from the VLM inference service in the previous section: the latter is responsible for only one part of the complete process (i.e., VLM inference) and is called as an underlying service by the former. Methods 1 and 2 can handle only one request at a time. If you need concurrent request support, please use Method 3 (High-Performance Service Deployment).
+> Note that the PaddleOCR-VL service described in this section differs from the VLM inference service in the previous section: the latter is responsible for only one part of the complete process (i.e., VLM inference) and is called as an underlying service by the former. Both methods can handle only one request at a time. If you need concurrent request processing, please refer to the [High-Performance Service Deployment solution](https://github.com/PaddlePaddle/PaddleOCR/blob/main/deploy/paddleocr_vl_docker/hps/README_en.md).
 
 ### 4.1 Method 1: Deploy Using Docker Compose (Recommended)
 
@@ -1906,7 +1905,7 @@ Modify <code>VLM_BACKEND</code> in the <code>.env</code> file, for example, to c
 <details>
 <summary>5. Adjust pipeline configurations (such as model path, batch size, deployment device, etc.)</summary>
 
-Refer to section <a href="#45-pipeline-configuration-adjustment-instructions">4.5 Pipeline Configuration Adjustment Instructions</a> in this document.
+Refer to section <a href="#44-pipeline-configuration-adjustment-instructions">4.4 Pipeline Configuration Adjustment Instructions</a> in this document.
 
 </details>
 
@@ -1972,15 +1971,7 @@ The command-line options related to serving are as follows:
 
 If you need to adjust pipeline configurations (such as model path, batch size, deployment device, etc.), you can specify the `--pipeline` parameter as a custom configuration file path. For the correspondence between PaddleOCR pipelines and PaddleX pipeline registration names, as well as how to obtain and modify PaddleX pipeline configuration files, please refer to [PaddleOCR and PaddleX](../paddleocr_and_paddlex.en.md). Furthermore, section 4.1.3 will introduce how to adjust the pipeline configuration based on common requirements.
 
-### 4.3 Method 3: High-Performance Service Deployment (Supports Concurrent Requests)
-
-The High-Performance Service Deployment is based on a three-layer architecture of FastAPI Gateway + Triton Inference Server + vLLM, supporting concurrent request processing, making it suitable for production environments with high throughput requirements.
-
-> The API format of the High-Performance Service Deployment is fully compatible with Methods 1 and 2. For client-side invocation, please refer to [4.4 Client-Side Invocation](#44-client-side-invocation).
-
-For detailed information on requirements, quick start, configuration, performance tuning, and troubleshooting, please refer to the [High-Performance Service Deployment documentation](https://github.com/PaddlePaddle/PaddleOCR/blob/main/deploy/paddleocr_vl_docker/hps/README_en.md).
-
-### 4.4 Client-Side Invocation
+### 4.3 Client-Side Invocation
 
 Below are the API reference and examples of multi-language service invocation:
 
@@ -2977,7 +2968,7 @@ foreach ($result as $i => $item) {
 </code></pre></details>
 </details>
 
-### 4.5 Pipeline Configuration Adjustment Instructions
+### 4.4 Pipeline Configuration Adjustment Instructions
 
 > NOTE:
 > If you do not need to adjust pipeline configurations, you can ignore this section.
@@ -2988,7 +2979,7 @@ Adjusting the PaddleOCR-VL configuration for service deployment involves only th
 2. Modify the configuration file
 3. Apply the configuration file
 
-#### 4.5.1 Obtain the Configuration File
+#### 4.4.1 Obtain the Configuration File
 
 **If you are deploying using Docker Compose:**
 
@@ -3005,7 +2996,7 @@ Execute the following command to generate the pipeline configuration file:
 paddlex --get_pipeline_config PaddleOCR-VL
 ```
 
-#### 4.5.2 Modify the Configuration File
+#### 4.4.2 Modify the Configuration File
 
 **Enhance VLM Inference Performance Using Acceleration Frameworks**
 
@@ -3078,7 +3069,7 @@ Serving:
 
 When `max_num_input_imgs` is set to `null`, there will be no limit on the number of PDF pages.
 
-#### 4.5.3 Apply the Configuration File
+#### 4.4.3 Apply the Configuration File
 
 **If you deployed using Docker Compose**:
 

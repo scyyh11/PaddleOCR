@@ -13,14 +13,14 @@
 | 组件           | 说明                                   |
 |----------------|----------------------------------------|
 | FastAPI 网关   | 统一访问入口、简化客户端调用、并发控制 |
-| Triton 服务器  | 模型管理、动态批处理、GPU 调度         |
+| Triton 服务器  | 模型管理、动态批处理、推理调度         |
 | vLLM 服务器    | 连续批处理、VLM 推理                   |
 
 **Triton 模型：**
 
 | 模型 | 设备 | 说明 |
 |------|------|------|
-| `layout-parsing` | GPU | 版面解析推理 |
+| `layout-parsing` | 推理设备 | 版面解析推理 |
 | `restructure-pages` | CPU | 多页结果后处理（跨页表格合并、标题层级重分配） |
 
 ## 环境要求
@@ -82,7 +82,7 @@ cp .env.example .env
 | `HPS_LOG_LEVEL` | INFO | 日志级别（DEBUG, INFO, WARNING, ERROR） |
 | `HPS_FILTER_HEALTH_ACCESS_LOG` | true | 是否过滤健康检查的访问日志 |
 | `UVICORN_WORKERS` | 4 | 网关 Worker 进程数 |
-| `GPU_DEVICE_ID` | 0 | 使用的 GPU 设备 ID |
+| `DEVICE_ID` | 0 | 使用的推理设备 ID |
 
 ### 高吞吐配置示例
 
@@ -115,57 +115,7 @@ curl http://localhost:8080/health
 curl http://localhost:8080/health/ready
 ```
 
-### 版面解析
-
-```bash
-curl -X POST http://localhost:8080/layout-parsing \
-  -H "Content-Type: application/json" \
-  -d '{
-    "file": "base64编码的图片或PDF",
-    "fileType": 1
-  }'
-```
-
-### 多页结果重组
-
-对多页文档的版面解析结果进行后处理，支持跨页表格合并和标题层级重新分配。
-
-```bash
-curl -X POST http://localhost:8080/restructure-pages \
-  -H "Content-Type: application/json" \
-  -d '{
-    "pages": [
-      {
-        "prunedResult": {
-          "parsing_res_list": [...],
-          "layout_det_res": [...]
-        },
-        "markdownImages": {"img_0": "base64..."}
-      }
-    ],
-    "mergeTables": true,
-    "relevelTitles": true,
-    "concatenatePages": false
-  }'
-```
-
-**请求参数说明：**
-
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `pages` | array | 必填 | 各页的版面解析结果列表 |
-| `mergeTables` | bool | true | 是否合并跨页表格 |
-| `relevelTitles` | bool | true | 是否重新分配标题层级 |
-| `concatenatePages` | bool | false | 是否生成合并后的 Markdown |
-
-> 注意：此接口为 CPU 操作，不占用 GPU 资源。
-
-### API 文档
-
-服务启动后，可访问交互式 API 文档：
-
-- Swagger UI: http://localhost:8080/docs
-- ReDoc: http://localhost:8080/redoc
+高性能服务化部署的 API 格式与 PaddleOCR-VL 服务化部署完全一致，更多调用方式和产线配置说明请参考 [PaddleOCR-VL 使用教程](https://github.com/PaddlePaddle/PaddleOCR/blob/main/docs/version3.x/pipeline_usage/PaddleOCR-VL.md) 中的客户端调用方式和产线配置调整说明章节。
 
 ## 性能调优
 
@@ -222,7 +172,9 @@ curl http://localhost:8080/health/ready
 
 ## 开发调试
 
-### 本地运行（不使用 Docker）
+### 本地运行网关（不使用 Docker）
+
+以下命令仅启动网关服务，需要确保 Triton 服务器和 VLM 服务已在其他地方运行：
 
 ```bash
 cd gateway
