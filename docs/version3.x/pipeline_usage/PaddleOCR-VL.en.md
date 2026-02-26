@@ -29,7 +29,7 @@ For some inference hardware, you may need to refer to other usage tutorials we p
 
 3. **Want to deploy PaddleOCR-VL as an API service**:
 
-    If you want to deploy PaddleOCR-VL as a web service (API) so that other devices or applications can access and call it through a specific URL without configuring the environment, we offer two methods (handles one request at a time, no concurrent support):
+    You can deploy PaddleOCR-VL as a web service (API), allowing client applications to invoke PaddleOCR-VL's capabilities through a specific URL without configuring the environment. If concurrent request processing is not required, choose either of the following two methods:
 
     - Deployment using Docker Compose (one-click start, recommended): Please read [4.1 Method 1: Deploy Using Docker Compose](#41-method-1-deploy-using-docker-compose-recommended) and [4.3 Client-Side Invocation](#43-client-side-invocation), or the corresponding chapters in documentation for other hardware.
     - Manual deployment: Please read [1. Environment Preparation](#1-environment-preparation), [4.2 Method 2: Manual Deployment](#42-method-2-manual-deployment), and [4.3 Client-Side Invocation](#43-client-side-invocation), or the corresponding chapters in documentation for other hardware.
