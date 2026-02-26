@@ -1,8 +1,10 @@
-# PaddleOCR-VL High-Performance Service Deployment (Beta)
+# PaddleOCR-VL High-Performance Service Deployment
 
 [简体中文](README.md)
 
 This directory provides a high-performance service deployment solution for PaddleOCR-VL with concurrent request processing support.
+
+> This solution currently only supports NVIDIA GPUs. Support for other inference devices is still being developed.
 
 ## Architecture
 
@@ -10,17 +12,17 @@ This directory provides a high-performance service deployment solution for Paddl
 Client → FastAPI Gateway → Triton Server → vLLM Server
 ```
 
-| Component       | Description                                          |
-|-----------------|------------------------------------------------------|
-| FastAPI Gateway | Unified access point, simplified client calls, concurrency control |
-| Triton Server   | Model management, dynamic batching, inference scheduling  |
-| vLLM Server     | Continuous batching, VLM inference                   |
+| Component       | Description                                                           |
+|-----------------|-----------------------------------------------------------------------|
+| FastAPI Gateway | Unified access point, simplified client calls, concurrency control    |
+| Triton Server   | Model management, dynamic batching, inference scheduling              |
+| vLLM Server     | Continuous batching, VLM inference                                    |
 
 **Triton Models:**
 
 | Model | Device | Description |
 |-------|--------|-------------|
-| `layout-parsing` | Inference device | Layout parsing inference |
+| `layout-parsing` | Inference device (e.g., GPU) | Layout parsing inference |
 | `restructure-pages` | CPU | Multi-page result post-processing (cross-page table merging, title level reassignment) |
 
 ## Requirements
@@ -40,7 +42,7 @@ git clone https://github.com/PaddlePaddle/PaddleOCR.git
 cd PaddleOCR/deploy/paddleocr_vl_docker/hps
 ```
 
-2. Download and prepare necessary files:
+2. Prepare necessary files:
 
 ```bash
 bash prepare.sh
@@ -84,26 +86,15 @@ cp .env.example .env
 | `UVICORN_WORKERS` | 4 | Number of gateway worker processes |
 | `DEVICE_ID` | 0 | Inference device ID to use |
 
-### High-Throughput Configuration Example
+### Pipeline Configuration
 
-```bash
-# .env
-HPS_MAX_CONCURRENT_INFERENCE_REQUESTS=32
-HPS_MAX_CONCURRENT_NON_INFERENCE_REQUESTS=128
-UVICORN_WORKERS=8
-```
-
-### Low-Latency Configuration Example
-
-```bash
-# .env
-HPS_MAX_CONCURRENT_INFERENCE_REQUESTS=8
-HPS_MAX_CONCURRENT_NON_INFERENCE_REQUESTS=32
-HPS_INFERENCE_TIMEOUT=300
-UVICORN_WORKERS=2
-```
+To adjust pipeline configurations (such as model path, batch size, deployment device, etc.), please refer to the Pipeline Configuration section in the [PaddleOCR-VL Usage Tutorial](https://github.com/PaddlePaddle/PaddleOCR/blob/main/docs/version3.x/pipeline_usage/PaddleOCR-VL.en.md).
 
 ## API Usage
+
+### Document Parsing
+
+Please refer to the Client-Side Invocation section in the [PaddleOCR-VL Usage Tutorial](https://github.com/PaddlePaddle/PaddleOCR/blob/main/docs/version3.x/pipeline_usage/PaddleOCR-VL.en.md).
 
 ### Health Checks
 
@@ -115,13 +106,11 @@ curl http://localhost:8080/health
 curl http://localhost:8080/health/ready
 ```
 
-The API format of the High-Performance Service Deployment is fully compatible with the standard PaddleOCR-VL service deployment. For more invocation methods and pipeline configuration instructions, please refer to the Client-Side Invocation and Pipeline Configuration sections in the [PaddleOCR-VL Usage Tutorial](https://github.com/PaddlePaddle/PaddleOCR/blob/main/docs/version3.x/pipeline_usage/PaddleOCR-VL.en.md).
-
 ## Performance Tuning
 
 ### Concurrency Settings
 
-The gateway uses separate semaphores for inference and non-inference operations:
+The gateway controls concurrency for inference and non-inference operations independently:
 
 - **`HPS_MAX_CONCURRENT_INFERENCE_REQUESTS`** (default 16): Controls concurrency for inference operations such as `layout-parsing` (layout parsing)
   - Too low (4): Underutilized inference device, requests queue unnecessarily
@@ -131,6 +120,25 @@ The gateway uses separate semaphores for inference and non-inference operations:
 - **`HPS_MAX_CONCURRENT_NON_INFERENCE_REQUESTS`** (default 64): Controls concurrency for non-inference operations such as `restructure-pages` (page restructuring)
   - Non-inference operations do not consume inference device resources and can be set to a higher concurrency level
   - Adjust based on CPU cores and available memory
+
+**High-throughput configuration example:**
+
+```bash
+# .env
+HPS_MAX_CONCURRENT_INFERENCE_REQUESTS=32
+HPS_MAX_CONCURRENT_NON_INFERENCE_REQUESTS=128
+UVICORN_WORKERS=8
+```
+
+**Low-latency configuration example:**
+
+```bash
+# .env
+HPS_MAX_CONCURRENT_INFERENCE_REQUESTS=8
+HPS_MAX_CONCURRENT_NON_INFERENCE_REQUESTS=32
+HPS_INFERENCE_TIMEOUT=300
+UVICORN_WORKERS=2
+```
 
 ### Worker Processes
 
@@ -148,48 +156,27 @@ Triton automatically batches requests to improve inference device utilization. B
 
 ### Service Fails to Start
 
+Check the logs for each service to identify the issue:
+
 ```bash
-# View logs
 docker compose logs paddleocr-vl-api
 docker compose logs paddleocr-vl-tritonserver
 docker compose logs paddleocr-vlm-server
+```
 
-# Check health status
+Common causes include port conflicts, unavailable inference devices, or image pull failures. Use the readiness check endpoint to verify service status:
+
+```bash
 curl http://localhost:8080/health/ready
 ```
 
 ### Timeout Errors
 
 - Increase `HPS_INFERENCE_TIMEOUT` (for complex documents)
-- Check GPU memory usage: `nvidia-smi`
 - If the inference device is overloaded, reduce `HPS_MAX_CONCURRENT_INFERENCE_REQUESTS`
 
 ### Out of Memory
 
 - Reduce `HPS_MAX_CONCURRENT_INFERENCE_REQUESTS`
-- Ensure only one service runs per GPU
+- Ensure only one service runs per inference device
 - Check `shm_size` in compose.yaml (default: 4GB)
-
-## Development & Debugging
-
-### Running the Gateway Locally (Without Docker)
-
-The following command only starts the gateway service. Ensure that the Triton server and VLM service are already running elsewhere:
-
-```bash
-cd gateway
-pip install -r requirements.txt
-uvicorn app:app --host 0.0.0.0 --port 8080 --workers 4
-```
-
-### Concurrency Testing
-
-```bash
-# Concurrent request test
-for i in {1..20}; do
-  curl -X POST http://localhost:8080/layout-parsing \
-    -H "Content-Type: application/json" \
-    -d '{"file": "...", "fileType": 1}' &
-done
-wait
-```
