@@ -68,7 +68,7 @@ docker compose up
 
 ### 环境变量
 
-复制 `.env.example` 到 `.env` 并根据需要修改：
+复制 `.env.example` 到 `.env` 并根据需要修改。除了通过 `.env` 文件设置，也可以直接设置环境变量：
 
 ```bash
 cp .env.example .env
@@ -102,7 +102,7 @@ cp .env.example .env
 # 存活检查
 curl http://localhost:8080/health
 
-# 就绪检查（验证 Triton 和 VLM 服务）
+# 就绪检查（验证 Triton 和 VLM 服务是否已准备好处理请求）
 curl http://localhost:8080/health/ready
 ```
 
@@ -150,9 +150,9 @@ UVICORN_WORKERS=2
 
 ### Triton 动态批处理
 
-Triton 自动将请求批处理以提高推理设备利用率。批处理大小在模型仓库中配置（默认：8）。
+Triton 自动将请求批处理以提高推理设备利用率。最大批处理大小通过模型配置文件中的 `max_batch_size` 参数控制（默认：8），配置文件位于模型仓库目录下的 `config.pbtxt`（如 `model_repo/layout-parsing/config.pbtxt`）。
 
-## 故障排查
+## 故障排查与解决
 
 ### 服务无法启动
 
@@ -164,11 +164,7 @@ docker compose logs paddleocr-vl-tritonserver
 docker compose logs paddleocr-vlm-server
 ```
 
-常见原因包括端口被占用、推理设备不可用或镜像拉取失败。可通过就绪检查接口确认服务状态：
-
-```bash
-curl http://localhost:8080/health/ready
-```
+常见原因包括端口被占用、推理设备不可用或镜像拉取失败。
 
 ### 超时错误
 

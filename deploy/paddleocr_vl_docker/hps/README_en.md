@@ -68,7 +68,7 @@ The above command will start 3 containers in sequence:
 
 ### Environment Variables
 
-Copy `.env.example` to `.env` and modify as needed:
+Copy `.env.example` to `.env` and modify as needed. You can also set these as environment variables directly instead of using the `.env` file:
 
 ```bash
 cp .env.example .env
@@ -102,7 +102,7 @@ Please refer to the Client-Side Invocation section in the [PaddleOCR-VL Usage Tu
 # Liveness check
 curl http://localhost:8080/health
 
-# Readiness check (verifies Triton and VLM services)
+# Readiness check (verifies Triton and VLM services are ready to process requests)
 curl http://localhost:8080/health/ready
 ```
 
@@ -150,9 +150,9 @@ Each Uvicorn worker is an independent process with its own event loop:
 
 ### Triton Dynamic Batching
 
-Triton automatically batches requests to improve inference device utilization. Batch size is configured in the model repository (default: 8).
+Triton automatically batches requests to improve inference device utilization. The maximum batch size is controlled by the `max_batch_size` parameter in the model configuration file (default: 8), located at `config.pbtxt` under each model directory in the model repository (e.g., `model_repo/layout-parsing/config.pbtxt`).
 
-## Troubleshooting
+## Troubleshooting and Resolution
 
 ### Service Fails to Start
 
@@ -164,11 +164,7 @@ docker compose logs paddleocr-vl-tritonserver
 docker compose logs paddleocr-vlm-server
 ```
 
-Common causes include port conflicts, unavailable inference devices, or image pull failures. Use the readiness check endpoint to verify service status:
-
-```bash
-curl http://localhost:8080/health/ready
-```
+Common causes include port conflicts, unavailable inference devices, or image pull failures.
 
 ### Timeout Errors
 
