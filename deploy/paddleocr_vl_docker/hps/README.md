@@ -68,10 +68,16 @@ docker compose up
 
 ### 环境变量
 
-复制 `.env.example` 到 `.env` 并根据需要修改。除了通过 `.env` 文件设置，也可以直接设置环境变量：
+复制 `.env.example` 到 `.env` 并根据需要修改。
 
 ```bash
 cp .env.example .env
+```
+
+除了通过 `.env` 文件设置，也可以直接设置环境变量，如：
+
+```bash
+export HPS_MAX_CONCURRENT_INFERENCE_REQUESTS=8
 ```
 
 | 变量 | 默认值 | 说明 |

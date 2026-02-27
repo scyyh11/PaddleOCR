@@ -68,10 +68,16 @@ The above command will start 3 containers in sequence:
 
 ### Environment Variables
 
-Copy `.env.example` to `.env` and modify as needed. You can also set these as environment variables directly instead of using the `.env` file:
+Copy `.env.example` to `.env` and modify as needed.
 
 ```bash
 cp .env.example .env
+```
+
+You can also set these as environment variables directly instead of using the `.env` file, e.g.:
+
+```bash
+export HPS_MAX_CONCURRENT_INFERENCE_REQUESTS=8
 ```
 
 | Variable | Default | Description |
