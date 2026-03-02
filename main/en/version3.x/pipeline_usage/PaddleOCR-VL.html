@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../../version3.x/logo.jpg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
@@ -5043,11 +5043,12 @@ PaddleOCR provides a unified interface for the PaddleOCR-VL model series to faci
 </li>
 <li>
 <p><strong>Want to deploy PaddleOCR-VL as an API service</strong>:</p>
-<p>If you want to deploy PaddleOCR-VL as a web service (API) so that other devices or applications can access and call it through a specific URL without configuring the environment, we offer two methods:</p>
+<p>You can deploy PaddleOCR-VL as a web service (API), allowing client applications to invoke PaddleOCR-VL's capabilities through a specific URL without configuring the environment. If concurrent request processing is not required, choose either of the following two methods:</p>
 <ul>
 <li>Deployment using Docker Compose (one-click start, recommended): Please read <a href="#41-method-1-deploy-using-docker-compose-recommended">4.1 Method 1: Deploy Using Docker Compose</a> and <a href="#43-client-side-invocation">4.3 Client-Side Invocation</a>, or the corresponding chapters in documentation for other hardware.</li>
 <li>Manual deployment: Please read <a href="#1-environment-preparation">1. Environment Preparation</a>, <a href="#42-method-2-manual-deployment">4.2 Method 2: Manual Deployment</a>, and <a href="#43-client-side-invocation">4.3 Client-Side Invocation</a>, or the corresponding chapters in documentation for other hardware.</li>
 </ul>
+<p>For concurrent request processing, please refer to the <a href="https://github.com/PaddlePaddle/PaddleOCR/blob/main/deploy/paddleocr_vl_docker/hps/README_en.md">High-Performance Service Deployment solution</a>.</p>
 </li>
 <li>
 <p><strong>Want to fine-tune PaddleOCR-VL to adapt to specific business needs</strong>:</p>
@@ -6519,7 +6520,7 @@ Setting it to <code>None</code> means using the instantiation parameter; otherwi
 <h2 id="3-enhancing-vlm-inference-performance-using-inference-acceleration-frameworks">3. Enhancing VLM Inference Performance Using Inference Acceleration Frameworks<a class="headerlink" href="#3-enhancing-vlm-inference-performance-using-inference-acceleration-frameworks" title="Permanent link">&para;</a></h2>
 <p>The inference performance under default configurations is not fully optimized and may not meet actual production requirements. This step primarily introduces how to use the vLLM, SGLang and FastDeploy inference acceleration frameworks to enhance the inference performance of PaddleOCR-VL.</p>
 <h3 id="31-launching-the-vlm-inference-service">3.1 Launching the VLM Inference Service<a class="headerlink" href="#31-launching-the-vlm-inference-service" title="Permanent link">&para;</a></h3>
-<p>There are two methods to launch the VLM inference service; choose either one:</p>
+<p>There are three methods to launch the VLM inference service; choose either one:</p>
 <ul>
 <li>
 <p>Method 1: Launch the service using the official Docker image. Currently supported:</p>
@@ -6537,7 +6538,7 @@ Setting it to <code>None</code> means using the instantiation parameter; otherwi
 </ul>
 </li>
 <li>
-<p>Method 3: Launch service directly using inference acceleration frameworks. Currently supported:</p>
+<p>Method 3: Launch service directly using inference acceleration frameworks (the pre-configured performance tuning parameters provided by PaddleOCR will not be applied). Currently supported:</p>
 <ul>
 <li>FastDeploy</li>
 <li>vLLM</li>
@@ -6775,7 +6776,7 @@ For example:
 </li>
 </ul>
 <h2 id="4-service-deployment">4. Service Deployment<a class="headerlink" href="#4-service-deployment" title="Permanent link">&para;</a></h2>
-<p>This step mainly introduces how to deploy PaddleOCR-VL as a service and invoke it. There are two methods; choose either one:</p>
+<p>This step mainly introduces how to deploy PaddleOCR-VL as a service and invoke it. If concurrent request processing is not required, choose either of the following two methods:</p>
 <ul>
 <li>
 <p>Method 1: Deploy using Docker Compose (recommended).</p>
@@ -6784,8 +6785,9 @@ For example:
 <p>Method 2: Manual Deployment.</p>
 </li>
 </ul>
+<p>Both methods can handle only one request at a time. If you need concurrent request processing, please refer to the <a href="https://github.com/PaddlePaddle/PaddleOCR/blob/main/deploy/paddleocr_vl_docker/hps/README_en.md">High-Performance Service Deployment solution</a>.</p>
 <blockquote>
-<p>Note that the PaddleOCR-VL service described in this section differs from the VLM inference service in the previous section: the latter is responsible for only one part of the complete process (i.e., VLM inference) and is called as an underlying service by the former. In addition, the PaddleOCR-VL service started according to the instructions in this section can handle only one request at a time. We will later provide instructions on how to start the service with support for concurrent requests.</p>
+<p>Note that the PaddleOCR-VL service described in this section differs from the VLM inference service in the previous section: the latter is responsible for only one part of the complete process (i.e., VLM inference) and is called as an underlying service by the former.</p>
 </blockquote>
 <h3 id="41-method-1-deploy-using-docker-compose-recommended">4.1 Method 1: Deploy Using Docker Compose (Recommended)<a class="headerlink" href="#41-method-1-deploy-using-docker-compose-recommended" title="Permanent link">&para;</a></h3>
 <p>You can obtain the Compose file and the environment variables configuration file from <a href="https://github.com/PaddlePaddle/PaddleOCR/blob/main/deploy/paddleocr_vl_docker/accelerators/gpu/compose.yaml">here</a> and <a href="https://github.com/PaddlePaddle/PaddleOCR/blob/main/deploy/paddleocr_vl_docker/accelerators/gpu/.env">here</a>, respectively, and download them to your local machine. Then, in the directory where the files were just downloaded, execute the following command to start the server, which will listen on port <strong>8080</strong> by default:</p>
