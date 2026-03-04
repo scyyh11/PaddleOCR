@@ -158,6 +158,25 @@ Each Uvicorn worker is an independent process with its own event loop:
 
 Triton automatically batches requests to improve inference device utilization. The maximum batch size is controlled by the `max_batch_size` parameter in the model configuration file (default: 8), located at `config.pbtxt` under each model directory in the model repository (e.g., `model_repo/layout-parsing/config.pbtxt`).
 
+### Triton Instance Count
+
+The number of parallel inference instances for each Triton model is configured via the `instance_group` section in `config.pbtxt` (default: 1). Increasing the instance count improves parallelism but consumes more device resources.
+
+```
+# model_repo/layout-parsing/config.pbtxt
+instance_group [
+  {
+      count: 1       # Number of instances; increase for higher parallelism
+      kind: KIND_GPU
+      gpus: [ 0 ]
+  }
+]
+```
+
+- **`count: 1`** (default): Suitable for limited GPU memory scenarios; a single instance with dynamic batching is sufficient for most workloads
+- **`count: 2+`**: Suitable when GPU memory is abundant and higher throughput is needed; each additional instance consumes an extra copy of the model's memory footprint
+- Non-inference models (e.g., `restructure-pages`) run on CPU and can have their instance count increased based on available CPU cores
+
 ## Troubleshooting and Resolution
 
 ### Service Fails to Start

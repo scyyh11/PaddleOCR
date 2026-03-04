@@ -158,6 +158,25 @@ UVICORN_WORKERS=2
 
 Triton 自动将请求批处理以提高推理设备利用率。最大批处理大小通过模型配置文件中的 `max_batch_size` 参数控制（默认：8），配置文件位于模型仓库目录下的 `config.pbtxt`（如 `model_repo/layout-parsing/config.pbtxt`）。
 
+### Triton 实例数
+
+每个 Triton 模型的并行推理实例数通过 `config.pbtxt` 中的 `instance_group` 配置（默认：1）。增加实例数可以提高并行处理能力，但会占用更多设备资源。
+
+```
+# model_repo/layout-parsing/config.pbtxt
+instance_group [
+  {
+      count: 1       # 实例数，增大可提高并行度
+      kind: KIND_GPU
+      gpus: [ 0 ]
+  }
+]
+```
+
+- **`count: 1`**（默认）：适合显存有限的场景，单实例配合动态批处理已可满足大部分需求
+- **`count: 2+`**：适合显存充裕且需要更高吞吐的场景；每增加一个实例会额外占用一份模型所需的显存
+- 非推理模型（如 `restructure-pages`）运行在 CPU 上，可根据 CPU 核数适当增加实例数
+
 ## 故障排查与解决
 
 ### 服务无法启动
