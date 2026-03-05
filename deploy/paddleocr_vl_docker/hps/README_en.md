@@ -173,9 +173,12 @@ instance_group [
 ]
 ```
 
-- **`count: 1`** (default): Suitable for limited GPU memory scenarios; a single instance with dynamic batching is sufficient for most workloads
-- **`count: 2+`**: Suitable when GPU memory is abundant and higher throughput is needed; each additional instance consumes an extra copy of the model's memory footprint
-- Non-inference models (e.g., `restructure-pages`) run on CPU and can have their instance count increased based on available CPU cores
+There is a trade-off between instance count and dynamic batching:
+
+- **Single instance (`count: 1`)**: Dynamic batching combines multiple requests into one batch for parallel execution, but all requests in the same batch must wait for the slowest one to finish before results are returned, which may increase latency for faster requests. Additionally, a single instance can only process one batch at a time — subsequent requests must queue until the current batch completes. Best suited for scenarios with limited GPU memory or uniform request processing times
+- **Multiple instances (`count: 2+`)**: Multiple instances can process different batches simultaneously, reducing request queuing time and improving overall throughput. Note that within each instance, dynamic batching behavior still applies (requests in the same batch start and finish together). Each additional instance consumes an extra copy of the model's memory footprint. Adjust based on the GPU memory and compute capacity of your inference device
+
+Non-inference models (e.g., `restructure-pages`) run on CPU and can have their instance count increased based on available CPU cores.
 
 ## Troubleshooting and Resolution
 
