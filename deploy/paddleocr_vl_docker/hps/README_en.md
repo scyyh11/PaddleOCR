@@ -15,8 +15,8 @@ Client → FastAPI Gateway → Triton Server → vLLM Server
 | Component       | Description                                                           |
 |-----------------|-----------------------------------------------------------------------|
 | FastAPI Gateway | Unified access point, simplified client calls, concurrency control    |
-| Triton Server   | Model management, dynamic batching, inference scheduling              |
-| vLLM Server     | Continuous batching, VLM inference                                    |
+| Triton Server   | Layout detection model (PP-DocLayoutV3) and pipeline orchestration; model management, dynamic batching, inference scheduling |
+| vLLM Server     | VLM (PaddleOCR-VL-1.5), continuous batching inference                |
 
 **Triton Models:**
 
@@ -24,8 +24,6 @@ Client → FastAPI Gateway → Triton Server → vLLM Server
 |-------|--------|-------------|
 | `layout-parsing` | Inference device (e.g., GPU) | Layout parsing inference |
 | `restructure-pages` | CPU | Multi-page result post-processing (cross-page table merging, title level reassignment) |
-
-> Note: The Triton server only loads the layout detection model (PP-DocLayoutV3). The VLM model is served by a separate vLLM inference service.
 
 ## Requirements
 
@@ -162,7 +160,7 @@ Triton automatically batches requests to improve inference device utilization. T
 
 ### Triton Instance Count
 
-The Triton server only loads the layout detection model (PP-DocLayoutV3); the VLM model is served by a separate vLLM inference service. The number of parallel inference instances for each Triton model is configured via the `instance_group` section in `config.pbtxt` (default: 1). Increasing the instance count improves parallelism but consumes more device resources.
+The number of parallel inference instances for each Triton model is configured via the `instance_group` section in `config.pbtxt` (default: 1). Increasing the instance count improves parallelism but consumes more device resources.
 
 ```
 # model_repo/layout-parsing/config.pbtxt
