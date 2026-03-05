@@ -25,6 +25,8 @@ Client → FastAPI Gateway → Triton Server → vLLM Server
 | `layout-parsing` | Inference device (e.g., GPU) | Layout parsing inference |
 | `restructure-pages` | CPU | Multi-page result post-processing (cross-page table merging, title level reassignment) |
 
+> Note: The Triton server only loads the layout detection model (PP-DocLayoutV3). The VLM model is served by a separate vLLM inference service.
+
 ## Requirements
 
 - x64 CPU

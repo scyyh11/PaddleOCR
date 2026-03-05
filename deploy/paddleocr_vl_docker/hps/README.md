@@ -25,6 +25,8 @@
 | `layout-parsing` | 推理设备（如 GPU） | 版面解析推理 |
 | `restructure-pages` | CPU | 多页结果后处理（跨页表格合并、标题层级重分配） |
 
+> 注意：Triton 服务中仅加载了版面检测模型（PP-DocLayoutV3），VLM 模型由独立的 vLLM 推理服务提供。
+
 ## 环境要求
 
 - x64 CPU
