@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../logo.jpg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
     
     
       
@@ -4862,18 +4862,18 @@ You're not viewing the latest version.
 <hr />
 <h3 id="_3">目录<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="#目录">目录</a></li>
-<li><a href="#1-安装">1. 安装</a></li>
-<li><a href="#2-在-claude-for-desktop-中使用">2. 在 Claude for Desktop 中使用</a><ul>
-<li><a href="#21-快速开始">2.1 快速开始</a></li>
-<li><a href="#22-mcp-主机配置说明">2.2 MCP 主机配置说明</a></li>
-<li><a href="#23-工作模式说明">2.3 工作模式说明</a></li>
-<li><a href="#24-使用-uvx">2.4 使用 <code>uvx</code></a></li>
+<li><a href="#_3">目录</a></li>
+<li><a href="#1">1. 安装</a></li>
+<li><a href="#2-claude-for-desktop">2. 在 Claude for Desktop 中使用</a><ul>
+<li><a href="#21">2.1 快速开始</a></li>
+<li><a href="#22-mcp">2.2 MCP 主机配置说明</a></li>
+<li><a href="#23">2.3 工作模式说明</a></li>
+<li><a href="#24-uvx">2.4 使用 <code>uvx</code></a></li>
 </ul>
 </li>
-<li><a href="#3-运行服务器">3. 运行服务器</a></li>
-<li><a href="#4-参数说明">4. 参数说明</a></li>
-<li><a href="#5-已知局限性">5. 已知局限性</a></li>
+<li><a href="#3">3. 运行服务器</a></li>
+<li><a href="#4">4. 参数说明</a></li>
+<li><a href="#5">5. 已知局限性</a></li>
 </ul>
 <h2 id="1">1. 安装<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
 <p>本节将介绍如何通过 pip 安装 <code>paddleocr-mcp</code> 库。</p>
@@ -4882,7 +4882,7 @@ You're not viewing the latest version.
 <li>对于本地 Python 库模式，也可以考虑选择安装相应的可选依赖：</li>
 <li><code>paddleocr-mcp[local]</code>：包含 PaddleOCR（不包含飞桨框架）。</li>
 <li><code>paddleocr-mcp[local-cpu]</code>：在 <code>local</code> 基础上额外包含 CPU 版本的飞桨框架。</li>
-<li>PaddleOCR 也支持通过 <code>uvx</code> 等方式免安装运行服务器。详情请参考 <a href="#2-在-claude-for-desktop-中使用">2. 在 Claude for Desktop 中使用</a> 中的说明。</li>
+<li>PaddleOCR 也支持通过 <code>uvx</code> 等方式免安装运行服务器。详情请参考 <a href="#2-claude-for-desktop">2. 在 Claude for Desktop 中使用</a> 中的说明。</li>
 </ul>
 <p>使用 pip 安装 <code>paddleocr-mcp</code> 库的命令如下：</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 从 PyPI 安装</span>
@@ -4909,7 +4909,7 @@ You're not viewing the latest version.
 <ol>
 <li>
 <p><strong>安装 <code>paddleocr-mcp</code></strong></p>
-<p>请参考 <a href="#1-安装">1. 安装</a>。</p>
+<p>请参考 <a href="#1">1. 安装</a>。</p>
 </li>
 <li>
 <p><strong>获取服务基础 URL 与星河社区访问令牌</strong></p>
@@ -4959,8 +4959,8 @@ You're not viewing the latest version.
 <p>在 Claude for Desktop 的配置文件中，您需要定义 MCP 服务器的启动方式。关键字段如下：</p>
 <ul>
 <li><code>command</code>：<code>paddleocr_mcp</code>（如果可执行文件可在 <code>PATH</code> 中找到）或绝对路径。</li>
-<li><code>args</code>：可配置命令行参数，如 <code>["--verbose"]</code>。详见 <a href="#4-参数说明">4. 参数说明</a>。</li>
-<li><code>env</code>：可配置环境变量。详见 <a href="#4-参数说明">4. 参数说明</a>。</li>
+<li><code>args</code>：可配置命令行参数，如 <code>["--verbose"]</code>。详见 <a href="#4">4. 参数说明</a>。</li>
+<li><code>env</code>：可配置环境变量。详见 <a href="#4">4. 参数说明</a>。</li>
 </ul>
 <h3 id="23">2.3 工作模式说明<a class="headerlink" href="#23" title="Permanent link">&para;</a></h3>
 <p>您可以根据需求配置 MCP 服务器，使其运行在不同的工作模式。不同工作模式需要的操作流程有所不同，下面将详细介绍。</p>
@@ -5025,7 +5025,7 @@ You're not viewing the latest version.
 </li>
 </ul>
 <h4 id="paddleocr">模式二：PaddleOCR 官方服务<a class="headerlink" href="#paddleocr" title="Permanent link">&para;</a></h4>
-<p>请参考 <a href="#21-快速开始">2.1 快速开始</a>。</p>
+<p>请参考 <a href="#21">2.1 快速开始</a>。</p>
 <p>对于文字识别以外的任务，请在 PaddleOCR 官网获取任务对应的服务基础 URL，并正确设置 <code>PADDLEOCR_MCP_PIPELINE</code> 与 <code>PADDLEOCR_MCP_SERVER_URL</code>（参数说明详见第 4 节）。</p>
 <h4 id="_4">模式三：千帆平台服务<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
 <ol>
@@ -5124,7 +5124,7 @@ You're not viewing the latest version.
 </span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>如需了解本地模式的依赖、性能调优及产线配置，请参考 <a href="#模式一本地-python-库">模式一：本地 Python 库</a> 部分。</p>
+<p>如需了解本地模式的依赖、性能调优及产线配置，请参考 <a href="#python">模式一：本地 Python 库</a> 部分。</p>
 <p>由于使用了不一样的启动方式，配置文件中 <code>command</code> 和 <code>args</code> 的设置都与前文介绍的方式存在不同，但 MCP 服务本身支持的命令行参数与环境变量（如 <code>PADDLEOCR_MCP_SERVER_URL</code>）仍然可以以相同的方式设置。</p>
 <h2 id="3">3. 运行服务器<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
 <p>除了在 Claude for Desktop 等 MCP 主机中使用外，您也可以通过 CLI 运行 PaddleOCR MCP 服务器。</p>
@@ -5141,7 +5141,7 @@ You're not viewing the latest version.
 </span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="c1"># OCR + 本地服务 + Streamable HTTP</span>
 </span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>paddleocr_mcp<span class="w"> </span>--pipeline<span class="w"> </span>OCR<span class="w"> </span>--ppocr_source<span class="w"> </span>self_hosted<span class="w"> </span>--server_url<span class="w"> </span>http://127.0.0.1:8080<span class="w"> </span>--http
 </span></code></pre></div>
-<p>在 <a href="#4-参数说明">4. 参数说明</a> 中可以了解 PaddleOCR MCP 服务器支持的全部参数。</p>
+<p>在 <a href="#4">4. 参数说明</a> 中可以了解 PaddleOCR MCP 服务器支持的全部参数。</p>
 <h2 id="4">4. 参数说明<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <p>您可以通过环境变量或命令行参数来控制 MCP 服务器的行为。</p>
 <table>
