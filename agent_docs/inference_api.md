@@ -15,38 +15,15 @@ for res in result:
 
 ## Available Pipelines
 
-All imported from `paddleocr`:
+All imported from `paddleocr`. **To get the current list**, read `__all__` in `paddleocr/_pipelines/__init__.py`.
 
-| Pipeline | Purpose |
-|----------|---------|
-| `PaddleOCR` | Full OCR (detection + recognition) |
-| `PaddleOCRVL` | Vision-language OCR (v1, v1.5) |
-| `PPStructureV3` | Document structure: tables, formulas, layout |
-| `PPChatOCRv4Doc` | LLM-powered document analysis |
-| `DocUnderstanding` | VLM-based document QA |
-| `FormulaRecognitionPipeline` | Math formula recognition |
-| `SealRecognition` | Seal text detection + recognition |
-| `TableRecognitionPipelineV2` | Table structure recognition |
-| `DocPreprocessor` | Orientation, unwarping |
-| `PPDocTranslation` | Document translation |
+Common pipelines include `PaddleOCR` (full OCR), `PPStructureV3` (document structure), `DocUnderstanding` (VLM-based QA), but the authoritative list lives in the source. Each pipeline has its own file in `paddleocr/_pipelines/` — read the file to understand its constructor parameters and capabilities.
 
 ## Available Individual Models
 
-| Model | Purpose |
-|-------|---------|
-| `TextDetection` | Detect text regions |
-| `TextRecognition` | Recognize text content |
-| `LayoutDetection` | Detect document layout regions |
-| `TableClassification` | Classify table types |
-| `TableCellsDetection` | Detect table cells |
-| `TableStructureRecognition` | Recognize table structure |
-| `SealTextDetection` | Detect seal text |
-| `FormulaRecognition` | Recognize formulas |
-| `ChartParsing` | Parse charts |
-| `DocVLM` | Document vision-language model |
-| `DocImgOrientationClassification` | Classify document orientation |
-| `TextImageUnwarping` | Unwarp distorted text images |
-| `TextLineOrientationClassification` | Classify text line orientation |
+All imported from `paddleocr`. **To get the current list**, read `__all__` in `paddleocr/_models/__init__.py`.
+
+Common models include `TextDetection`, `TextRecognition`, `LayoutDetection`, but the authoritative list lives in the source. Each model has its own file in `paddleocr/_models/` — read the file to understand its parameters and default model names.
 
 ## PaddleOCR Constructor Parameters
 
