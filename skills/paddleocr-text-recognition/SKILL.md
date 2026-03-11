@@ -3,6 +3,18 @@ name: paddleocr-text-recognition
 description: >
   Use this skill when users need to extract text from images, PDFs, or documents. Supports URLs and local files.
   Returns structured JSON containing recognized text.
+metadata:
+  openclaw:
+    requires:
+      env:
+        - PADDLEOCR_OCR_API_URL
+        - PADDLEOCR_ACCESS_TOKEN
+        - PADDLEOCR_TIMEOUT
+      bins:
+        - python
+    primaryEnv: PADDLEOCR_ACCESS_TOKEN
+    emoji: "🔤"
+    homepage: https://github.com/PaddlePaddle/PaddleOCR/tree/main/skills/paddleocr-text-recognition
 ---
 
 # PaddleOCR Text Recognition Skill
@@ -56,25 +68,32 @@ If the script execution fails (API not configured, network error, etc.):
    python scripts/ocr_caller.py --file-path "file path" --pretty
    ```
 
-   **Save result to file** (recommended):
-   ```bash
-   python scripts/ocr_caller.py --file-url "URL" --output result.json --pretty
-   ```
+   **Default behavior: save raw JSON to a temp file**:
+   - If `--output` is omitted, the script saves automatically under the system temp directory
+   - Default path pattern: `<system-temp>/paddleocr/text-recognition/results/result_<timestamp>_<id>.json`
+   - If `--output` is provided, it overrides the default temp-file destination
+   - If `--stdout` is provided, JSON is printed to stdout and no file is saved
+   - In save mode, the script prints the absolute saved path on stderr: `Result saved to: /absolute/path/...`
+   - In default/custom save mode, read and parse the saved JSON file before responding
+   - Use `--stdout` only when you explicitly want to skip file persistence
 
 3. **Parse JSON response**:
+   - In default/custom save mode, load JSON from the saved file path shown by the script
    - Check the `ok` field: `true` means success, `false` means error
    - Extract text: `text` field contains all recognized text
+   - If `--stdout` is used, parse the stdout JSON directly
    - Handle errors: If `ok` is false, display `error.message`
 
 4. **Present results to user**:
    - Display extracted text in a readable format
    - If the text is empty, the image may contain no text
+   - In save mode, always tell the user the saved file path and that full raw JSON is available there
 
 ### IMPORTANT: Complete Output Display
 
 **CRITICAL**: Always display the COMPLETE recognized text to the user. Do NOT truncate or summarize the OCR results.
 
-- The script returns the full JSON with complete text content in `text` field
+- The output JSON contains complete output, including full text in `text` field
 - **You MUST display the entire `text` content to the user**, no matter how long it is
 - Do NOT use phrases like "Here's a summary" or "The text begins with..."
 - Do NOT truncate with "..." unless the text truly exceeds reasonable display limits
@@ -110,9 +129,14 @@ python scripts/ocr_caller.py --file-path "./document.pdf" --pretty
 python scripts/ocr_caller.py --file-url "https://example.com/input" --file-type 1 --pretty
 ```
 
+**Example 4: Print JSON Without Saving**:
+```bash
+python scripts/ocr_caller.py --file-url "https://example.com/input" --stdout --pretty
+```
+
 ### Understanding the Output
 
-The script outputs JSON structure as follows:
+The output JSON structure is as follows:
 ```json
 {
   "ok": true,
@@ -127,6 +151,8 @@ The script outputs JSON structure as follows:
 - `text`: Complete recognized text
 - `result`: Raw API response (for debugging)
 - `error`: Error details if `ok` is false
+
+> Raw result location (default): the temp-file path printed by the script on stderr
 
 ### First-Time Configuration
 

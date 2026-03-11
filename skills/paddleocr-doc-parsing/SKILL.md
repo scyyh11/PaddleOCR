@@ -4,6 +4,18 @@ description: >
   Advanced document parsing with PaddleOCR. Returns complete document
   structure including text, tables, formulas, charts, and layout information. The AI agent extracts
   relevant content based on user needs.
+metadata:
+  openclaw:
+    requires:
+      env:
+        - PADDLEOCR_DOC_PARSING_API_URL
+        - PADDLEOCR_ACCESS_TOKEN
+        - PADDLEOCR_DOC_PARSING_TIMEOUT
+      bins:
+        - python
+    primaryEnv: PADDLEOCR_ACCESS_TOKEN
+    emoji: "📄"
+    homepage: https://github.com/PaddlePaddle/PaddleOCR/tree/main/skills/paddleocr-doc-parsing
 ---
 
 # PaddleOCR Document Parsing Skill
@@ -43,30 +55,32 @@ If the script execution fails (API not configured, network error, etc.):
 
 1. **Execute document parsing**:
    ```bash
-   python scripts/vl_caller.py --file-url "URL provided by user"
+   python scripts/vl_caller.py --file-url "URL provided by user" --pretty
    ```
    Or for local files:
    ```bash
-   python scripts/vl_caller.py --file-path "file path"
+   python scripts/vl_caller.py --file-path "file path" --pretty
    ```
 
    **Optional: explicitly set file type**:
    ```bash
-   python scripts/vl_caller.py --file-url "URL provided by user" --file-type 0
+   python scripts/vl_caller.py --file-url "URL provided by user" --file-type 0 --pretty
    ```
    - `--file-type 0`: PDF
    - `--file-type 1`: image
    - If omitted, the service can infer file type from input.
 
-   **Save result to file** (recommended):
-   ```bash
-   python scripts/vl_caller.py --file-url "URL" --output result.json --pretty
-   ```
-   - The script will display: `Result saved to: /absolute/path/to/result.json`
-   - This message appears on stderr, the JSON is saved to the file
-   - **Tell the user the file path** shown in the message
+   **Default behavior: save raw JSON to a temp file**:
+   - If `--output` is omitted, the script saves automatically under the system temp directory
+   - Default path pattern: `<system-temp>/paddleocr/doc-parsing/results/result_<timestamp>_<id>.json`
+   - If `--output` is provided, it overrides the default temp-file destination
+   - If `--stdout` is provided, JSON is printed to stdout and no file is saved
+   - In save mode, the script prints the absolute saved path on stderr: `Result saved to: /absolute/path/...`
+   - In default/custom save mode, read and parse the saved JSON file before responding
+   - In save mode, always tell the user the saved file path and that full raw JSON is available there
+   - Use `--stdout` only when you explicitly want to skip file persistence
 
-2. **The script returns COMPLETE JSON** with all document content:
+2. **The output JSON contains COMPLETE content** with all document data:
    - Headers, footers, page numbers
    - Main text content
    - Tables with structure
@@ -80,7 +94,7 @@ If the script execution fails (API not configured, network error, etc.):
    - Supported file types depend on the model and endpoint configuration.
    - Always follow the file type constraints documented by your endpoint API.
 
-3. **Extract what the user needs** from stable contract fields based on their request:
+3. **Extract what the user needs** from the output JSON using these fields:
    - Top-level `text`
    - `result[n].markdown`
    - `result[n].prunedResult`
@@ -89,7 +103,8 @@ If the script execution fails (API not configured, network error, etc.):
 
 **CRITICAL**: You must display the COMPLETE extracted content to the user based on their needs.
 
-- The script returns ALL document content in a structured format
+- The output JSON contains ALL document content in a structured format
+- In save mode, the raw provider result can be inspected in the saved JSON file
 - **Display the full content requested by the user**, do NOT truncate or summarize
 - If user asks for "all text", show the entire `text` field
 - If user asks for "tables", show ALL tables in the document
@@ -97,7 +112,7 @@ If the script execution fails (API not configured, network error, etc.):
 
 **What this means**:
 - ✅ **DO**: Display complete text, all tables, all formulas as requested
-- ✅ **DO**: Present content using stable contract fields: top-level `text`, `result[n].markdown`, and `result[n].prunedResult`
+- ✅ **DO**: Present content using these fields: top-level `text`, `result[n].markdown`, and `result[n].prunedResult`
 - ❌ **DON'T**: Truncate with "..." unless content is excessively long (>10,000 chars)
 - ❌ **DON'T**: Summarize or provide excerpts when user asks for full content
 - ❌ **DON'T**: Say "Here's a preview" when user expects complete output
@@ -126,7 +141,7 @@ Agent: "I found a document with multiple sections. Here's the beginning:
 
 ### Understanding the JSON Response
 
-The script returns a JSON envelope wrapping the raw API result:
+The output JSON uses an envelope wrapping the raw API result:
 
 ```json
 {
@@ -142,6 +157,8 @@ The script returns a JSON envelope wrapping the raw API result:
 - `result` - raw provider response object
 - `result[n].prunedResult` - structured parsing output for each page (layout/content/confidence and related metadata)
 - `result[n].markdown` — full rendered page output in markdown/HTML
+
+> Raw result location (default): the temp-file path printed by the script on stderr
 
 ### Usage Examples
 
@@ -171,6 +188,14 @@ Then use:
 ```bash
 python scripts/vl_caller.py \
   --file-url "URL" \
+  --pretty
+```
+
+**Example 4: Print JSON Without Saving**
+```bash
+python scripts/vl_caller.py \
+  --file-url "URL" \
+  --stdout \
   --pretty
 ```
 
