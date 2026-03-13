@@ -17,7 +17,12 @@ from __future__ import annotations
 from typing import Any
 
 
-def create_config_from_structure(structure: dict[str, Any], *, unset: Any = None, config: dict[str, Any] | None = None) -> dict[str, Any]:
+def create_config_from_structure(
+    structure: dict[str, Any],
+    *,
+    unset: Any = None,
+    config: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     if config is None:
         config = {}
     for k, v in structure.items():

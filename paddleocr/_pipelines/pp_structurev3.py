@@ -534,7 +534,9 @@ class PPStructureV3(PaddleXPipelineWrapper):
         }
         return create_config_from_structure(STRUCTURE)
 
-    def _get_ocr_model_names(self, lang: str | None, ppocr_version: str | None) -> tuple[str | None, str | None]:
+    def _get_ocr_model_names(
+        self, lang: str | None, ppocr_version: str | None
+    ) -> tuple[str | None, str | None]:
         LATIN_LANGS = [
             "af",
             "az",

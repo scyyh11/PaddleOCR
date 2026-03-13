@@ -33,7 +33,9 @@ from ._constants import (
 from ._utils.cli import str2bool
 
 
-def parse_common_args(kwargs: dict[str, Any], *, default_enable_hpi: bool | None) -> dict[str, Any]:
+def parse_common_args(
+    kwargs: dict[str, Any], *, default_enable_hpi: bool | None
+) -> dict[str, Any]:
     default_vals = {
         "device": DEFAULT_DEVICE,
         "enable_hpi": default_enable_hpi,
@@ -62,7 +64,9 @@ def parse_common_args(kwargs: dict[str, Any], *, default_enable_hpi: bool | None
     return kwargs
 
 
-def prepare_common_init_args(model_name: str | None, common_args: dict[str, Any]) -> dict[str, Any]:
+def prepare_common_init_args(
+    model_name: str | None, common_args: dict[str, Any]
+) -> dict[str, Any]:
     device = common_args["device"]
     if device is None:
         device = get_default_device()
@@ -99,7 +103,12 @@ def prepare_common_init_args(model_name: str | None, common_args: dict[str, Any]
     return init_kwargs
 
 
-def add_common_cli_opts(parser: argparse.ArgumentParser, *, default_enable_hpi: bool | None, allow_multiple_devices: bool) -> None:
+def add_common_cli_opts(
+    parser: argparse.ArgumentParser,
+    *,
+    default_enable_hpi: bool | None,
+    allow_multiple_devices: bool,
+) -> None:
     if allow_multiple_devices:
         help_ = "Device(s) to use for inference, e.g., `cpu`, `gpu`, `npu`, `gpu:0`, `gpu:0,1`. If multiple devices are specified, inference will be performed in parallel. Note that parallel inference is not always supported. By default, GPU 0 will be used if available; otherwise, the CPU will be used."
     else:

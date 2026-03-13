@@ -32,7 +32,9 @@ def get_subcommand_args(args: argparse.Namespace) -> dict[str, Any]:
     return args_dict
 
 
-def add_simple_inference_args(subparser: argparse.ArgumentParser, *, input_help: str | None = None) -> None:
+def add_simple_inference_args(
+    subparser: argparse.ArgumentParser, *, input_help: str | None = None
+) -> None:
     if input_help is None:
         input_help = "Input path or URL."
     subparser.add_argument(
@@ -49,7 +51,11 @@ def add_simple_inference_args(subparser: argparse.ArgumentParser, *, input_help:
     )
 
 
-def perform_simple_inference(wrapper_cls: type, params: dict[str, Any], predict_param_names: set[str] | None = None) -> None:
+def perform_simple_inference(
+    wrapper_cls: type,
+    params: dict[str, Any],
+    predict_param_names: set[str] | None = None,
+) -> None:
     params = params.copy()
 
     input_ = params.pop("input")

@@ -119,7 +119,9 @@ class PipelineCLISubcommandExecutor(CLISubcommandExecutor):
     def subparser_name(self) -> str:
         raise NotImplementedError
 
-    def add_subparser(self, subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    def add_subparser(
+        self, subparsers: argparse._SubParsersAction
+    ) -> argparse.ArgumentParser:
         subparser = subparsers.add_parser(name=self.subparser_name)
         self._update_subparser(subparser)
         add_common_cli_opts(

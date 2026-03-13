@@ -93,7 +93,9 @@ class PredictorCLISubcommandExecutor(CLISubcommandExecutor):
     def subparser_name(self) -> str:
         raise NotImplementedError
 
-    def add_subparser(self, subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    def add_subparser(
+        self, subparsers: argparse._SubParsersAction
+    ) -> argparse.ArgumentParser:
         subparser = subparsers.add_parser(name=self.subparser_name)
         self._update_subparser(subparser)
         subparser.add_argument("--model_name", type=str, help="Name of the model.")

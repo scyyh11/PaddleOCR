@@ -222,7 +222,11 @@ class PaddleOCRVL(PaddleXPipelineWrapper):
         return self.paddlex_pipeline.concatenate_markdown_pages(markdown_list)
 
     def restructure_pages(
-        self, res_list: list[Any], merge_tables: bool = True, relevel_titles: bool = True, concatenate_pages: bool = False
+        self,
+        res_list: list[Any],
+        merge_tables: bool = True,
+        relevel_titles: bool = True,
+        concatenate_pages: bool = False,
     ) -> list[Any]:
         return list(
             self.paddlex_pipeline.restructure_pages(

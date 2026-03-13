@@ -21,7 +21,9 @@ from typing import Any
 
 class CLISubcommandExecutor(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def add_subparser(self, subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
+    def add_subparser(
+        self, subparsers: argparse._SubParsersAction
+    ) -> argparse.ArgumentParser:
         raise NotImplementedError
 
     @abc.abstractmethod
