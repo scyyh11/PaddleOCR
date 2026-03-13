@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
 import os
 
-DISABLE_AUTO_LOGGING_CONFIG = (
+DISABLE_AUTO_LOGGING_CONFIG: bool = (
     os.getenv("PADDLEOCR_DISABLE_AUTO_LOGGING_CONFIG", "0") == "1"
 )

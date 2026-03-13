@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
+import argparse
+from typing import Any, Iterator
+
+from .._abstract import CLISubcommandExecutor
+from .._types import InputType, PredictResult
 from .._utils.cli import (
     get_subcommand_args,
     str2bool,
@@ -23,53 +30,53 @@ from .utils import create_config_from_structure
 class PPChatOCRv4Doc(PaddleXPipelineWrapper):
     def __init__(
         self,
-        layout_detection_model_name=None,
-        layout_detection_model_dir=None,
-        doc_orientation_classify_model_name=None,
-        doc_orientation_classify_model_dir=None,
-        doc_unwarping_model_name=None,
-        doc_unwarping_model_dir=None,
-        text_detection_model_name=None,
-        text_detection_model_dir=None,
-        textline_orientation_model_name=None,
-        textline_orientation_model_dir=None,
-        textline_orientation_batch_size=None,
-        text_recognition_model_name=None,
-        text_recognition_model_dir=None,
-        text_recognition_batch_size=None,
-        table_structure_recognition_model_name=None,
-        table_structure_recognition_model_dir=None,
-        seal_text_detection_model_name=None,
-        seal_text_detection_model_dir=None,
-        seal_text_recognition_model_name=None,
-        seal_text_recognition_model_dir=None,
-        seal_text_recognition_batch_size=None,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        use_textline_orientation=None,
-        use_seal_recognition=None,
-        use_table_recognition=None,
-        layout_threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        text_det_limit_side_len=None,
-        text_det_limit_type=None,
-        text_det_thresh=None,
-        text_det_box_thresh=None,
-        text_det_unclip_ratio=None,
-        text_rec_score_thresh=None,
-        seal_det_limit_side_len=None,
-        seal_det_limit_type=None,
-        seal_det_thresh=None,
-        seal_det_box_thresh=None,
-        seal_det_unclip_ratio=None,
-        seal_rec_score_thresh=None,
-        retriever_config=None,
-        mllm_chat_bot_config=None,
-        chat_bot_config=None,
-        **kwargs,
-    ):
+        layout_detection_model_name: str | None = None,
+        layout_detection_model_dir: str | None = None,
+        doc_orientation_classify_model_name: str | None = None,
+        doc_orientation_classify_model_dir: str | None = None,
+        doc_unwarping_model_name: str | None = None,
+        doc_unwarping_model_dir: str | None = None,
+        text_detection_model_name: str | None = None,
+        text_detection_model_dir: str | None = None,
+        textline_orientation_model_name: str | None = None,
+        textline_orientation_model_dir: str | None = None,
+        textline_orientation_batch_size: int | None = None,
+        text_recognition_model_name: str | None = None,
+        text_recognition_model_dir: str | None = None,
+        text_recognition_batch_size: int | None = None,
+        table_structure_recognition_model_name: str | None = None,
+        table_structure_recognition_model_dir: str | None = None,
+        seal_text_detection_model_name: str | None = None,
+        seal_text_detection_model_dir: str | None = None,
+        seal_text_recognition_model_name: str | None = None,
+        seal_text_recognition_model_dir: str | None = None,
+        seal_text_recognition_batch_size: int | None = None,
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        use_textline_orientation: bool | None = None,
+        use_seal_recognition: bool | None = None,
+        use_table_recognition: bool | None = None,
+        layout_threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        text_det_limit_side_len: int | None = None,
+        text_det_limit_type: str | None = None,
+        text_det_thresh: float | None = None,
+        text_det_box_thresh: float | None = None,
+        text_det_unclip_ratio: float | None = None,
+        text_rec_score_thresh: float | None = None,
+        seal_det_limit_side_len: int | None = None,
+        seal_det_limit_type: str | None = None,
+        seal_det_thresh: float | None = None,
+        seal_det_box_thresh: float | None = None,
+        seal_det_unclip_ratio: float | None = None,
+        seal_rec_score_thresh: float | None = None,
+        retriever_config: dict[str, Any] | None = None,
+        mllm_chat_bot_config: dict[str, Any] | None = None,
+        chat_bot_config: dict[str, Any] | None = None,
+        **kwargs: Any,
+    ) -> None:
         params = locals().copy()
         params.pop("self")
         params.pop("kwargs")
@@ -78,56 +85,56 @@ class PPChatOCRv4Doc(PaddleXPipelineWrapper):
         super().__init__(**kwargs)
 
     @property
-    def _paddlex_pipeline_name(self):
+    def _paddlex_pipeline_name(self) -> str:
         return "PP-ChatOCRv4-doc"
 
-    def save_vector(self, vector_info, save_path, retriever_config=None):
+    def save_vector(self, vector_info: Any, save_path: str, retriever_config: dict[str, Any] | None = None) -> Any:
         return self.paddlex_pipeline.save_vector(
             vector_info=vector_info,
             save_path=save_path,
             retriever_config=retriever_config,
         )
 
-    def load_vector(self, data_path, retriever_config=None):
+    def load_vector(self, data_path: str, retriever_config: dict[str, Any] | None = None) -> Any:
         return self.paddlex_pipeline.load_vector(
             data_path=data_path, retriever_config=retriever_config
         )
 
-    def load_visual_info_list(self, data_path):
+    def load_visual_info_list(self, data_path: str) -> Any:
         return self.paddlex_pipeline.load_visual_info_list(data_path=data_path)
 
-    def save_visual_info_list(self, visual_info, save_path):
+    def save_visual_info_list(self, visual_info: Any, save_path: str) -> Any:
         return self.paddlex_pipeline.save_visual_info_list(
             visual_info=visual_info, save_path=save_path
         )
 
     def visual_predict_iter(
         self,
-        input,
+        input: InputType,
         *,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        use_textline_orientation=None,
-        use_seal_recognition=None,
-        use_table_recognition=None,
-        layout_threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        text_det_limit_side_len=None,
-        text_det_limit_type=None,
-        text_det_thresh=None,
-        text_det_box_thresh=None,
-        text_det_unclip_ratio=None,
-        text_rec_score_thresh=None,
-        seal_det_limit_side_len=None,
-        seal_det_limit_type=None,
-        seal_det_thresh=None,
-        seal_det_box_thresh=None,
-        seal_det_unclip_ratio=None,
-        seal_rec_score_thresh=None,
-        **kwargs,
-    ):
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        use_textline_orientation: bool | None = None,
+        use_seal_recognition: bool | None = None,
+        use_table_recognition: bool | None = None,
+        layout_threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        text_det_limit_side_len: int | None = None,
+        text_det_limit_type: str | None = None,
+        text_det_thresh: float | None = None,
+        text_det_box_thresh: float | None = None,
+        text_det_unclip_ratio: float | None = None,
+        text_rec_score_thresh: float | None = None,
+        seal_det_limit_side_len: int | None = None,
+        seal_det_limit_type: str | None = None,
+        seal_det_thresh: float | None = None,
+        seal_det_box_thresh: float | None = None,
+        seal_det_unclip_ratio: float | None = None,
+        seal_rec_score_thresh: float | None = None,
+        **kwargs: Any,
+    ) -> Iterator[PredictResult]:
         return self.paddlex_pipeline.visual_predict(
             input,
             use_doc_orientation_classify=use_doc_orientation_classify,
@@ -156,31 +163,31 @@ class PPChatOCRv4Doc(PaddleXPipelineWrapper):
 
     def visual_predict(
         self,
-        input,
+        input: InputType,
         *,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        use_textline_orientation=None,
-        use_seal_recognition=None,
-        use_table_recognition=None,
-        layout_threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        text_det_limit_side_len=None,
-        text_det_limit_type=None,
-        text_det_thresh=None,
-        text_det_box_thresh=None,
-        text_det_unclip_ratio=None,
-        text_rec_score_thresh=None,
-        seal_det_limit_side_len=None,
-        seal_det_limit_type=None,
-        seal_det_thresh=None,
-        seal_det_box_thresh=None,
-        seal_det_unclip_ratio=None,
-        seal_rec_score_thresh=None,
-        **kwargs,
-    ):
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        use_textline_orientation: bool | None = None,
+        use_seal_recognition: bool | None = None,
+        use_table_recognition: bool | None = None,
+        layout_threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        text_det_limit_side_len: int | None = None,
+        text_det_limit_type: str | None = None,
+        text_det_thresh: float | None = None,
+        text_det_box_thresh: float | None = None,
+        text_det_unclip_ratio: float | None = None,
+        text_rec_score_thresh: float | None = None,
+        seal_det_limit_side_len: int | None = None,
+        seal_det_limit_type: str | None = None,
+        seal_det_thresh: float | None = None,
+        seal_det_box_thresh: float | None = None,
+        seal_det_unclip_ratio: float | None = None,
+        seal_rec_score_thresh: float | None = None,
+        **kwargs: Any,
+    ) -> list[PredictResult]:
         return list(
             self.visual_predict_iter(
                 input,
@@ -211,13 +218,13 @@ class PPChatOCRv4Doc(PaddleXPipelineWrapper):
 
     def build_vector(
         self,
-        visual_info,
+        visual_info: Any,
         *,
-        min_characters=3500,
-        block_size=300,
-        flag_save_bytes_vector=False,
-        retriever_config=None,
-    ):
+        min_characters: int = 3500,
+        block_size: int = 300,
+        flag_save_bytes_vector: bool = False,
+        retriever_config: dict[str, Any] | None = None,
+    ) -> Any:
         return self.paddlex_pipeline.build_vector(
             visual_info,
             min_characters=min_characters,
@@ -226,7 +233,7 @@ class PPChatOCRv4Doc(PaddleXPipelineWrapper):
             retriever_config=retriever_config,
         )
 
-    def mllm_pred(self, input, key_list, *, mllm_chat_bot_config=None):
+    def mllm_pred(self, input: InputType, key_list: list[str], *, mllm_chat_bot_config: dict[str, Any] | None = None) -> Any:
         return self.paddlex_pipeline.mllm_pred(
             input,
             key_list,
@@ -235,27 +242,27 @@ class PPChatOCRv4Doc(PaddleXPipelineWrapper):
 
     def chat(
         self,
-        key_list,
-        visual_info,
+        key_list: list[str],
+        visual_info: Any,
         *,
-        use_vector_retrieval=True,
-        vector_info=None,
-        min_characters=3500,
-        text_task_description=None,
-        text_output_format=None,
-        text_rules_str=None,
-        text_few_shot_demo_text_content=None,
-        text_few_shot_demo_key_value_list=None,
-        table_task_description=None,
-        table_output_format=None,
-        table_rules_str=None,
-        table_few_shot_demo_text_content=None,
-        table_few_shot_demo_key_value_list=None,
-        mllm_predict_info=None,
-        mllm_integration_strategy="integration",
-        chat_bot_config=None,
-        retriever_config=None,
-    ):
+        use_vector_retrieval: bool = True,
+        vector_info: Any = None,
+        min_characters: int = 3500,
+        text_task_description: str | None = None,
+        text_output_format: str | None = None,
+        text_rules_str: str | None = None,
+        text_few_shot_demo_text_content: str | None = None,
+        text_few_shot_demo_key_value_list: str | None = None,
+        table_task_description: str | None = None,
+        table_output_format: str | None = None,
+        table_rules_str: str | None = None,
+        table_few_shot_demo_text_content: str | None = None,
+        table_few_shot_demo_key_value_list: str | None = None,
+        mllm_predict_info: Any = None,
+        mllm_integration_strategy: str = "integration",
+        chat_bot_config: dict[str, Any] | None = None,
+        retriever_config: dict[str, Any] | None = None,
+    ) -> Any:
         return self.paddlex_pipeline.chat(
             key_list,
             visual_info,
@@ -279,10 +286,10 @@ class PPChatOCRv4Doc(PaddleXPipelineWrapper):
         )
 
     @classmethod
-    def get_cli_subcommand_executor(cls):
+    def get_cli_subcommand_executor(cls) -> CLISubcommandExecutor:
         return PPChatOCRv4DocCLISubcommandExecutor()
 
-    def _get_paddlex_config_overrides(self):
+    def _get_paddlex_config_overrides(self) -> dict[str, Any]:
         STRUCTURE = {
             "SubPipelines.LayoutParser.SubModules.LayoutDetection.model_name": self._params[
                 "layout_detection_model_name"
@@ -423,10 +430,10 @@ class PPChatOCRv4Doc(PaddleXPipelineWrapper):
 
 class PPChatOCRv4DocCLISubcommandExecutor(PipelineCLISubcommandExecutor):
     @property
-    def subparser_name(self):
+    def subparser_name(self) -> str:
         return "pp_chatocrv4_doc"
 
-    def _update_subparser(self, subparser):
+    def _update_subparser(self, subparser: argparse.ArgumentParser) -> None:
         subparser.add_argument(
             "-i",
             "--input",
@@ -681,7 +688,7 @@ class PPChatOCRv4DocCLISubcommandExecutor(PipelineCLISubcommandExecutor):
             help="Configuration for the multimodal large language model.",
         )
 
-    def execute_with_args(self, args):
+    def execute_with_args(self, args: argparse.Namespace) -> None:
         params = get_subcommand_args(args)
         input = params.pop("input")
         keys = params.pop("keys")

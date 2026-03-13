@@ -12,8 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
+import argparse
+from typing import Any, Iterator
+
 from paddlex.utils.pipeline_arguments import custom_type
 
+from .._abstract import CLISubcommandExecutor
+from .._types import InputType, PredictResult
 from .._utils.cli import (
     add_simple_inference_args,
     get_subcommand_args,
@@ -26,11 +33,11 @@ from .utils import create_config_from_structure
 class DocUnderstanding(PaddleXPipelineWrapper):
     def __init__(
         self,
-        doc_understanding_model_name=None,
-        doc_understanding_model_dir=None,
-        doc_understanding_batch_size=None,
-        **kwargs,
-    ):
+        doc_understanding_model_name: str | None = None,
+        doc_understanding_model_dir: str | None = None,
+        doc_understanding_batch_size: int | None = None,
+        **kwargs: Any,
+    ) -> None:
 
         self._params = {
             "doc_understanding_model_name": doc_understanding_model_name,
@@ -40,24 +47,24 @@ class DocUnderstanding(PaddleXPipelineWrapper):
         super().__init__(**kwargs)
 
     @property
-    def _paddlex_pipeline_name(self):
+    def _paddlex_pipeline_name(self) -> str:
         return "doc_understanding"
 
-    def predict_iter(self, input, **kwargs):
+    def predict_iter(self, input: InputType, **kwargs: Any) -> Iterator[PredictResult]:
         return self.paddlex_pipeline.predict(input, **kwargs)
 
     def predict(
         self,
-        input,
-        **kwargs,
-    ):
+        input: InputType,
+        **kwargs: Any,
+    ) -> list[PredictResult]:
         return list(self.predict_iter(input, **kwargs))
 
     @classmethod
-    def get_cli_subcommand_executor(cls):
+    def get_cli_subcommand_executor(cls) -> CLISubcommandExecutor:
         return DocUnderstandingCLISubcommandExecutor()
 
-    def _get_paddlex_config_overrides(self):
+    def _get_paddlex_config_overrides(self) -> dict[str, Any]:
         STRUCTURE = {
             "SubModules.DocUnderstanding.model_name": self._params[
                 "doc_understanding_model_name"
@@ -76,10 +83,10 @@ class DocUnderstandingCLISubcommandExecutor(PipelineCLISubcommandExecutor):
     input_validator = staticmethod(custom_type(dict))
 
     @property
-    def subparser_name(self):
+    def subparser_name(self) -> str:
         return "doc_understanding"
 
-    def _update_subparser(self, subparser):
+    def _update_subparser(self, subparser: argparse.ArgumentParser) -> None:
         add_simple_inference_args(
             subparser,
             input_help='Input dict, e.g. `{"image": "https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/medal_table.png", "query": "Recognize this table"}`.',
@@ -101,7 +108,7 @@ class DocUnderstandingCLISubcommandExecutor(PipelineCLISubcommandExecutor):
             help="Batch size for the document understanding model.",
         )
 
-    def execute_with_args(self, args):
+    def execute_with_args(self, args: argparse.Namespace) -> None:
         params = get_subcommand_args(args)
         params["input"] = self.input_validator(params["input"])
         perform_simple_inference(DocUnderstanding, params)

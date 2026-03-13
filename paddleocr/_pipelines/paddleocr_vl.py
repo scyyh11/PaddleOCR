@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
+import argparse
+from typing import Any, Iterator
+
+from .._abstract import CLISubcommandExecutor
+from .._types import InputType, PredictResult
 from .._utils.cli import (
     add_simple_inference_args,
     get_subcommand_args,
@@ -37,36 +44,36 @@ _SUPPORTED_VL_BACKENDS = [
 class PaddleOCRVL(PaddleXPipelineWrapper):
     def __init__(
         self,
-        pipeline_version=_DEFAULT_PIPELINE_VERSION,
-        layout_detection_model_name=None,
-        layout_detection_model_dir=None,
-        layout_threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        vl_rec_model_name=None,
-        vl_rec_model_dir=None,
-        vl_rec_backend=None,
-        vl_rec_server_url=None,
-        vl_rec_max_concurrency=None,
-        vl_rec_api_model_name=None,
-        vl_rec_api_key=None,
-        doc_orientation_classify_model_name=None,
-        doc_orientation_classify_model_dir=None,
-        doc_unwarping_model_name=None,
-        doc_unwarping_model_dir=None,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        use_layout_detection=None,
-        use_chart_recognition=None,
-        use_seal_recognition=None,
-        use_ocr_for_image_block=None,
-        format_block_content=None,
-        merge_layout_blocks=None,
-        markdown_ignore_labels=None,
-        use_queues=None,
-        **kwargs,
-    ):
+        pipeline_version: str = _DEFAULT_PIPELINE_VERSION,
+        layout_detection_model_name: str | None = None,
+        layout_detection_model_dir: str | None = None,
+        layout_threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        vl_rec_model_name: str | None = None,
+        vl_rec_model_dir: str | None = None,
+        vl_rec_backend: str | None = None,
+        vl_rec_server_url: str | None = None,
+        vl_rec_max_concurrency: int | None = None,
+        vl_rec_api_model_name: str | None = None,
+        vl_rec_api_key: str | None = None,
+        doc_orientation_classify_model_name: str | None = None,
+        doc_orientation_classify_model_dir: str | None = None,
+        doc_unwarping_model_name: str | None = None,
+        doc_unwarping_model_dir: str | None = None,
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        use_layout_detection: bool | None = None,
+        use_chart_recognition: bool | None = None,
+        use_seal_recognition: bool | None = None,
+        use_ocr_for_image_block: bool | None = None,
+        format_block_content: bool | None = None,
+        merge_layout_blocks: bool | None = None,
+        markdown_ignore_labels: list[str] | None = None,
+        use_queues: bool | None = None,
+        **kwargs: Any,
+    ) -> None:
         if pipeline_version not in _AVAILABLE_PIPELINE_VERSIONS:
             raise ValueError(
                 f"Invalid pipeline version: {pipeline_version}. Supported versions are {_AVAILABLE_PIPELINE_VERSIONS}."
@@ -87,7 +94,7 @@ class PaddleOCRVL(PaddleXPipelineWrapper):
         super().__init__(**kwargs)
 
     @property
-    def _paddlex_pipeline_name(self):
+    def _paddlex_pipeline_name(self) -> str:
         if self.pipeline_version == "v1":
             return "PaddleOCR-VL"
         elif self.pipeline_version == "v1.5":
@@ -97,33 +104,33 @@ class PaddleOCRVL(PaddleXPipelineWrapper):
 
     def predict_iter(
         self,
-        input,
+        input: InputType,
         *,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        use_layout_detection=None,
-        use_chart_recognition=None,
-        use_seal_recognition=None,
-        use_ocr_for_image_block=None,
-        layout_threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        layout_shape_mode="auto",
-        use_queues=None,
-        prompt_label=None,
-        format_block_content=None,
-        repetition_penalty=None,
-        temperature=None,
-        top_p=None,
-        min_pixels=None,
-        max_pixels=None,
-        max_new_tokens=None,
-        merge_layout_blocks=None,
-        markdown_ignore_labels=None,
-        vlm_extra_args=None,
-        **kwargs,
-    ):
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        use_layout_detection: bool | None = None,
+        use_chart_recognition: bool | None = None,
+        use_seal_recognition: bool | None = None,
+        use_ocr_for_image_block: bool | None = None,
+        layout_threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        layout_shape_mode: str = "auto",
+        use_queues: bool | None = None,
+        prompt_label: str | None = None,
+        format_block_content: bool | None = None,
+        repetition_penalty: float | None = None,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        min_pixels: int | None = None,
+        max_pixels: int | None = None,
+        max_new_tokens: int | None = None,
+        merge_layout_blocks: bool | None = None,
+        markdown_ignore_labels: list[str] | None = None,
+        vlm_extra_args: dict[str, Any] | None = None,
+        **kwargs: Any,
+    ) -> Iterator[PredictResult]:
         return self.paddlex_pipeline.predict(
             input,
             use_doc_orientation_classify=use_doc_orientation_classify,
@@ -154,33 +161,33 @@ class PaddleOCRVL(PaddleXPipelineWrapper):
 
     def predict(
         self,
-        input,
+        input: InputType,
         *,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        use_layout_detection=None,
-        use_chart_recognition=None,
-        use_seal_recognition=None,
-        use_ocr_for_image_block=None,
-        layout_threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        layout_shape_mode="auto",
-        use_queues=None,
-        prompt_label=None,
-        format_block_content=None,
-        repetition_penalty=None,
-        temperature=None,
-        top_p=None,
-        min_pixels=None,
-        max_pixels=None,
-        max_new_tokens=None,
-        merge_layout_blocks=None,
-        markdown_ignore_labels=None,
-        vlm_extra_args=None,
-        **kwargs,
-    ):
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        use_layout_detection: bool | None = None,
+        use_chart_recognition: bool | None = None,
+        use_seal_recognition: bool | None = None,
+        use_ocr_for_image_block: bool | None = None,
+        layout_threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        layout_shape_mode: str = "auto",
+        use_queues: bool | None = None,
+        prompt_label: str | None = None,
+        format_block_content: bool | None = None,
+        repetition_penalty: float | None = None,
+        temperature: float | None = None,
+        top_p: float | None = None,
+        min_pixels: int | None = None,
+        max_pixels: int | None = None,
+        max_new_tokens: int | None = None,
+        merge_layout_blocks: bool | None = None,
+        markdown_ignore_labels: list[str] | None = None,
+        vlm_extra_args: dict[str, Any] | None = None,
+        **kwargs: Any,
+    ) -> list[PredictResult]:
         return list(
             self.predict_iter(
                 input,
@@ -211,12 +218,12 @@ class PaddleOCRVL(PaddleXPipelineWrapper):
             )
         )
 
-    def concatenate_markdown_pages(self, markdown_list):
+    def concatenate_markdown_pages(self, markdown_list: list[str]) -> str:
         return self.paddlex_pipeline.concatenate_markdown_pages(markdown_list)
 
     def restructure_pages(
-        self, res_list, merge_tables=True, relevel_titles=True, concatenate_pages=False
-    ):
+        self, res_list: list[Any], merge_tables: bool = True, relevel_titles: bool = True, concatenate_pages: bool = False
+    ) -> list[Any]:
         return list(
             self.paddlex_pipeline.restructure_pages(
                 res_list,
@@ -227,10 +234,10 @@ class PaddleOCRVL(PaddleXPipelineWrapper):
         )
 
     @classmethod
-    def get_cli_subcommand_executor(cls):
+    def get_cli_subcommand_executor(cls) -> CLISubcommandExecutor:
         return PaddleOCRVLCLISubcommandExecutor()
 
-    def _get_paddlex_config_overrides(self):
+    def _get_paddlex_config_overrides(self) -> dict[str, Any]:
         STRUCTURE = {
             "SubPipelines.DocPreprocessor.use_doc_orientation_classify": self._params[
                 "use_doc_orientation_classify"
@@ -297,10 +304,10 @@ class PaddleOCRVL(PaddleXPipelineWrapper):
 
 class PaddleOCRVLCLISubcommandExecutor(PipelineCLISubcommandExecutor):
     @property
-    def subparser_name(self):
+    def subparser_name(self) -> str:
         return "doc_parser"
 
-    def _update_subparser(self, subparser):
+    def _update_subparser(self, subparser: argparse.ArgumentParser) -> None:
         add_simple_inference_args(subparser)
 
         subparser.add_argument(
@@ -494,7 +501,7 @@ class PaddleOCRVLCLISubcommandExecutor(PipelineCLISubcommandExecutor):
             help="Maximum number of tokens generated by the VLM.",
         )
 
-    def execute_with_args(self, args):
+    def execute_with_args(self, args: argparse.Namespace) -> None:
         params = get_subcommand_args(args)
         perform_simple_inference(
             PaddleOCRVL,

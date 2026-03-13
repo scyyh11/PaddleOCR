@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
+import argparse
+from typing import Any, Iterator
+
+from .._abstract import CLISubcommandExecutor
+from .._types import InputType, PredictResult
 from .._utils.cli import (
     add_simple_inference_args,
     get_subcommand_args,
@@ -25,27 +32,27 @@ from .utils import create_config_from_structure
 class FormulaRecognitionPipeline(PaddleXPipelineWrapper):
     def __init__(
         self,
-        doc_orientation_classify_model_name=None,
-        doc_orientation_classify_model_dir=None,
-        doc_orientation_classify_batch_size=None,
-        doc_unwarping_model_name=None,
-        doc_unwarping_model_dir=None,
-        doc_unwarping_batch_size=None,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        layout_detection_model_name=None,
-        layout_detection_model_dir=None,
-        layout_threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        layout_detection_batch_size=None,
-        use_layout_detection=None,
-        formula_recognition_model_name=None,
-        formula_recognition_model_dir=None,
-        formula_recognition_batch_size=None,
-        **kwargs,
-    ):
+        doc_orientation_classify_model_name: str | None = None,
+        doc_orientation_classify_model_dir: str | None = None,
+        doc_orientation_classify_batch_size: int | None = None,
+        doc_unwarping_model_name: str | None = None,
+        doc_unwarping_model_dir: str | None = None,
+        doc_unwarping_batch_size: int | None = None,
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        layout_detection_model_name: str | None = None,
+        layout_detection_model_dir: str | None = None,
+        layout_threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        layout_detection_batch_size: int | None = None,
+        use_layout_detection: bool | None = None,
+        formula_recognition_model_name: str | None = None,
+        formula_recognition_model_dir: str | None = None,
+        formula_recognition_batch_size: int | None = None,
+        **kwargs: Any,
+    ) -> None:
         params = locals().copy()
         params.pop("self")
         params.pop("kwargs")
@@ -54,23 +61,23 @@ class FormulaRecognitionPipeline(PaddleXPipelineWrapper):
         super().__init__(**kwargs)
 
     @property
-    def _paddlex_pipeline_name(self):
+    def _paddlex_pipeline_name(self) -> str:
         return "formula_recognition"
 
     def predict_iter(
         self,
-        input,
+        input: InputType,
         *,
-        use_layout_detection=None,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        layout_det_res=None,
-        layout_threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        **kwargs,
-    ):
+        use_layout_detection: bool | None = None,
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        layout_det_res: Any = None,
+        layout_threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        **kwargs: Any,
+    ) -> Iterator[PredictResult]:
         return self.paddlex_pipeline.predict(
             input,
             use_layout_detection=use_layout_detection,
@@ -86,18 +93,18 @@ class FormulaRecognitionPipeline(PaddleXPipelineWrapper):
 
     def predict(
         self,
-        input,
+        input: InputType,
         *,
-        use_layout_detection=None,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        layout_det_res=None,
-        layout_threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        **kwargs,
-    ):
+        use_layout_detection: bool | None = None,
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        layout_det_res: Any = None,
+        layout_threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        **kwargs: Any,
+    ) -> list[PredictResult]:
         return list(
             self.predict_iter(
                 input,
@@ -114,10 +121,10 @@ class FormulaRecognitionPipeline(PaddleXPipelineWrapper):
         )
 
     @classmethod
-    def get_cli_subcommand_executor(cls):
+    def get_cli_subcommand_executor(cls) -> CLISubcommandExecutor:
         return FormulaRecognitionPipelineCLISubcommandExecutor()
 
-    def _get_paddlex_config_overrides(self):
+    def _get_paddlex_config_overrides(self) -> dict[str, Any]:
         STRUCTURE = {
             "use_layout_detection": self._params["use_layout_detection"],
             "SubModules.LayoutDetection.model_name": self._params[
@@ -178,10 +185,10 @@ class FormulaRecognitionPipeline(PaddleXPipelineWrapper):
 
 class FormulaRecognitionPipelineCLISubcommandExecutor(PipelineCLISubcommandExecutor):
     @property
-    def subparser_name(self):
+    def subparser_name(self) -> str:
         return "formula_recognition_pipeline"
 
-    def _update_subparser(self, subparser):
+    def _update_subparser(self, subparser: argparse.ArgumentParser) -> None:
         add_simple_inference_args(subparser)
 
         subparser.add_argument(
@@ -280,6 +287,6 @@ class FormulaRecognitionPipelineCLISubcommandExecutor(PipelineCLISubcommandExecu
             help="Batch size for formula recognition.",
         )
 
-    def execute_with_args(self, args):
+    def execute_with_args(self, args: argparse.Namespace) -> None:
         params = get_subcommand_args(args)
         perform_simple_inference(FormulaRecognitionPipeline, params)

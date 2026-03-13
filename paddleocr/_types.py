@@ -14,28 +14,17 @@
 
 from __future__ import annotations
 
-import logging
+from os import PathLike
+from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Sequence, Union
 
-from .._env import DISABLE_AUTO_LOGGING_CONFIG
+import numpy as np
 
-LOGGER_NAME: str = "paddleocr"
+if TYPE_CHECKING:
+    from PIL import Image as PILImage
 
-logger: logging.Logger = logging.getLogger(LOGGER_NAME)
+# Input types
+ImageInput = Union[str, "PathLike[str]", np.ndarray, "PILImage.Image"]
+InputType = Union[ImageInput, Sequence[ImageInput]]
 
-
-def _set_up_logger() -> None:
-    if DISABLE_AUTO_LOGGING_CONFIG:
-        return
-
-    # Basically compatible with PaddleOCR 2.x, except for logging to stderr
-    formatter = logging.Formatter(
-        "[%(asctime)s] %(name)s %(levelname)s: %(message)s", datefmt="%Y/%m/%d %H:%M:%S"
-    )
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(formatter)
-    logger.addHandler(stream_handler)
-    logger.setLevel(logging.ERROR)
-    logger.propagate = False
-
-
-_set_up_logger()
+# Prediction result (Phase 3 will refine with TypedDict)
+PredictResult = Dict[str, Any]

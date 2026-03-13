@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
+import argparse
+from typing import Any
+
 from paddlex.inference import PaddlePredictorOption
 from paddlex.utils.device import get_default_device, parse_device
 
@@ -28,7 +33,7 @@ from ._constants import (
 from ._utils.cli import str2bool
 
 
-def parse_common_args(kwargs, *, default_enable_hpi):
+def parse_common_args(kwargs: dict[str, Any], *, default_enable_hpi: bool | None) -> dict[str, Any]:
     default_vals = {
         "device": DEFAULT_DEVICE,
         "enable_hpi": default_enable_hpi,
@@ -57,13 +62,13 @@ def parse_common_args(kwargs, *, default_enable_hpi):
     return kwargs
 
 
-def prepare_common_init_args(model_name, common_args):
+def prepare_common_init_args(model_name: str | None, common_args: dict[str, Any]) -> dict[str, Any]:
     device = common_args["device"]
     if device is None:
         device = get_default_device()
     device_type, _ = parse_device(device)
 
-    init_kwargs = {}
+    init_kwargs: dict[str, Any] = {}
     init_kwargs["device"] = device
     init_kwargs["use_hpip"] = common_args["enable_hpi"]
 
@@ -94,7 +99,7 @@ def prepare_common_init_args(model_name, common_args):
     return init_kwargs
 
 
-def add_common_cli_opts(parser, *, default_enable_hpi, allow_multiple_devices):
+def add_common_cli_opts(parser: argparse.ArgumentParser, *, default_enable_hpi: bool | None, allow_multiple_devices: bool) -> None:
     if allow_multiple_devices:
         help_ = "Device(s) to use for inference, e.g., `cpu`, `gpu`, `npu`, `gpu:0`, `gpu:0,1`. If multiple devices are specified, inference will be performed in parallel. Note that parallel inference is not always supported. By default, GPU 0 will be used if available; otherwise, the CPU will be used."
     else:

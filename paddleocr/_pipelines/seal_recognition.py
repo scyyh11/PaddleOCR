@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
+import argparse
+from typing import Any, Iterator
+
+from .._abstract import CLISubcommandExecutor
+from .._types import InputType, PredictResult
 from .._utils.cli import (
     add_simple_inference_args,
     get_subcommand_args,
@@ -25,32 +32,32 @@ from .utils import create_config_from_structure
 class SealRecognition(PaddleXPipelineWrapper):
     def __init__(
         self,
-        doc_orientation_classify_model_name=None,
-        doc_orientation_classify_model_dir=None,
-        doc_unwarping_model_name=None,
-        doc_unwarping_model_dir=None,
-        layout_detection_model_name=None,
-        layout_detection_model_dir=None,
-        seal_text_detection_model_name=None,
-        seal_text_detection_model_dir=None,
-        text_recognition_model_name=None,
-        text_recognition_model_dir=None,
-        text_recognition_batch_size=None,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        use_layout_detection=None,
-        layout_threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        seal_det_limit_side_len=None,
-        seal_det_limit_type=None,
-        seal_det_thresh=None,
-        seal_det_box_thresh=None,
-        seal_det_unclip_ratio=None,
-        seal_rec_score_thresh=None,
-        **kwargs,
-    ):
+        doc_orientation_classify_model_name: str | None = None,
+        doc_orientation_classify_model_dir: str | None = None,
+        doc_unwarping_model_name: str | None = None,
+        doc_unwarping_model_dir: str | None = None,
+        layout_detection_model_name: str | None = None,
+        layout_detection_model_dir: str | None = None,
+        seal_text_detection_model_name: str | None = None,
+        seal_text_detection_model_dir: str | None = None,
+        text_recognition_model_name: str | None = None,
+        text_recognition_model_dir: str | None = None,
+        text_recognition_batch_size: int | None = None,
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        use_layout_detection: bool | None = None,
+        layout_threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        seal_det_limit_side_len: int | None = None,
+        seal_det_limit_type: str | None = None,
+        seal_det_thresh: float | None = None,
+        seal_det_box_thresh: float | None = None,
+        seal_det_unclip_ratio: float | None = None,
+        seal_rec_score_thresh: float | None = None,
+        **kwargs: Any,
+    ) -> None:
 
         self._params = {
             "doc_orientation_classify_model_name": doc_orientation_classify_model_name,
@@ -81,29 +88,29 @@ class SealRecognition(PaddleXPipelineWrapper):
         super().__init__(**kwargs)
 
     @property
-    def _paddlex_pipeline_name(self):
+    def _paddlex_pipeline_name(self) -> str:
         return "seal_recognition"
 
     def predict_iter(
         self,
-        input,
+        input: InputType,
         *,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        use_layout_detection=None,
-        layout_det_res=None,
-        layout_threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        seal_det_limit_side_len=None,
-        seal_det_limit_type=None,
-        seal_det_thresh=None,
-        seal_det_box_thresh=None,
-        seal_det_unclip_ratio=None,
-        seal_rec_score_thresh=None,
-        **kwargs,
-    ):
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        use_layout_detection: bool | None = None,
+        layout_det_res: Any = None,
+        layout_threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        seal_det_limit_side_len: int | None = None,
+        seal_det_limit_type: str | None = None,
+        seal_det_thresh: float | None = None,
+        seal_det_box_thresh: float | None = None,
+        seal_det_unclip_ratio: float | None = None,
+        seal_rec_score_thresh: float | None = None,
+        **kwargs: Any,
+    ) -> Iterator[PredictResult]:
         return self.paddlex_pipeline.predict(
             input,
             use_doc_orientation_classify=use_doc_orientation_classify,
@@ -125,24 +132,24 @@ class SealRecognition(PaddleXPipelineWrapper):
 
     def predict(
         self,
-        input,
+        input: InputType,
         *,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        use_layout_detection=None,
-        layout_det_res=None,
-        layout_threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        seal_det_limit_side_len=None,
-        seal_det_limit_type=None,
-        seal_det_thresh=None,
-        seal_det_box_thresh=None,
-        seal_det_unclip_ratio=None,
-        seal_rec_score_thresh=None,
-        **kwargs,
-    ):
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        use_layout_detection: bool | None = None,
+        layout_det_res: Any = None,
+        layout_threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        seal_det_limit_side_len: int | None = None,
+        seal_det_limit_type: str | None = None,
+        seal_det_thresh: float | None = None,
+        seal_det_box_thresh: float | None = None,
+        seal_det_unclip_ratio: float | None = None,
+        seal_rec_score_thresh: float | None = None,
+        **kwargs: Any,
+    ) -> list[PredictResult]:
         return list(
             self.predict_iter(
                 input,
@@ -165,10 +172,10 @@ class SealRecognition(PaddleXPipelineWrapper):
         )
 
     @classmethod
-    def get_cli_subcommand_executor(cls):
+    def get_cli_subcommand_executor(cls) -> CLISubcommandExecutor:
         return SealRecognitionCLISubcommandExecutor()
 
-    def _get_paddlex_config_overrides(self):
+    def _get_paddlex_config_overrides(self) -> dict[str, Any]:
         STRUCTURE = {
             "SubPipelines.DocPreprocessor.SubModules.DocOrientationClassify.model_name": self._params[
                 "doc_orientation_classify_model_name"
@@ -244,10 +251,10 @@ class SealRecognition(PaddleXPipelineWrapper):
 
 class SealRecognitionCLISubcommandExecutor(PipelineCLISubcommandExecutor):
     @property
-    def subparser_name(self):
+    def subparser_name(self) -> str:
         return "seal_recognition"
 
-    def _update_subparser(self, subparser):
+    def _update_subparser(self, subparser: argparse.ArgumentParser) -> None:
         add_simple_inference_args(subparser)
 
         subparser.add_argument(
@@ -371,7 +378,7 @@ class SealRecognitionCLISubcommandExecutor(PipelineCLISubcommandExecutor):
             help="Text recognition threshold. Text results with scores greater than this threshold are retained.",
         )
 
-    def execute_with_args(self, args):
+    def execute_with_args(self, args: argparse.Namespace) -> None:
         params = get_subcommand_args(args)
 
         perform_simple_inference(SealRecognition, params)

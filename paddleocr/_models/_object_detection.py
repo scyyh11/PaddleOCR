@@ -12,7 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
 import abc
+import argparse
+from typing import Any
 
 from .._utils.cli import (
     add_simple_inference_args,
@@ -27,13 +31,13 @@ class ObjectDetection(PaddleXPredictorWrapper):
     def __init__(
         self,
         *,
-        img_size=None,
-        threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        **kwargs,
-    ):
+        img_size: int | None = None,
+        threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        **kwargs: Any,
+    ) -> None:
         self._extra_init_args = {
             "img_size": img_size,
             "threshold": threshold,
@@ -43,12 +47,12 @@ class ObjectDetection(PaddleXPredictorWrapper):
         }
         super().__init__(**kwargs)
 
-    def _get_extra_paddlex_predictor_init_args(self):
+    def _get_extra_paddlex_predictor_init_args(self) -> dict[str, Any]:
         return self._extra_init_args
 
 
 class ObjectDetectionSubcommandExecutor(PredictorCLISubcommandExecutor):
-    def _update_subparser(self, subparser):
+    def _update_subparser(self, subparser: argparse.ArgumentParser) -> None:
         add_simple_inference_args(subparser)
 
         subparser.add_argument(
@@ -79,9 +83,9 @@ class ObjectDetectionSubcommandExecutor(PredictorCLISubcommandExecutor):
 
     @property
     @abc.abstractmethod
-    def wrapper_cls(self):
+    def wrapper_cls(self) -> type[PaddleXPredictorWrapper]:
         raise NotImplementedError
 
-    def execute_with_args(self, args):
+    def execute_with_args(self, args: argparse.Namespace) -> None:
         params = get_subcommand_args(args)
         perform_simple_inference(self.wrapper_cls, params)

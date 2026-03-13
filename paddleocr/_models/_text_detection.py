@@ -12,19 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
+import argparse
+from typing import Any
+
 
 class TextDetectionMixin:
     def __init__(
         self,
         *,
-        limit_side_len=None,
-        limit_type=None,
-        thresh=None,
-        box_thresh=None,
-        unclip_ratio=None,
-        input_shape=None,
-        **kwargs,
-    ):
+        limit_side_len: int | None = None,
+        limit_type: str | None = None,
+        thresh: float | None = None,
+        box_thresh: float | None = None,
+        unclip_ratio: float | None = None,
+        input_shape: tuple[int, int, int] | None = None,
+        **kwargs: Any,
+    ) -> None:
         self._extra_init_args = {
             "limit_side_len": limit_side_len,
             "limit_type": limit_type,
@@ -35,12 +40,12 @@ class TextDetectionMixin:
         }
         super().__init__(**kwargs)
 
-    def _get_extra_paddlex_predictor_init_args(self):
+    def _get_extra_paddlex_predictor_init_args(self) -> dict[str, Any]:
         return self._extra_init_args
 
 
 class TextDetectionSubcommandExecutorMixin:
-    def _add_text_detection_args(self, subparser):
+    def _add_text_detection_args(self, subparser: argparse.ArgumentParser) -> None:
         subparser.add_argument(
             "--limit_side_len",
             type=int,

@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
+import argparse
+from typing import Any, Iterator
+
+from .._abstract import CLISubcommandExecutor
+from .._types import InputType, PredictResult
 from .._utils.cli import (
     add_simple_inference_args,
     get_subcommand_args,
@@ -25,14 +32,14 @@ from .utils import create_config_from_structure
 class DocPreprocessor(PaddleXPipelineWrapper):
     def __init__(
         self,
-        doc_orientation_classify_model_name=None,
-        doc_orientation_classify_model_dir=None,
-        doc_unwarping_model_name=None,
-        doc_unwarping_model_dir=None,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        **kwargs,
-    ):
+        doc_orientation_classify_model_name: str | None = None,
+        doc_orientation_classify_model_dir: str | None = None,
+        doc_unwarping_model_name: str | None = None,
+        doc_unwarping_model_dir: str | None = None,
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        **kwargs: Any,
+    ) -> None:
 
         self._params = {
             "doc_orientation_classify_model_name": doc_orientation_classify_model_name,
@@ -45,16 +52,16 @@ class DocPreprocessor(PaddleXPipelineWrapper):
         super().__init__(**kwargs)
 
     @property
-    def _paddlex_pipeline_name(self):
+    def _paddlex_pipeline_name(self) -> str:
         return "doc_preprocessor"
 
     def predict_iter(
         self,
-        input,
+        input: InputType,
         *,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-    ):
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+    ) -> Iterator[PredictResult]:
         return self.paddlex_pipeline.predict(
             input,
             use_doc_orientation_classify=use_doc_orientation_classify,
@@ -63,11 +70,11 @@ class DocPreprocessor(PaddleXPipelineWrapper):
 
     def predict(
         self,
-        input,
+        input: InputType,
         *,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-    ):
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+    ) -> list[PredictResult]:
         return list(
             self.predict_iter(
                 input,
@@ -77,10 +84,10 @@ class DocPreprocessor(PaddleXPipelineWrapper):
         )
 
     @classmethod
-    def get_cli_subcommand_executor(cls):
+    def get_cli_subcommand_executor(cls) -> CLISubcommandExecutor:
         return DocPreprocessorCLISubcommandExecutor()
 
-    def _get_paddlex_config_overrides(self):
+    def _get_paddlex_config_overrides(self) -> dict[str, Any]:
         STRUCTURE = {
             "SubModules.DocOrientationClassify.model_name": self._params[
                 "doc_orientation_classify_model_name"
@@ -104,10 +111,10 @@ class DocPreprocessor(PaddleXPipelineWrapper):
 
 class DocPreprocessorCLISubcommandExecutor(PipelineCLISubcommandExecutor):
     @property
-    def subparser_name(self):
+    def subparser_name(self) -> str:
         return "doc_preprocessor"
 
-    def _update_subparser(self, subparser):
+    def _update_subparser(self, subparser: argparse.ArgumentParser) -> None:
         add_simple_inference_args(subparser)
 
         subparser.add_argument(
@@ -141,7 +148,7 @@ class DocPreprocessorCLISubcommandExecutor(PipelineCLISubcommandExecutor):
             help="Whether to use text image unwarping.",
         )
 
-    def execute_with_args(self, args):
+    def execute_with_args(self, args: argparse.Namespace) -> None:
         params = get_subcommand_args(args)
 
         perform_simple_inference(DocPreprocessor, params)

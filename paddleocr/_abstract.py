@@ -12,14 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
 import abc
+import argparse
+from typing import Any
 
 
 class CLISubcommandExecutor(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def add_subparser(self, subparsers):
+    def add_subparser(self, subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
         raise NotImplementedError
 
     @abc.abstractmethod
-    def execute_with_args(self, args):
+    def execute_with_args(self, args: argparse.Namespace) -> None:
         raise NotImplementedError

@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
+import argparse
+from typing import Any, Iterator
+
+from .._abstract import CLISubcommandExecutor
+from .._types import InputType, PredictResult
 from .._utils.cli import (
     get_subcommand_args,
     str2bool,
@@ -24,72 +31,72 @@ from .utils import create_config_from_structure
 class PPDocTranslation(PaddleXPipelineWrapper):
     def __init__(
         self,
-        layout_detection_model_name=None,
-        layout_detection_model_dir=None,
-        layout_threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        chart_recognition_model_name=None,
-        chart_recognition_model_dir=None,
-        chart_recognition_batch_size=None,
-        region_detection_model_name=None,
-        region_detection_model_dir=None,
-        doc_orientation_classify_model_name=None,
-        doc_orientation_classify_model_dir=None,
-        doc_unwarping_model_name=None,
-        doc_unwarping_model_dir=None,
-        text_detection_model_name=None,
-        text_detection_model_dir=None,
-        text_det_limit_side_len=None,
-        text_det_limit_type=None,
-        text_det_thresh=None,
-        text_det_box_thresh=None,
-        text_det_unclip_ratio=None,
-        textline_orientation_model_name=None,
-        textline_orientation_model_dir=None,
-        textline_orientation_batch_size=None,
-        text_recognition_model_name=None,
-        text_recognition_model_dir=None,
-        text_recognition_batch_size=None,
-        text_rec_score_thresh=None,
-        table_classification_model_name=None,
-        table_classification_model_dir=None,
-        wired_table_structure_recognition_model_name=None,
-        wired_table_structure_recognition_model_dir=None,
-        wireless_table_structure_recognition_model_name=None,
-        wireless_table_structure_recognition_model_dir=None,
-        wired_table_cells_detection_model_name=None,
-        wired_table_cells_detection_model_dir=None,
-        wireless_table_cells_detection_model_name=None,
-        wireless_table_cells_detection_model_dir=None,
-        table_orientation_classify_model_name=None,
-        table_orientation_classify_model_dir=None,
-        seal_text_detection_model_name=None,
-        seal_text_detection_model_dir=None,
-        seal_det_limit_side_len=None,
-        seal_det_limit_type=None,
-        seal_det_thresh=None,
-        seal_det_box_thresh=None,
-        seal_det_unclip_ratio=None,
-        seal_text_recognition_model_name=None,
-        seal_text_recognition_model_dir=None,
-        seal_text_recognition_batch_size=None,
-        seal_rec_score_thresh=None,
-        formula_recognition_model_name=None,
-        formula_recognition_model_dir=None,
-        formula_recognition_batch_size=None,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        use_textline_orientation=None,
-        use_seal_recognition=None,
-        use_table_recognition=None,
-        use_formula_recognition=None,
-        use_chart_recognition=None,
-        use_region_detection=None,
-        chat_bot_config=None,
-        **kwargs,
-    ):
+        layout_detection_model_name: str | None = None,
+        layout_detection_model_dir: str | None = None,
+        layout_threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        chart_recognition_model_name: str | None = None,
+        chart_recognition_model_dir: str | None = None,
+        chart_recognition_batch_size: int | None = None,
+        region_detection_model_name: str | None = None,
+        region_detection_model_dir: str | None = None,
+        doc_orientation_classify_model_name: str | None = None,
+        doc_orientation_classify_model_dir: str | None = None,
+        doc_unwarping_model_name: str | None = None,
+        doc_unwarping_model_dir: str | None = None,
+        text_detection_model_name: str | None = None,
+        text_detection_model_dir: str | None = None,
+        text_det_limit_side_len: int | None = None,
+        text_det_limit_type: str | None = None,
+        text_det_thresh: float | None = None,
+        text_det_box_thresh: float | None = None,
+        text_det_unclip_ratio: float | None = None,
+        textline_orientation_model_name: str | None = None,
+        textline_orientation_model_dir: str | None = None,
+        textline_orientation_batch_size: int | None = None,
+        text_recognition_model_name: str | None = None,
+        text_recognition_model_dir: str | None = None,
+        text_recognition_batch_size: int | None = None,
+        text_rec_score_thresh: float | None = None,
+        table_classification_model_name: str | None = None,
+        table_classification_model_dir: str | None = None,
+        wired_table_structure_recognition_model_name: str | None = None,
+        wired_table_structure_recognition_model_dir: str | None = None,
+        wireless_table_structure_recognition_model_name: str | None = None,
+        wireless_table_structure_recognition_model_dir: str | None = None,
+        wired_table_cells_detection_model_name: str | None = None,
+        wired_table_cells_detection_model_dir: str | None = None,
+        wireless_table_cells_detection_model_name: str | None = None,
+        wireless_table_cells_detection_model_dir: str | None = None,
+        table_orientation_classify_model_name: str | None = None,
+        table_orientation_classify_model_dir: str | None = None,
+        seal_text_detection_model_name: str | None = None,
+        seal_text_detection_model_dir: str | None = None,
+        seal_det_limit_side_len: int | None = None,
+        seal_det_limit_type: str | None = None,
+        seal_det_thresh: float | None = None,
+        seal_det_box_thresh: float | None = None,
+        seal_det_unclip_ratio: float | None = None,
+        seal_text_recognition_model_name: str | None = None,
+        seal_text_recognition_model_dir: str | None = None,
+        seal_text_recognition_batch_size: int | None = None,
+        seal_rec_score_thresh: float | None = None,
+        formula_recognition_model_name: str | None = None,
+        formula_recognition_model_dir: str | None = None,
+        formula_recognition_batch_size: int | None = None,
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        use_textline_orientation: bool | None = None,
+        use_seal_recognition: bool | None = None,
+        use_table_recognition: bool | None = None,
+        use_formula_recognition: bool | None = None,
+        use_chart_recognition: bool | None = None,
+        use_region_detection: bool | None = None,
+        chat_bot_config: dict[str, Any] | None = None,
+        **kwargs: Any,
+    ) -> None:
         params = locals().copy()
         params.pop("self")
         params.pop("kwargs")
@@ -98,45 +105,45 @@ class PPDocTranslation(PaddleXPipelineWrapper):
         super().__init__(**kwargs)
 
     @property
-    def _paddlex_pipeline_name(self):
+    def _paddlex_pipeline_name(self) -> str:
         return "PP-DocTranslation"
 
     def visual_predict_iter(
         self,
-        input,
+        input: InputType,
         *,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        use_textline_orientation=None,
-        use_seal_recognition=None,
-        use_table_recognition=None,
-        use_formula_recognition=None,
-        use_chart_recognition=None,
-        use_region_detection=None,
-        layout_threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        text_det_limit_side_len=None,
-        text_det_limit_type=None,
-        text_det_thresh=None,
-        text_det_box_thresh=None,
-        text_det_unclip_ratio=None,
-        text_rec_score_thresh=None,
-        seal_det_limit_side_len=None,
-        seal_det_limit_type=None,
-        seal_det_thresh=None,
-        seal_det_box_thresh=None,
-        seal_det_unclip_ratio=None,
-        seal_rec_score_thresh=None,
-        use_wired_table_cells_trans_to_html=False,
-        use_wireless_table_cells_trans_to_html=False,
-        use_table_orientation_classify=True,
-        use_ocr_results_with_table_cells=True,
-        use_e2e_wired_table_rec_model=False,
-        use_e2e_wireless_table_rec_model=True,
-        **kwargs,
-    ):
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        use_textline_orientation: bool | None = None,
+        use_seal_recognition: bool | None = None,
+        use_table_recognition: bool | None = None,
+        use_formula_recognition: bool | None = None,
+        use_chart_recognition: bool | None = None,
+        use_region_detection: bool | None = None,
+        layout_threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        text_det_limit_side_len: int | None = None,
+        text_det_limit_type: str | None = None,
+        text_det_thresh: float | None = None,
+        text_det_box_thresh: float | None = None,
+        text_det_unclip_ratio: float | None = None,
+        text_rec_score_thresh: float | None = None,
+        seal_det_limit_side_len: int | None = None,
+        seal_det_limit_type: str | None = None,
+        seal_det_thresh: float | None = None,
+        seal_det_box_thresh: float | None = None,
+        seal_det_unclip_ratio: float | None = None,
+        seal_rec_score_thresh: float | None = None,
+        use_wired_table_cells_trans_to_html: bool = False,
+        use_wireless_table_cells_trans_to_html: bool = False,
+        use_table_orientation_classify: bool = True,
+        use_ocr_results_with_table_cells: bool = True,
+        use_e2e_wired_table_rec_model: bool = False,
+        use_e2e_wireless_table_rec_model: bool = True,
+        **kwargs: Any,
+    ) -> Iterator[PredictResult]:
         return self.paddlex_pipeline.visual_predict(
             input,
             use_doc_orientation_classify=use_doc_orientation_classify,
@@ -174,40 +181,40 @@ class PPDocTranslation(PaddleXPipelineWrapper):
 
     def visual_predict(
         self,
-        input,
+        input: InputType,
         *,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        use_textline_orientation=None,
-        use_seal_recognition=None,
-        use_table_recognition=None,
-        use_formula_recognition=None,
-        use_chart_recognition=None,
-        use_region_detection=None,
-        layout_threshold=None,
-        layout_nms=None,
-        layout_unclip_ratio=None,
-        layout_merge_bboxes_mode=None,
-        text_det_limit_side_len=None,
-        text_det_limit_type=None,
-        text_det_thresh=None,
-        text_det_box_thresh=None,
-        text_det_unclip_ratio=None,
-        text_rec_score_thresh=None,
-        seal_det_limit_side_len=None,
-        seal_det_limit_type=None,
-        seal_det_thresh=None,
-        seal_det_box_thresh=None,
-        seal_det_unclip_ratio=None,
-        seal_rec_score_thresh=None,
-        use_wired_table_cells_trans_to_html=False,
-        use_wireless_table_cells_trans_to_html=False,
-        use_table_orientation_classify=True,
-        use_ocr_results_with_table_cells=True,
-        use_e2e_wired_table_rec_model=False,
-        use_e2e_wireless_table_rec_model=True,
-        **kwargs,
-    ):
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        use_textline_orientation: bool | None = None,
+        use_seal_recognition: bool | None = None,
+        use_table_recognition: bool | None = None,
+        use_formula_recognition: bool | None = None,
+        use_chart_recognition: bool | None = None,
+        use_region_detection: bool | None = None,
+        layout_threshold: float | None = None,
+        layout_nms: bool | None = None,
+        layout_unclip_ratio: float | None = None,
+        layout_merge_bboxes_mode: str | None = None,
+        text_det_limit_side_len: int | None = None,
+        text_det_limit_type: str | None = None,
+        text_det_thresh: float | None = None,
+        text_det_box_thresh: float | None = None,
+        text_det_unclip_ratio: float | None = None,
+        text_rec_score_thresh: float | None = None,
+        seal_det_limit_side_len: int | None = None,
+        seal_det_limit_type: str | None = None,
+        seal_det_thresh: float | None = None,
+        seal_det_box_thresh: float | None = None,
+        seal_det_unclip_ratio: float | None = None,
+        seal_rec_score_thresh: float | None = None,
+        use_wired_table_cells_trans_to_html: bool = False,
+        use_wireless_table_cells_trans_to_html: bool = False,
+        use_table_orientation_classify: bool = True,
+        use_ocr_results_with_table_cells: bool = True,
+        use_e2e_wired_table_rec_model: bool = False,
+        use_e2e_wireless_table_rec_model: bool = True,
+        **kwargs: Any,
+    ) -> list[PredictResult]:
         return list(
             self.visual_predict_iter(
                 input,
@@ -247,20 +254,20 @@ class PPDocTranslation(PaddleXPipelineWrapper):
 
     def translate_iter(
         self,
-        ori_md_info_list,
+        ori_md_info_list: list[Any],
         *,
-        target_language="zh",
-        chunk_size=5000,
-        task_description=None,
-        output_format=None,
-        rules_str=None,
-        few_shot_demo_text_content=None,
-        few_shot_demo_key_value_list=None,
-        glossary=None,
-        llm_request_interval=0.0,
-        chat_bot_config=None,
-        **kwargs,
-    ):
+        target_language: str = "zh",
+        chunk_size: int = 5000,
+        task_description: str | None = None,
+        output_format: str | None = None,
+        rules_str: str | None = None,
+        few_shot_demo_text_content: str | None = None,
+        few_shot_demo_key_value_list: list[Any] | None = None,
+        glossary: str | None = None,
+        llm_request_interval: float = 0.0,
+        chat_bot_config: dict[str, Any] | None = None,
+        **kwargs: Any,
+    ) -> Iterator[Any]:
         return self.paddlex_pipeline.translate(
             ori_md_info_list,
             target_language=target_language,
@@ -278,20 +285,20 @@ class PPDocTranslation(PaddleXPipelineWrapper):
 
     def translate(
         self,
-        ori_md_info_list,
+        ori_md_info_list: list[Any],
         *,
-        target_language="zh",
-        chunk_size=5000,
-        task_description=None,
-        output_format=None,
-        rules_str=None,
-        few_shot_demo_text_content=None,
-        few_shot_demo_key_value_list=None,
-        glossary=None,
-        llm_request_interval=0.0,
-        chat_bot_config=None,
-        **kwargs,
-    ):
+        target_language: str = "zh",
+        chunk_size: int = 5000,
+        task_description: str | None = None,
+        output_format: str | None = None,
+        rules_str: str | None = None,
+        few_shot_demo_text_content: str | None = None,
+        few_shot_demo_key_value_list: list[Any] | None = None,
+        glossary: str | None = None,
+        llm_request_interval: float = 0.0,
+        chat_bot_config: dict[str, Any] | None = None,
+        **kwargs: Any,
+    ) -> list[Any]:
         return list(
             self.translate_iter(
                 ori_md_info_list,
@@ -309,17 +316,17 @@ class PPDocTranslation(PaddleXPipelineWrapper):
             )
         )
 
-    def load_from_markdown(self, input):
+    def load_from_markdown(self, input: InputType) -> Any:
         return self.paddlex_pipeline.load_from_markdown(input)
 
-    def concatenate_markdown_pages(self, markdown_list):
+    def concatenate_markdown_pages(self, markdown_list: list[str]) -> str:
         return self.paddlex_pipeline.concatenate_markdown_pages(markdown_list)
 
     @classmethod
-    def get_cli_subcommand_executor(cls):
+    def get_cli_subcommand_executor(cls) -> CLISubcommandExecutor:
         return PPDocTranslationCLISubcommandExecutor()
 
-    def _get_paddlex_config_overrides(self):
+    def _get_paddlex_config_overrides(self) -> dict[str, Any]:
         # HACK: We should consider reducing duplication.
         STRUCTURE = {
             "SubPipelines.LayoutParser.SubPipelines.DocPreprocessor.use_doc_orientation_classify": self._params[
@@ -561,10 +568,10 @@ class PPDocTranslation(PaddleXPipelineWrapper):
 
 class PPDocTranslationCLISubcommandExecutor(PipelineCLISubcommandExecutor):
     @property
-    def subparser_name(self):
+    def subparser_name(self) -> str:
         return "pp_doctranslation"
 
-    def _update_subparser(self, subparser):
+    def _update_subparser(self, subparser: argparse.ArgumentParser) -> None:
         subparser.add_argument(
             "-i",
             "--input",
@@ -907,7 +914,7 @@ class PPDocTranslationCLISubcommandExecutor(PipelineCLISubcommandExecutor):
             help="Configuration for the embedding model.",
         )
 
-    def execute_with_args(self, args):
+    def execute_with_args(self, args: argparse.Namespace) -> None:
         params = get_subcommand_args(args)
         input = params.pop("input")
         target_language = params.pop("target_language")
@@ -939,7 +946,7 @@ class PPDocTranslationCLISubcommandExecutor(PipelineCLISubcommandExecutor):
             target_language=target_language,
         )
 
-        for res in result_translate:
-            res.print()
+        for trans_res in result_translate:
+            trans_res.print()
             if save_path:
-                res.save_to_markdown(save_path)
+                trans_res.save_to_markdown(save_path)

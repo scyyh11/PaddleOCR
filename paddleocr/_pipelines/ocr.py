@@ -12,13 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
 # TODO: Should we use a third-party CLI library to auto-generate command-line
 # arguments from the pipeline class, to reduce boilerplate and improve
 # maintainability?
 
+import argparse
 import sys
 import warnings
+from typing import Any, Iterator
 
+from .._abstract import CLISubcommandExecutor
+from .._types import InputType, PredictResult
 from .._utils.cli import (
     add_simple_inference_args,
     get_subcommand_args,
@@ -55,34 +61,34 @@ _SUPPORTED_OCR_VERSIONS = ["PP-OCRv3", "PP-OCRv4", "PP-OCRv5"]
 class PaddleOCR(PaddleXPipelineWrapper):
     def __init__(
         self,
-        doc_orientation_classify_model_name=None,
-        doc_orientation_classify_model_dir=None,
-        doc_unwarping_model_name=None,
-        doc_unwarping_model_dir=None,
-        text_detection_model_name=None,
-        text_detection_model_dir=None,
-        textline_orientation_model_name=None,
-        textline_orientation_model_dir=None,
-        textline_orientation_batch_size=None,
-        text_recognition_model_name=None,
-        text_recognition_model_dir=None,
-        text_recognition_batch_size=None,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        use_textline_orientation=None,
-        text_det_limit_side_len=None,
-        text_det_limit_type=None,
-        text_det_thresh=None,
-        text_det_box_thresh=None,
-        text_det_unclip_ratio=None,
-        text_det_input_shape=None,
-        text_rec_score_thresh=None,
-        return_word_box=None,
-        text_rec_input_shape=None,
-        lang=None,
-        ocr_version=None,
-        **kwargs,
-    ):
+        doc_orientation_classify_model_name: str | None = None,
+        doc_orientation_classify_model_dir: str | None = None,
+        doc_unwarping_model_name: str | None = None,
+        doc_unwarping_model_dir: str | None = None,
+        text_detection_model_name: str | None = None,
+        text_detection_model_dir: str | None = None,
+        textline_orientation_model_name: str | None = None,
+        textline_orientation_model_dir: str | None = None,
+        textline_orientation_batch_size: int | None = None,
+        text_recognition_model_name: str | None = None,
+        text_recognition_model_dir: str | None = None,
+        text_recognition_batch_size: int | None = None,
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        use_textline_orientation: bool | None = None,
+        text_det_limit_side_len: int | None = None,
+        text_det_limit_type: str | None = None,
+        text_det_thresh: float | None = None,
+        text_det_box_thresh: float | None = None,
+        text_det_unclip_ratio: float | None = None,
+        text_det_input_shape: tuple[int, int, int] | None = None,
+        text_rec_score_thresh: float | None = None,
+        return_word_box: bool | None = None,
+        text_rec_input_shape: tuple[int, int, int] | None = None,
+        lang: str | None = None,
+        ocr_version: str | None = None,
+        **kwargs: Any,
+    ) -> None:
         if ocr_version is not None and ocr_version not in _SUPPORTED_OCR_VERSIONS:
             raise ValueError(
                 f"Invalid OCR version: {ocr_version}. Supported values are {_SUPPORTED_OCR_VERSIONS}."
@@ -163,24 +169,24 @@ class PaddleOCR(PaddleXPipelineWrapper):
         super().__init__(**base_params)
 
     @property
-    def _paddlex_pipeline_name(self):
+    def _paddlex_pipeline_name(self) -> str:
         return "OCR"
 
     def predict_iter(
         self,
-        input,
+        input: InputType,
         *,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        use_textline_orientation=None,
-        text_det_limit_side_len=None,
-        text_det_limit_type=None,
-        text_det_thresh=None,
-        text_det_box_thresh=None,
-        text_det_unclip_ratio=None,
-        text_rec_score_thresh=None,
-        return_word_box=None,
-    ):
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        use_textline_orientation: bool | None = None,
+        text_det_limit_side_len: int | None = None,
+        text_det_limit_type: str | None = None,
+        text_det_thresh: float | None = None,
+        text_det_box_thresh: float | None = None,
+        text_det_unclip_ratio: float | None = None,
+        text_rec_score_thresh: float | None = None,
+        return_word_box: bool | None = None,
+    ) -> Iterator[PredictResult]:
         return self.paddlex_pipeline.predict(
             input,
             use_doc_orientation_classify=use_doc_orientation_classify,
@@ -197,19 +203,19 @@ class PaddleOCR(PaddleXPipelineWrapper):
 
     def predict(
         self,
-        input,
+        input: InputType,
         *,
-        use_doc_orientation_classify=None,
-        use_doc_unwarping=None,
-        use_textline_orientation=None,
-        text_det_limit_side_len=None,
-        text_det_limit_type=None,
-        text_det_thresh=None,
-        text_det_box_thresh=None,
-        text_det_unclip_ratio=None,
-        text_rec_score_thresh=None,
-        return_word_box=None,
-    ):
+        use_doc_orientation_classify: bool | None = None,
+        use_doc_unwarping: bool | None = None,
+        use_textline_orientation: bool | None = None,
+        text_det_limit_side_len: int | None = None,
+        text_det_limit_type: str | None = None,
+        text_det_thresh: float | None = None,
+        text_det_box_thresh: float | None = None,
+        text_det_unclip_ratio: float | None = None,
+        text_rec_score_thresh: float | None = None,
+        return_word_box: bool | None = None,
+    ) -> list[PredictResult]:
         return list(
             self.predict_iter(
                 input,
@@ -227,14 +233,14 @@ class PaddleOCR(PaddleXPipelineWrapper):
         )
 
     @deprecated("Please use `predict` instead.")
-    def ocr(self, img, **kwargs):
+    def ocr(self, img: InputType, **kwargs: Any) -> list[PredictResult]:
         return self.predict(img, **kwargs)
 
     @classmethod
-    def get_cli_subcommand_executor(cls):
+    def get_cli_subcommand_executor(cls) -> CLISubcommandExecutor:
         return PaddleOCRCLISubcommandExecutor()
 
-    def _get_paddlex_config_overrides(self):
+    def _get_paddlex_config_overrides(self) -> dict[str, Any]:
         STRUCTURE = {
             "SubPipelines.DocPreprocessor.SubModules.DocOrientationClassify.model_name": self._params[
                 "doc_orientation_classify_model_name"
@@ -305,7 +311,9 @@ class PaddleOCR(PaddleXPipelineWrapper):
         }
         return create_config_from_structure(STRUCTURE)
 
-    def _get_ocr_model_names(self, lang, ppocr_version):
+    def _get_ocr_model_names(
+        self, lang: str | None, ppocr_version: str | None
+    ) -> tuple[str | None, str | None]:
         LATIN_LANGS = [
             "af",
             "az",
@@ -513,10 +521,10 @@ class PaddleOCR(PaddleXPipelineWrapper):
 
 class PaddleOCRCLISubcommandExecutor(PipelineCLISubcommandExecutor):
     @property
-    def subparser_name(self):
+    def subparser_name(self) -> str:
         return "ocr"
 
-    def _update_subparser(self, subparser):
+    def _update_subparser(self, subparser: argparse.ArgumentParser) -> None:
         add_simple_inference_args(subparser)
 
         subparser.add_argument(
@@ -676,7 +684,7 @@ class PaddleOCRCLISubcommandExecutor(PipelineCLISubcommandExecutor):
                 help=f"[Deprecated] Please use `--{new_name}` instead.",
             )
 
-    def execute_with_args(self, args):
+    def execute_with_args(self, args: argparse.Namespace) -> None:
         params = get_subcommand_args(args)
         for name, new_name in _DEPRECATED_PARAM_NAME_MAPPING.items():
             assert name in params

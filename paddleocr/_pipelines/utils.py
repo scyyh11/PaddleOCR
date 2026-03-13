@@ -12,8 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
 
-def create_config_from_structure(structure, *, unset=None, config=None):
+from typing import Any
+
+
+def create_config_from_structure(structure: dict[str, Any], *, unset: Any = None, config: dict[str, Any] | None = None) -> dict[str, Any]:
     if config is None:
         config = {}
     for k, v in structure.items():

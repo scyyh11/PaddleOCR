@@ -12,9 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
 import argparse
 import sys
 import warnings
+from typing import Any, Sequence
 
 from typing_extensions import deprecated as deprecated
 
@@ -24,7 +27,13 @@ class CLIDeprecationWarning(DeprecationWarning):
 
 
 class DeprecatedOptionAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
+    def __call__(
+        self,
+        parser: argparse.ArgumentParser,
+        namespace: argparse.Namespace,
+        values: str | Sequence[Any] | None,
+        option_string: str | None = None,
+    ) -> None:
         assert option_string
         warnings.warn(
             f"The option `{option_string}` has been deprecated and will be removed in the future. Please refer to the documentation for more details.",
@@ -33,7 +42,7 @@ class DeprecatedOptionAction(argparse.Action):
         setattr(namespace, self.dest, values)
 
 
-def warn_deprecated_param(name, new_name=None):
+def warn_deprecated_param(name: str, new_name: str | None = None) -> None:
     msg = (
         f"The parameter `{name}` has been deprecated and will be removed in the future."
     )
