@@ -31,11 +31,11 @@ class ObjectDetection(PaddleXPredictorWrapper):
     def __init__(
         self,
         *,
-        img_size: int | None = None,
-        threshold: float | None = None,
+        img_size: int | tuple[int, int] | None = None,
+        threshold: float | dict | None = None,
         layout_nms: bool | None = None,
-        layout_unclip_ratio: float | None = None,
-        layout_merge_bboxes_mode: str | None = None,
+        layout_unclip_ratio: float | tuple[float, float] | dict | None = None,
+        layout_merge_bboxes_mode: str | dict | None = None,
         **kwargs: Any,
     ) -> None:
         self._extra_init_args = {

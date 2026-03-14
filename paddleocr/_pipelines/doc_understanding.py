@@ -20,7 +20,7 @@ from typing import Any, Iterator
 from paddlex.utils.pipeline_arguments import custom_type
 
 from .._abstract import CLISubcommandExecutor
-from .._types import InputType, PredictResult
+from .._types import PredictResult
 from .._utils.cli import (
     add_simple_inference_args,
     get_subcommand_args,
@@ -50,12 +50,12 @@ class DocUnderstanding(PaddleXPipelineWrapper):
     def _paddlex_pipeline_name(self) -> str:
         return "doc_understanding"
 
-    def predict_iter(self, input: InputType, **kwargs: Any) -> Iterator[PredictResult]:
+    def predict_iter(self, input: dict, **kwargs: Any) -> Iterator[PredictResult]:
         return self.paddlex_pipeline.predict(input, **kwargs)
 
     def predict(
         self,
-        input: InputType,
+        input: dict,
         **kwargs: Any,
     ) -> list[PredictResult]:
         return list(self.predict_iter(input, **kwargs))

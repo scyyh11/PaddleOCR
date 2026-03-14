@@ -27,7 +27,7 @@ class TextDetectionMixin:
         thresh: float | None = None,
         box_thresh: float | None = None,
         unclip_ratio: float | None = None,
-        input_shape: tuple[int, int, int] | None = None,
+        input_shape: tuple | None = None,
         **kwargs: Any,
     ) -> None:
         self._extra_init_args = {

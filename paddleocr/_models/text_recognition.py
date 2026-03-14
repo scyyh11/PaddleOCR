@@ -30,7 +30,7 @@ class TextRecognition(PaddleXPredictorWrapper):
     def __init__(
         self,
         *,
-        input_shape: tuple[int, int, int] | None = None,
+        input_shape: tuple | None = None,
         **kwargs: Any,
     ) -> None:
         self._extra_init_args = {
