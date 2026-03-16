@@ -380,9 +380,9 @@ Common parameters are as follows:
 </tr>
 <tr>
 <td><code>precision</code></td>
-<td>The computation precision, such as <code>"fp32"</code>, <code>"fp16"</code>.</td>
+<td>The computation precision, such as <code>fp32</code>, <code>fp16</code>.</td>
 <td><code>str</code></td>
-<td><code>"fp32"</code></td>
+<td><code>fp32</code></td>
 </tr>
 <tr>
 <td><code>enable_mkldnn</code></td>
