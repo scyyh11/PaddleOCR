@@ -42,7 +42,7 @@ For some inference hardware, you may need to refer to other usage tutorials we p
 
 ## Inference Device Support for PaddleOCR-VL
 
-Currently, PaddleOCR-VL offers six inference methods, with varying levels of support for different inference devices. Please confirm that your inference device meets the requirements in the table below before proceeding with PaddleOCR-VL deployment:
+Currently, PaddleOCR-VL offers seven inference methods, with varying levels of support for different inference devices. Please confirm that your inference device meets the requirements in the table below before proceeding with PaddleOCR-VL deployment:
 
 <table border="1">
 <thead>
@@ -69,6 +69,17 @@ Currently, PaddleOCR-VL offers six inference methods, with varying levels of sup
     <td>🚧</td>
     <td>✅</td>
     <td>✅</td>
+  </tr>
+  <tr style="text-align: center;">
+    <td>Transformers</td>
+    <td>✅</td>
+    <td>🚧</td>
+    <td>🚧</td>
+    <td>🚧</td>
+    <td>🚧</td>
+    <td>🚧</td>
+    <td>✅</td>
+    <td>🚧</td>
   </tr>
   <tr style="text-align: center;">
     <td>PaddlePaddle + vLLM</td>
@@ -129,7 +140,7 @@ Currently, PaddleOCR-VL offers six inference methods, with varying levels of sup
 </table>
 
 <details><summary>Explanation of Inference Method</summary>
-"PaddlePaddle" indicates that both the layout detection model and the VLM use the PaddlePaddle framework for inference. This is the default mode for the PaddleOCR CLI and Python API. Other inference method follow the format "Layout Detection Model Inference method + VLM Inference method". For example, "PaddlePaddle + vLLM" means the layout detection model uses PaddlePaddle, while the VLM uses vLLM.
+"PaddlePaddle" indicates that both the layout detection model and the VLM use the PaddlePaddle framework for inference. This is the default mode for the PaddleOCR CLI and Python API. "Transformers" indicates that both the layout detection model and the VLM are inferred through the Transformers engine. Other inference methods follow the format "Layout Detection Model Inference Method + VLM Inference Method". For example, "PaddlePaddle + vLLM" means the layout detection model uses PaddlePaddle, while the VLM uses vLLM.
 </details>
 
 > TIP:
@@ -164,7 +175,7 @@ This section explains how to set up the runtime environment for PaddleOCR-VL. Ch
 
 - Method 1: Use the official Docker image.
 
-- Method 2: Manually install PaddlePaddle and PaddleOCR.
+- Method 2: Manually install the inference engine and PaddleOCR.
 
 **We strongly recommend using the Docker image to minimize potential environment-related issues.**
 
@@ -203,9 +214,9 @@ docker load -i paddleocr-vl-latest-nvidia-gpu-offline.tar
 > For example:
 > `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-vl:paddleocr3.3-nvidia-gpu-offline`
 
-### 1.2 Method 2: Manually Install PaddlePaddle and PaddleOCR
+### 1.2 Method 2: Manually Install the Inference Engine and PaddleOCR
 
-If you cannot use Docker, you can manually install PaddlePaddle and PaddleOCR. The required Python version is 3.8–3.12.
+To install the inference engine and PaddleOCR manually, follow the steps below.
 
 **We strongly recommend installing PaddleOCR-VL in a virtual environment to avoid dependency conflicts.** For example, use the Python venv standard library to create a virtual environment:
 
@@ -216,27 +227,33 @@ python -m venv .venv_paddleocr
 source .venv_paddleocr/bin/activate
 ```
 
-Run the following commands to complete the installation:
+- If you use PaddlePaddle for inference, install PaddlePaddle 3.2.1 or later. For example, for CUDA 12.6:
 
 ```shell
-# The following command installs the PaddlePaddle version for CUDA 12.6. For other CUDA versions and the CPU version, please refer to https://www.paddlepaddle.org.cn/install/quick?docurl=/documentation/docs/zh/develop/install/pip/linux-pip.html
+# For other CUDA versions and the CPU version, please refer to https://www.paddlepaddle.org.cn/install/quick?docurl=/documentation/docs/en/develop/install/pip/linux-pip_en.html
 python -m pip install paddlepaddle-gpu==3.2.1 -i https://www.paddlepaddle.org.cn/packages/stable/cu126/
+```
+
+- If you use `transformers` for inference, refer to the [official Transformers documentation](https://huggingface.co/docs/transformers/installation) to install `transformers` and its required low-level inference frameworks.
+
+After installing the inference engine, run the following command to install the base package required by PaddleOCR-VL:
+
+```shell
 python -m pip install -U "paddleocr[doc-parser]"
 ```
 
-> IMPORTANT:
-> **Please ensure that you install PaddlePaddle framework version 3.2.1 or above.**
-
 ## 2. Quick Start
 
-PaddleOCR-VL supports two usage methods: CLI command line and Python API. The CLI command line method is simpler and suitable for quickly verifying functionality, while the Python API method is more flexible and suitable for integration into existing projects.
+This section introduces how to use PaddleOCR-VL through the CLI and Python API.
+
+PaddleOCR-VL supports both CLI and Python API usage. The CLI method is simpler and suitable for quick verification, while the Python API is more flexible and suitable for integration into existing projects. The examples below use PaddlePaddle inference by default. To switch to the `transformers` engine, append `--engine transformers` in the CLI, or pass `engine="transformers"` when initializing the Python API.
 
 > IMPORTANT:
 > The methods introduced in this section are primarily for rapid validation. Their inference speed, memory usage, and stability may not meet the requirements of a production environment. **If deployment to a production environment is needed, we strongly recommend using a dedicated inference acceleration framework**. For specific methods, please refer to the next section.
 
 ### 2.1 Command Line Usage
 
-Run a single command to quickly test the PaddleOCR-VL ：
+Run a single command to quickly test PaddleOCR-VL:
 
 ```shell
 # NVIDIA GPU
@@ -265,6 +282,12 @@ paddleocr doc_parser -i ./paddleocr_vl_demo.png --use_doc_unwarping True
 
 # Use --use_layout_detection to enable layout detection
 paddleocr doc_parser -i ./paddleocr_vl_demo.png --use_layout_detection False
+```
+
+To switch to the `transformers` engine, use:
+
+```bash
+paddleocr doc_parser -i ./paddleocr_vl_demo.png --engine transformers
 ```
 
 <details><summary><b>Command line supports more parameters. Click to expand for detailed parameter descriptions</b></summary>
@@ -596,51 +619,63 @@ Supports specifying specific card numbers:<ul>
 <td></td>
 </tr>
 <tr>
+<td><code>engine</code></td>
+<td><b>Meaning:</b> Inference engine.<br/><b>Description:</b> Supports <code>paddle</code>, <code>paddle_static</code>, <code>paddle_dynamic</code>, and <code>transformers</code>. For detailed descriptions, supported values, compatibility rules, and examples, see <a href="../inference_engine.en.md">Inference Engine and Configuration</a>.</td>
+<td><code>str|None</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
 <td><code>enable_hpi</code></td>
-<td><b>Meaning:</b>Whether to enable high-performance inference.</td>
+<td><b>Meaning:</b> Whether to enable high-performance inference.</td>
 <td><code>bool</code></td>
 <td></td>
 </tr>
 <tr>
 <td><code>use_tensorrt</code></td>
-<td><b>Meaning:</b>Whether to enable the TensorRT subgraph engine of Paddle Inference. 
-If the model does not support acceleration via TensorRT, acceleration will not be used even if this flag is set.<br/>For PaddlePaddle version with CUDA 11.8, the compatible TensorRT version is 8.x (x&amp;gt;=6). It is recommended to install TensorRT 8.6.1.6.<br/>
+<td><b>Meaning:</b> Whether to enable the TensorRT subgraph engine of Paddle Inference.<br/>
+<b>Description:</b>
+If the model does not support TensorRT acceleration, acceleration will not be used even if this flag is set.<br/>
+For CUDA 11.8 versions of PaddlePaddle, the compatible TensorRT version is 8.x (x>=6). TensorRT 8.6.1.6 is recommended.<br/>
 </td>
 <td><code>bool</code></td>
-<td></td>
+<td><code>False</code></td>
 </tr>
 <tr>
 <td><code>precision</code></td>
-<td><b>Meaning:</b>Computational precision, such as fp32, fp16.</td>
+<td><b>Meaning:</b> Computation precision, such as <code>fp32</code> or <code>fp16</code>.</td>
 <td><code>str</code></td>
-<td></td>
+<td><code>fp32</code></td>
 </tr>
 <tr>
 <td><code>enable_mkldnn</code></td>
-<td><b>Meaning:</b>Whether to enable MKL-DNN accelerated inference. <br/>
+<td><b>Meaning:</b> Whether to enable MKL-DNN accelerated inference.<br/>
 <b>Description:</b>
-If MKL-DNN is not available or the model does not support acceleration via MKL-DNN, acceleration will not be used even if this flag is set.</td>
+If MKL-DNN is unavailable or the model does not support MKL-DNN acceleration, acceleration will not be used even if this flag is set.
+</td>
 <td><code>bool</code></td>
-<td></td>
+<td><code>True</code></td>
 </tr>
 <tr>
 <td><code>mkldnn_cache_capacity</code></td>
-<td><b>Meaning:</b>MKL-DNN cache capacity.</td>
+<td>
+<b>Meaning:</b> MKL-DNN cache capacity.
+</td>
 <td><code>int</code></td>
-<td></td>
+<td><code>10</code></td>
 </tr>
 <tr>
 <td><code>cpu_threads</code></td>
-<td><b>Meaning:</b>The number of threads used for inference on the CPU.</td>
+<td><b>Meaning:</b> Number of threads used for inference on CPU.</td>
 <td><code>int</code></td>
-<td></td>
+<td><code>10</code></td>
 </tr>
 <tr>
 <td><code>paddlex_config</code></td>
-<td><b>Meaning:</b>The file path for PaddleX production line configuration.</td>
+<td><b>Meaning:</b> Path to the PaddleX pipeline configuration file.</td>
 <td><code>str</code></td>
 <td></td>
 </tr>
+
 </tbody>
 </table>
 </details>
@@ -660,7 +695,7 @@ For explanation of the result parameters, refer to [2.2 Python Script Integratio
 
 ### 2.2 Python Script Integration
 
-The command line method is for quick testing and visualization. In actual projects, you usually need to integrate the model via code. You can perform pipeline inference with just a few lines of code as shown below:
+The command line method is intended for quick testing and visualization. In real projects, you usually integrate the model through code. You can quickly run PaddleOCR-VL inference with just a few lines of code:
 
 ```python
 from paddleocr import PaddleOCRVL
@@ -682,6 +717,19 @@ pipeline = PaddleOCRVL()
 # pipeline = PaddleOCRVL(use_doc_unwarping=True) # Use use_doc_unwarping to enable/disable document unwarping module
 # pipeline = PaddleOCRVL(use_layout_detection=False) # Use use_layout_detection to enable/disable layout detection module
 
+output = pipeline.predict("./paddleocr_vl_demo.png")
+for res in output:
+    res.print() ## Print the structured prediction output
+    res.save_to_json(save_path="output") ## Save the current image's structured result in JSON format
+    res.save_to_markdown(save_path="output") ## Save the current image's result in Markdown format
+```
+
+To switch to the `transformers` engine, use:
+
+```python
+from paddleocr import PaddleOCRVL
+
+pipeline = PaddleOCRVL(engine="transformers")
 output = pipeline.predict("./paddleocr_vl_demo.png")
 for res in output:
     res.print() ## Print the structured prediction output
@@ -983,52 +1031,68 @@ Supports specifying specific card numbers:<ul>
 <td><code>None</code></td>
 </tr>
 <tr>
+<td><code>engine</code></td>
+<td><b>Meaning:</b> Inference engine.<br/><b>Description:</b> Supports <code>paddle</code>, <code>paddle_static</code>, <code>paddle_dynamic</code>, and <code>transformers</code>. For detailed descriptions, supported values, compatibility rules, and examples, see <a href="../inference_engine.en.md">Inference Engine and Configuration</a>.</td>
+<td><code>str|None</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>engine_config</code></td>
+<td><b>Meaning:</b> Inference-engine configuration.<br/><b>Description:</b> Recommended together with <code>engine</code>. For supported fields, compatibility rules, and examples, see <a href="../inference_engine.en.md">Inference Engine and Configuration</a>.</td>
+<td><code>dict|None</code></td>
+<td><code>None</code></td>
+</tr>
+
+<tr>
 <td><code>enable_hpi</code></td>
-<td><b>Meaning:</b>Whether to enable high-performance inference.</td>
+<td><b>Meaning:</b> Whether to enable high-performance inference.</td>
 <td><code>bool</code></td>
-<td><code>False</code></td>
+<td><code>None</code></td>
 </tr>
 <tr>
 <td><code>use_tensorrt</code></td>
-<td><b>Meaning:</b>Whether to enable the TensorRT subgraph engine of Paddle Inference.<br/>
-<b>Description:</b> 
-If the model does not support acceleration via TensorRT, acceleration will not be used even if this flag is set.<br/>For PaddlePaddle version with CUDA 11.8, the compatible TensorRT version is 8.x (x&amp;gt;=6). It is recommended to install TensorRT 8.6.1.6.<br/>
+<td><b>Meaning:</b> Whether to enable the TensorRT subgraph engine of Paddle Inference.<br/>
+<b>Description:</b>
+If the model does not support TensorRT acceleration, acceleration will not be used even if this flag is set.<br/>
+For CUDA 11.8 versions of PaddlePaddle, the compatible TensorRT version is 8.x (x>=6). TensorRT 8.6.1.6 is recommended.<br/>
 </td>
 <td><code>bool</code></td>
 <td><code>False</code></td>
 </tr>
 <tr>
 <td><code>precision</code></td>
-<td><b>Meaning:</b>Computational precision, such as fp32, fp16.</td>
+<td><b>Meaning:</b> Computation precision, such as <code>"fp32"</code> or <code>"fp16"</code>.</td>
 <td><code>str</code></td>
 <td><code>"fp32"</code></td>
 </tr>
 <tr>
 <td><code>enable_mkldnn</code></td>
-<td><b>Meaning:</b>Whether to enable MKL-DNN accelerated inference.<br/> 
-<b>Description:</b> 
-If MKL-DNN is not available or the model does not support acceleration via MKL-DNN, acceleration will not be used even if this flag is set.</td>
+<td><b>Meaning:</b> Whether to enable MKL-DNN accelerated inference.<br/>
+<b>Description:</b>
+If MKL-DNN is unavailable or the model does not support MKL-DNN acceleration, acceleration will not be used even if this flag is set.
+</td>
 <td><code>bool</code></td>
 <td><code>True</code></td>
 </tr>
 <tr>
 <td><code>mkldnn_cache_capacity</code></td>
-<td><b>Meaning:</b>MKL-DNN cache capacity.</td>
+<td>
+<b>Meaning:</b> MKL-DNN cache capacity.
+</td>
 <td><code>int</code></td>
 <td><code>10</code></td>
 </tr>
 <tr>
 <td><code>cpu_threads</code></td>
-<td><b>Meaning:</b>The number of threads used for inference on the CPU.</td>
+<td><b>Meaning:</b> Number of threads used for inference on CPU.</td>
 <td><code>int</code></td>
-<td><code>8</code></td>
+<td><code>10</code></td>
 </tr>
 <tr>
 <td><code>paddlex_config</code></td>
-<td><b>Meaning:</b>The file path for PaddleX pipeline configuration.</td>
+<td><b>Meaning:</b> Path to the PaddleX pipeline configuration file.</td>
 <td><code>str</code></td>
 <td><code>None</code></td>
-<td></td>
 </tr>
 </tbody>
 </table>
@@ -1178,6 +1242,7 @@ Setting it to <code>None</code> means using the instantiation parameter; otherwi
 <td><code>str|None</code></td>
 <td><code>None</code></td>
 </tr>
+
 <tr>
 <td><code>format_block_content</code></td>
 <td><b>Meaning:</b>The parameter meaning is basically the same as the instantiation parameter. <br/>
@@ -1578,7 +1643,7 @@ docker run \
 
 **The PaddleOCR CLI has already resolved complex version compatibility issues. Instead of spending time studying framework documentation, you can install the necessary environment with a single command.**
 
-Due to potential dependency conflicts between inference acceleration frameworks and PaddlePaddle, it is recommended to install them in a virtual environment:
+Since inference acceleration frameworks may conflict with packages already installed in the current environment, it is recommended to install them in a virtual environment:
 
 ```shell
 # If a virtual environment is currently activated, deactivate it first using `deactivate`
@@ -1923,6 +1988,12 @@ Then, start the server using the PaddleX CLI:
 
 ```shell
 paddlex --serve --pipeline PaddleOCR-VL
+```
+
+To switch to the `transformers` engine for service deployment, use:
+
+```shell
+paddlex --serve --pipeline PaddleOCR-VL --engine transformers
 ```
 
 After startup, you will see output similar to the following, with the server listening on port **8080** by default:

@@ -252,6 +252,8 @@ In addition to providing an outstanding model library, PaddleOCR 3.0 also offers
 </details>
 
 ## ⚡ Quick Start
+> The local installation and inference examples in this section use PaddlePaddle as the default backend. PaddleOCR also supports other inference engines; for alternative backend options, see the [Inference Engine Guide](./docs/version3.x/inference_engine.en.md).
+
 ### 1. Run online demo 
 [![AI Studio](https://img.shields.io/badge/PP_OCRv5-AI_Studio-green)](https://aistudio.baidu.com/community/app/91660/webUI)
 [![AI Studio](https://img.shields.io/badge/PP_StructureV3-AI_Studio-green)](https://aistudio.baidu.com/community/app/518494/webUI)

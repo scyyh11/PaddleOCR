@@ -378,9 +378,9 @@ PP-OCRv5_mobile_det
 </tr>
 <tr>
 <td><code>precision</code></td>
-<td>计算精度，如 <code>fp32</code>、<code>fp16</code>。</td>
+<td>计算精度，如 <code>"fp32"</code>、<code>"fp16"</code>。</td>
 <td><code>str</code></td>
-<td><code>fp32</code></td>
+<td><code>"fp32"</code></td>
 </tr>
 <tr>
 <td><code>enable_mkldnn</code></td>
