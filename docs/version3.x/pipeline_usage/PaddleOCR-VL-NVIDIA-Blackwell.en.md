@@ -18,6 +18,9 @@ PaddleOCR-VL has been verified for accuracy and speed on the RTX 5070. However, 
 
 Before starting the tutorial, **please ensure that your NVIDIA driver supports CUDA 12.9 or higher**.
 
+> TIP:
+> Before reading this hardware-specific tutorial, we recommend first reading the [Process Guide](./PaddleOCR-VL.en.md#process-guide) in the main [PaddleOCR-VL Usage Tutorial](./PaddleOCR-VL.en.md) to determine which chapters apply to your goal, and then returning here to read the corresponding sections.
+
 ## 1. Environment Preparation
 
 This section introduces how to set up the PaddleOCR-VL runtime environment using one of the following two methods:
@@ -77,9 +80,9 @@ python -m pip install -U "paddleocr[doc-parser]"
 
 Please refer to [PaddleOCR-VL Usage Tutorial - 2. Quick Start](./PaddleOCR-VL.en.md#2-quick-start).
 
-## 3. Improving VLM Inference Performance Using Inference Acceleration Frameworks
+## 3. Improving Inference Performance with VLM Inference Services
 
-The inference performance under default configurations may not be fully optimized and may not meet actual production requirements. This section introduces how to use the vLLM and SGLang inference acceleration frameworks to enhance PaddleOCR-VL's inference performance.
+The inference performance under default configurations may not be fully optimized and may not meet actual production requirements. This section introduces how to improve PaddleOCR-VL inference performance through a VLM inference service. In this hardware-specific guide, the examples use vLLM and SGLang as the backends for the VLM inference service.
 
 ### 3.1 Starting the VLM Inference Service
 
@@ -174,7 +177,7 @@ The parameters supported by this command are as follows:
 
 ### 3.2 Client Usage
 
-Please refer to [PaddleOCR-VL Usage Tutorial - 3.2 Client Usage](./PaddleOCR-VL.en.md#32-client-usage-methods).
+For client-side invocation methods, please refer to [PaddleOCR-VL Usage Tutorial - 3.2 Client Usage Methods](./PaddleOCR-VL.en.md#32-client-usage-methods). If you run the client on this hardware, make sure to specify `device="gpu"`.
 
 ### 3.3 Performance Tuning
 
