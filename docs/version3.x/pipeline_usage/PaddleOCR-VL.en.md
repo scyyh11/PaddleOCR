@@ -82,7 +82,7 @@ Currently, PaddleOCR-VL offers seven inference methods, with varying levels of s
     <td>🚧</td>
   </tr>
   <tr style="text-align: center;">
-    <td>PaddlePaddle + vLLM</td>
+    <td>PaddlePaddle/Transformers + vLLM</td>
     <td>✅</td>
     <td>🚧</td>
     <td>✅</td>
@@ -93,7 +93,7 @@ Currently, PaddleOCR-VL offers seven inference methods, with varying levels of s
     <td>-</td>
   </tr>
   <tr style="text-align: center;">
-    <td>PaddlePaddle + SGLang</td>
+    <td>PaddlePaddle/Transformers + SGLang</td>
     <td>✅</td>
     <td>🚧</td>
     <td>🚧</td>
@@ -104,7 +104,7 @@ Currently, PaddleOCR-VL offers seven inference methods, with varying levels of s
     <td>-</td>
   </tr>
   <tr style="text-align: center;">
-    <td>PaddlePaddle + FastDeploy</td>
+    <td>PaddlePaddle/Transformers + FastDeploy</td>
     <td>✅</td>
     <td>✅</td>
     <td>🚧</td>
@@ -115,7 +115,7 @@ Currently, PaddleOCR-VL offers seven inference methods, with varying levels of s
     <td>-</td>
   </tr>
   <tr style="text-align: center;">
-    <td>PaddlePaddle + MLX-VLM</td>
+    <td>PaddlePaddle/Transformers + MLX-VLM</td>
     <td>-</td>
     <td>-</td>
     <td>-</td>
@@ -126,7 +126,7 @@ Currently, PaddleOCR-VL offers seven inference methods, with varying levels of s
     <td>✅</td>
   </tr>
   <tr style="text-align: center;">
-    <td>PaddlePaddle + llama.cpp</td>
+    <td>PaddlePaddle/Transformers + llama.cpp</td>
     <td>✅</td>
     <td>🚧</td>
     <td>🚧</td>
@@ -140,12 +140,13 @@ Currently, PaddleOCR-VL offers seven inference methods, with varying levels of s
 </table>
 
 <details><summary>Explanation of Inference Method</summary>
-"PaddlePaddle" indicates that both the layout detection model and the VLM use the PaddlePaddle framework for inference. This is the default mode for the PaddleOCR CLI and Python API. "Transformers" indicates that both the layout detection model and the VLM are inferred through the Transformers engine. Other inference methods follow the format "Layout Detection Model Inference Method + VLM Inference Method". For example, "PaddlePaddle + vLLM" means the layout detection model uses PaddlePaddle, while the VLM uses vLLM.
+"PaddlePaddle" indicates that both the layout detection model and the VLM use the PaddlePaddle framework for inference. This is the default mode for the PaddleOCR CLI and Python API. "Transformers" indicates that both the layout detection model and the VLM use the Transformers engine for inference. Other inference methods follow the format "Layout Detection Model Inference Method + VLM Inference Method". For example, "PaddlePaddle/Transformers + vLLM" means that the layout detection model uses PaddlePaddle or Transformers for inference, while the VLM uses vLLM.
 </details>
 
 > TIP:
 > - When using NVIDIA GPU for inference, ensure that the Compute Capability (CC) and CUDA version meet the requirements:
 > >  - PaddlePaddle: CC ≥ 7.0, CUDA ≥ 11.8
+> >  - Transformers: CC ≥ 7.0, CUDA ≥ 11.8
 > >  - vLLM: CC ≥ 8.0, CUDA ≥ 12.6
 > >  - SGLang: 8.0 ≤ CC < 12.0, CUDA ≥ 12.6
 > >  - FastDeploy: 8.0 ≤ CC < 12.0, CUDA ≥ 12.6
@@ -272,7 +273,7 @@ paddleocr doc_parser -i ./paddleocr_vl_demo.png --device metax_gpu
 paddleocr doc_parser -i ./paddleocr_vl_demo.png --device cpu
 
 # Huawei Ascend NPU 
-# Huawei Ascend NPU please refer to Chapter 3 for inference using PaddlePaddle + vLLM
+# Huawei Ascend NPU please refer to Chapter 3 for inference using PaddlePaddle/Transformers + vLLM
 
 # Use --use_doc_orientation_classify to enable document orientation classification
 paddleocr doc_parser -i ./paddleocr_vl_demo.png --use_doc_orientation_classify True
@@ -711,7 +712,7 @@ pipeline = PaddleOCRVL()
 # Apple Silicon
 # pipeline = PaddleOCRVL(device="cpu")
 # Huawei Ascend NPU 
-# Huawei Ascend NPU please refer to Chapter 3 for inference using PaddlePaddle + vLLM
+# Huawei Ascend NPU please refer to Chapter 3 for inference using PaddlePaddle/Transformers + vLLM
 
 # pipeline = PaddleOCRVL(use_doc_orientation_classify=True) # Use use_doc_orientation_classify to enable/disable document orientation classification model
 # pipeline = PaddleOCRVL(use_doc_unwarping=True) # Use use_doc_unwarping to enable/disable document unwarping module
@@ -1564,7 +1565,7 @@ Setting it to <code>None</code> means using the instantiation parameter; otherwi
 
 ## 3. Enhancing VLM Inference Performance Using Inference Acceleration Frameworks
 
-The inference performance under default configurations is not fully optimized and may not meet actual production requirements. This step primarily introduces how to use the vLLM, SGLang and FastDeploy inference acceleration frameworks to enhance the inference performance of PaddleOCR-VL.
+Using only PaddlePaddle or Transformers usually does not provide optimal inference performance. This section mainly introduces how to use inference acceleration frameworks such as vLLM, SGLang, and FastDeploy to improve PaddleOCR-VL inference performance.
 
 ### 3.1 Launching the VLM Inference Service
 

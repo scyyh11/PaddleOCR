@@ -13,7 +13,7 @@ If `engine` is not explicitly specified, the default behavior remains the same a
 In PaddleOCR, an inference engine refers to the underlying runtime used to execute a model. It determines which runtime loads and runs the model. You can think of it as "the backend actually used during model inference." When using an inference engine, users usually only need to care about two things:
 
 - which type of inference engine to use;
-- whether extra engine-specific configuration needs to be passed.
+- how to configure the inference engine.
 
 ## 2. Inference Engines Currently Supported by PaddleOCR
 
@@ -43,7 +43,7 @@ python -m pip install transformers
 
 In many cases, you also need to install the underlying inference framework. For details, see the [Transformers official documentation](https://huggingface.co/docs/transformers/installation).
 
-## 4. How to Set `engine` and `engine_config`
+## 4. Configuration and Supported Values of `engine` and `engine_config`
 
 ### 4.1 `engine`
 
@@ -59,7 +59,7 @@ In many cases, you also need to install the underlying inference framework. For 
 
 ### 4.2 `engine_config`
 
-`engine_config` is used to configure the inference engine and is recommended to be used together with `engine`. Common `engine_config` fields by engine are listed below:
+`engine_config` is used to configure the inference engine and is recommended to be used together with `engine`. Common `engine_config` fields for each engine are listed below:
 
 #### `paddle_static`
 
@@ -98,7 +98,7 @@ Common fields include:
 - `generation_config`: generation parameters, such as `max_new_tokens` and `temperature`;
 - `model_kwargs`: extra arguments passed to the model loading API;
 - `processor_kwargs`: extra arguments passed to the processor / image processor loading API;
-- `tokenizer_kwargs`: a compatibility-preserved field that is merged into `processor_kwargs`.
+- `tokenizer_kwargs`: a compatibility-preserved field that is merged with `processor_kwargs`.
 
 ### 4.3 Priority and Override Rules
 
@@ -158,7 +158,7 @@ paddleocr ocr -i general_ocr_001.png --engine paddle_static
 
 ### 5.5 Pipeline (Python API): configure the inference engine for a specific module
 
-If you want to specify `engine` and `engine_config` for a specific module inside a pipeline, you can first export the configuration file, modify the corresponding module configuration, and then load it back. For how to export, edit, and load the configuration file, see [Using PaddleX Pipeline Configuration Files](./paddleocr_and_paddlex.en.md#3-using-paddlex-pipeline-configuration-files). Example:
+If you want to specify `engine` and `engine_config` for a specific module inside a pipeline, you can first export the configuration file, modify the corresponding module configuration, and then load it. For how to export, edit, and load the configuration file, see [Using PaddleX Pipeline Configuration Files](./paddleocr_and_paddlex.en.md#3-using-paddlex-pipeline-configuration-files). Example:
 
 First, export the pipeline configuration file:
 

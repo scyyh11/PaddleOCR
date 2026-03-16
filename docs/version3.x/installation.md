@@ -8,11 +8,9 @@ comments: true
 
 ### 1.1 安装推理引擎
 
-PaddleOCR 3.5 引入了统一的推理引擎配置概念，底层支持飞桨框架、Transformers 等不同推理引擎。如果希望执行产线/模型推理，请参考 [推理引擎与配置说明](./inference_engine.md) 安装相关推理引擎。
+PaddleOCR 3.5 引入了统一的推理引擎配置概念，底层支持飞桨框架、Transformers 等不同推理引擎。如果希望执行产线/模型推理，请参考 [推理引擎与配置说明](./inference_engine.md) 安装相关推理引擎；如果只希望使用 PaddleOCR 推理以外的功能，可跳过此步骤。
 
 ### 1.2 安装 PaddleOCR 推理包
-
-在完成推理引擎安装后，再安装 PaddleOCR 推理包。
 
 从 PyPI 安装最新版本 PaddleOCR 推理包：
 
