@@ -19,19 +19,19 @@ In PaddleOCR, an inference engine refers to the underlying runtime used to execu
 
 | Engine category | `engine` values | Description |
 | - | - | - |
-| Paddle framework | `paddle`, `paddle_static`, `paddle_dynamic` | Runs on the Paddle framework. `paddle` is the unified entry and selects `paddle_static` or `paddle_dynamic` according to the model type and files in the model directory. |
+| PaddlePaddle framework | `paddle`, `paddle_static`, `paddle_dynamic` | Runs on the Paddle framework. |
 | Transformers | `transformers` | Runs on Hugging Face Transformers. |
 
-- `paddle`: unified Paddle framework entry.
-- `paddle_static`: Paddle static-graph inference, suitable for scenarios that require better inference performance or more fine-grained performance tuning.
-- `paddle_dynamic`: Paddle dynamic-graph inference.
-- `transformers`: Hugging Face Transformers inference.
+- `paddle`: The unified entry point for the PaddlePaddle framework. It selects `paddle_static` or `paddle_dynamic` according to the model type and files in the model directory. If both are available, `paddle_static` is preferred.
+- `paddle_static`: PaddlePaddle static-graph inference, suitable for scenarios that require better inference performance or more fine-grained performance tuning.
+- `paddle_dynamic`: PaddlePaddle dynamic-graph inference, which is more flexible and easier to debug compared to static graph.
+- `transformers`: Hugging Face Transformers inference, making it convenient to integrate with the Hugging Face ecosystem.
 
 ## 3. Installation by Inference Engine
 
-### 3.1 Paddle framework
+### 3.1 PaddlePaddle framework
 
-When using the Paddle framework for inference, you need to install PaddlePaddle first. For installation instructions, see [Paddle Framework Installation](./paddlepaddle_installation.en.md).
+When using the PaddlePaddle framework for inference, you need to install PaddlePaddle first. For installation instructions, see [PaddlePaddle Framework Installation](./paddlepaddle_installation.en.md).
 
 ### 3.2 Transformers
 
@@ -51,8 +51,8 @@ In many cases, you also need to install the underlying inference framework. For 
 
 | Value | Meaning | Description |
 | - | - | - |
-| `None` | No explicit engine specified | The default behavior remains the same as earlier versions of PaddleOCR: except for a few scenarios such as high-performance inference and generative AI client request features, PaddleOCR uses the Paddle framework for inference in most cases. |
-| `paddle` | Unified Paddle framework entry | Automatically selects `paddle_static` or `paddle_dynamic`. |
+| `None` | No explicit engine specified | The default behavior remains the same as earlier versions of PaddleOCR: except for a few scenarios such as high-performance inference and generative AI client request features, PaddleOCR uses the PaddlePaddle framework for inference in most cases. |
+| `paddle` | Unified PaddlePaddle framework entry | Automatically selects `paddle_static` or `paddle_dynamic`. |
 | `paddle_static` | Static-graph inference | Uses Paddle static-graph inference. |
 | `paddle_dynamic` | Dynamic-graph inference | Uses Paddle dynamic-graph inference. |
 | `transformers` | Transformers inference | Uses Hugging Face Transformers inference. |

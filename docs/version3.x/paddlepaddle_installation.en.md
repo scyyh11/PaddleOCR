@@ -2,11 +2,11 @@
 comments: true
 ---
 
-# Paddle Framework Installation
+# PaddlePaddle Framework Installation
 
-This document explains how to install PaddlePaddle. The following scenarios usually require the Paddle framework to be installed first:
+This document explains how to install PaddlePaddle. The following scenarios usually require the PaddlePaddle framework to be installed first:
 
-- using the Paddle framework as the inference engine for pipeline/model inference;
+- using the PaddlePaddle framework as the inference engine for pipeline/model inference;
 - performing development tasks such as model training and export.
 
 ## 1. Install PaddlePaddle with Docker
