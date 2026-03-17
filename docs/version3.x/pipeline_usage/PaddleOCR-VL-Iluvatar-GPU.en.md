@@ -47,7 +47,7 @@ If you wish to start the service in an environment without internet access, repl
 
 ### 1.2 Method 2: Manually Install PaddlePaddle and PaddleOCR
 
-If you cannot use Docker, you can also manually install PaddlePaddle and PaddleOCR. Python version 3.8–3.12 is required.
+If you cannot use Docker, you can also manually install PaddlePaddle and PaddleOCR. Python version 3.8–3.13 is required.
 
 **We strongly recommend installing PaddleOCR-VL in a virtual environment to avoid dependency conflicts.** For example, use the Python venv standard library to create a virtual environment:
 
@@ -61,7 +61,7 @@ source .venv_paddleocr/bin/activate
 Execute the following commands to complete the installation:
 
 ```shell
-python -m pip install paddlepaddle==3.2.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
+python -m pip install paddlepaddle==3.3.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
 python -m pip install paddle-iluvatar-gpu==3.2.0 -i https://www.paddlepaddle.org.cn/packages/stable/maca/
 python -m pip install -U "paddleocr[doc-parser]"
 ```
