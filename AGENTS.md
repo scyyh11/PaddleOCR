@@ -89,4 +89,4 @@ PaddleOCR 3.x is **not backwards compatible** with 2.x. Never generate 2.x-style
 Read these as needed — don't load them all upfront:
 - `agent_docs/inference_api.md` — Pipelines, models, constructor params, CLI, usage patterns
 - `agent_docs/training.md` — Training commands, config YAML structure, internal framework
-- `agent_docs/config_system.md` — YAML config structure, sections, overrides, transforms, builder flow
+- `agent_docs/config_system.md` — Training YAML configs AND inference PaddleX configs (two separate systems)

@@ -1,10 +1,22 @@
 # Config System
 
-## Overview
+PaddleOCR has **two separate config systems** — one for training and one for inference. They are unrelated.
+
+| | Training Config | Inference Config |
+|---|---|---|
+| **Used by** | `tools/train.py`, `tools/eval.py` | `paddleocr` Python API & CLI |
+| **Format** | YAML files in `configs/` | PaddleX pipeline config (dict/YAML) |
+| **Loading** | `tools/program.py` | PaddleX's `load_pipeline_config()` |
+
+---
+
+## Part 1: Training Config
+
+### Overview
 
 Training configs are YAML files in `configs/`, organized by task: `det/`, `rec/`, `cls/`, `table/`, `e2e/`, `kie/`, `sr/`. Config loading logic lives in `tools/program.py`.
 
-## Running with Configs
+### Running with Configs
 
 ```bash
 # Basic training
@@ -19,7 +31,7 @@ python3 -m paddle.distributed.launch --gpus '0,1,2,3' tools/train.py -c config.y
 
 The `-o` flag parses values as YAML: `true` → bool, `[1,2,3]` → list, `0.001` → float.
 
-## Top-Level Sections
+### Top-Level Sections
 
 Every config has these top-level keys:
 
@@ -34,7 +46,7 @@ Eval:          # Evaluation dataset (optional)
 Metric:        # Evaluation metric
 ```
 
-## Global
+### Global
 
 Common keys:
 
@@ -68,7 +80,7 @@ Global:
   amp_dtype: float16                # float16 or bfloat16
 ```
 
-## Architecture
+### Architecture
 
 Defines the model as composable components:
 
@@ -110,7 +122,7 @@ Architecture:
       Head: { name: DBHead, k: 50 }
 ```
 
-## Optimizer
+### Optimizer
 
 ```yaml
 Optimizer:
@@ -131,7 +143,7 @@ Available LR schedulers (defined in `ppocr/optimizer/learning_rate.py`):
 - `Const`, `Linear`, `Cosine`, `Step`, `Piecewise`, `MultiStepDecay`
 - `LinearWarmupCosine`, `CyclicalCosine`, `OneCycle`, `TwoStepCosine`
 
-## Train / Eval (Dataset + Transforms)
+### Train / Eval (Dataset + Transforms)
 
 ```yaml
 Train:
@@ -163,7 +175,7 @@ Train:
 
 Transforms execute in order. Each is `{ TransformName: { params } }`. Available transforms are in `ppocr/data/imaug/`.
 
-## YAML Anchors
+### YAML Anchors
 
 Configs use YAML anchors to avoid repeating values:
 
@@ -182,7 +194,7 @@ Train:
           max_text_length: *max_text_length
 ```
 
-## Config Loading Flow
+### Config Loading Flow
 
 ```
 config.yml → load_config() → dict
@@ -202,7 +214,7 @@ config.yml → load_config() → dict
 Config loading: `tools/program.py` (`load_config`, `merge_config`, `ArgsParser`).
 Builder functions: `ppocr/data/__init__.py`, `ppocr/modeling/architectures/__init__.py`, `ppocr/losses/__init__.py`, `ppocr/optimizer/__init__.py`, `ppocr/postprocess/__init__.py`, `ppocr/metrics/__init__.py`.
 
-## Key File Locations
+### Key File Locations (Training)
 
 | What | Where |
 |------|-------|
@@ -211,3 +223,136 @@ Builder functions: `ppocr/data/__init__.py`, `ppocr/modeling/architectures/__ini
 | LR schedulers | `ppocr/optimizer/learning_rate.py` |
 | Data transforms | `ppocr/data/imaug/` |
 | Component registries | `ppocr/modeling/{backbones,necks,heads}/__init__.py` |
+
+---
+
+## Part 2: Inference Config (PaddleX)
+
+### Overview
+
+Inference in PaddleOCR 3.x is powered by PaddleX. Configuration flows through a layered system:
+
+```
+PaddleX built-in defaults → paddlex_config parameter → constructor kwargs → CLI args
+```
+
+Each layer overrides the previous. Users rarely need to touch PaddleX configs directly — constructor parameters are the primary interface.
+
+### Configuration via Constructor Parameters
+
+```python
+from paddleocr import PaddleOCR
+
+# Most common: use constructor kwargs to configure
+ocr = PaddleOCR(
+    text_detection_model_name="PP-OCRv5_server_det",
+    text_recognition_model_name="en_PP-OCRv5_mobile_rec",
+    text_det_limit_side_len=1280,
+    text_det_thresh=0.3,
+    text_rec_score_thresh=0.5,
+)
+
+# Runtime options (device, precision, acceleration)
+ocr = PaddleOCR(
+    device="gpu:0",
+    enable_hpi=True,
+    use_tensorrt=True,
+    precision="fp16",
+)
+```
+
+### Configuration via paddlex_config
+
+For advanced use, pass a PaddleX config dict or YAML path directly:
+
+```python
+# Dict form
+ocr = PaddleOCR(paddlex_config={
+    "SubModules": {
+        "TextDetection": {
+            "model_name": "PP-OCRv5_server_det",
+            "thresh": 0.25,
+        }
+    }
+})
+
+# Or a config name that PaddleX resolves
+ocr = PaddleOCR(paddlex_config="OCR")
+```
+
+### PaddleX Config Structure
+
+PaddleX configs use a nested dict with `SubModules` (individual models) and `SubPipelines` (nested pipelines):
+
+```yaml
+# Pipeline-level toggles
+use_doc_orientation_classify: false
+use_doc_unwarping: false
+
+# Individual models
+SubModules:
+  TextDetection:
+    model_name: PP-OCRv5_server_det
+    thresh: 0.3
+    batch_size: 1
+  TextRecognition:
+    model_name: ch_PP-OCRv5_server_rec
+    score_thresh: 0.5
+    batch_size: 8
+
+# Nested sub-pipelines
+SubPipelines:
+  DocPreprocessor:
+    SubModules:
+      DocOrientationClassify:
+        model_name: PP-LCNet_x1_0_doc_ori
+```
+
+### How Constructor Params Map to PaddleX Config
+
+Each pipeline class implements `_get_paddlex_config_overrides()` that maps constructor kwargs to PaddleX config paths using dot notation:
+
+```python
+# Example mapping (from paddleocr/_pipelines/ocr.py)
+"SubModules.TextDetection.model_name"  ← text_detection_model_name
+"SubModules.TextDetection.thresh"      ← text_det_thresh
+"SubModules.TextRecognition.score_thresh" ← text_rec_score_thresh
+```
+
+The utility `create_config_from_structure()` in `paddleocr/_pipelines/utils.py` converts these dot-notation mappings into nested dicts, which are then deep-merged with the base PaddleX config.
+
+### Exporting Config
+
+To inspect or save the merged config:
+
+```python
+ocr = PaddleOCR(text_det_thresh=0.3)
+ocr.export_paddlex_config_to_yaml("my_config.yaml")
+```
+
+### Common Runtime Options
+
+These apply to all pipelines and models:
+
+| Parameter | Description |
+|-----------|-------------|
+| `device` | `"gpu:0"`, `"cpu"`, `"npu:0"` |
+| `enable_hpi` | High-performance inference |
+| `use_tensorrt` | TensorRT acceleration (GPU only) |
+| `precision` | `"fp32"`, `"fp16"` |
+| `enable_mkldnn` | MKL-DNN acceleration (CPU only) |
+| `cpu_threads` | Number of CPU threads |
+| `enable_cinn` | CINN compiler optimization |
+
+Handled by `parse_common_args()` and `prepare_common_init_args()` in `paddleocr/_common_args.py`.
+
+### Key File Locations (Inference)
+
+| What | Where |
+|------|-------|
+| Pipeline base class | `paddleocr/_pipelines/base.py` (`PaddleXPipelineWrapper`) |
+| Model base class | `paddleocr/_models/base.py` (`PaddleXPredictorWrapper`) |
+| Common args parsing | `paddleocr/_common_args.py` |
+| Config structure util | `paddleocr/_pipelines/utils.py` |
+| Default constants | `paddleocr/_constants.py` |
+| Config override examples | `paddleocr/_pipelines/ocr.py`, `paddleocr/_pipelines/pp_structurev3.py` |
