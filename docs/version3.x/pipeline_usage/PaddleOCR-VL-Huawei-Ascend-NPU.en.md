@@ -59,7 +59,7 @@ source .venv_paddleocr/bin/activate
 Execute the following commands to complete the installation:
 
 ```shell
-python -m pip install paddlepaddle==3.3.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
+python -m pip install paddlepaddle==3.2.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
 python -m pip install paddle-custom-npu==3.2.0 -i https://www.paddlepaddle.org.cn/packages/stable/npu/
 python -m pip install -U "paddleocr[doc-parser]"
 ```

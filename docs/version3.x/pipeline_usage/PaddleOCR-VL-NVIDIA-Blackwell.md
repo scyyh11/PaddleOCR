@@ -67,7 +67,7 @@ source .venv_paddleocr/bin/activate
 
 ```shell
 # 注意这里安装的是 cu129 的 PaddlePaddle
-python -m pip install paddlepaddle-gpu==3.3.0 -i https://www.paddlepaddle.org.cn/packages/stable/cu129/
+python -m pip install paddlepaddle-gpu==3.2.1 -i https://www.paddlepaddle.org.cn/packages/stable/cu129/
 python -m pip install -U "paddleocr[doc-parser]"
 ```
 

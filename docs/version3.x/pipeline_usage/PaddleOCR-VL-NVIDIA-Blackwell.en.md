@@ -67,7 +67,7 @@ Run the following commands to complete the installation:
 
 ```shell
 # Note that PaddlePaddle for cu129 is being installed here
-python -m pip install paddlepaddle-gpu==3.3.0 -i https://www.paddlepaddle.org.cn/packages/stable/cu129/
+python -m pip install paddlepaddle-gpu==3.2.1 -i https://www.paddlepaddle.org.cn/packages/stable/cu129/
 python -m pip install -U "paddleocr[doc-parser]"
 ```
 
