@@ -70,6 +70,8 @@ Hardware-specific usage tutorials:
 | Iluvatar GPU   | [PaddleOCR-VL Iluvatar GPU Usage Tutorial](./PaddleOCR-VL-Iluvatar-GPU.en.md) |
 | Huawei Ascend NPU | [PaddleOCR-VL Huawei Ascend NPU Usage Tutorial](./PaddleOCR-VL-Huawei-Ascend-NPU.en.md) |
 | Apple Silicon  | [PaddleOCR-VL Apple Silicon Usage Tutorial](./PaddleOCR-VL-Apple-Silicon.en.md) |
+| AMD GPU         | [PaddleOCR-VL AMD GPU Usage Tutorial](./PaddleOCR-VL-AMD-GPU.en.md) |
+| Intel Arc GPU        | [PaddleOCR-VL Intel Arc GPU Usage Tutorial](./PaddleOCR-VL-Intel-Arc-GPU.en.md) |
 
 ## Inference Device Support for PaddleOCR-VL
 
@@ -87,6 +89,8 @@ PaddleOCR-VL currently provides multiple inference methods, and the supported in
     <th>Huawei Ascend NPU</th>
     <th>x64 CPU</th>
     <th>Apple Silicon</th>
+    <th>AMD GPU</th>
+    <th>Intel Arc GPU</th>
   </tr>
 </thead>
 <tbody>
@@ -98,6 +102,8 @@ PaddleOCR-VL currently provides multiple inference methods, and the supported in
     <td>✅</td>
     <td>✅</td>
     <td>🚧</td>
+    <td>✅</td>
+    <td>✅</td>
     <td>✅</td>
     <td>✅</td>
   </tr>
@@ -122,6 +128,8 @@ PaddleOCR-VL currently provides multiple inference methods, and the supported in
     <td>✅</td>
     <td>-</td>
     <td>-</td>
+    <td>✅</td>
+    <td>✅</td>
   </tr>
   <tr style="text-align: center;">
     <td>PaddlePaddle + SGLang</td>
@@ -133,6 +141,8 @@ PaddleOCR-VL currently provides multiple inference methods, and the supported in
     <td>🚧</td>
     <td>-</td>
     <td>-</td>
+    <td>🚧</td>
+    <td>🚧</td>
   </tr>
   <tr style="text-align: center;">
     <td>PaddlePaddle + FastDeploy</td>
@@ -144,6 +154,8 @@ PaddleOCR-VL currently provides multiple inference methods, and the supported in
     <td>🚧</td>
     <td>-</td>
     <td>-</td>
+    <td>🚧</td>
+    <td>🚧</td>
   </tr>
   <tr style="text-align: center;">
     <td>PaddlePaddle + MLX-VLM</td>
@@ -155,6 +167,8 @@ PaddleOCR-VL currently provides multiple inference methods, and the supported in
     <td>-</td>
     <td>-</td>
     <td>✅</td>
+    <td>-</td>
+    <td>-</td>
   </tr>
   <tr style="text-align: center;">
     <td>PaddlePaddle + llama.cpp</td>
@@ -165,6 +179,8 @@ PaddleOCR-VL currently provides multiple inference methods, and the supported in
     <td>🚧</td>
     <td>🚧</td>
     <td>✅</td>
+    <td>🚧</td>
+    <td>🚧</td>
     <td>🚧</td>
   </tr>
   <tr style="text-align: center;">
@@ -291,7 +307,7 @@ The image comes preinstalled with the PaddlePaddle framework and does not includ
 
 ### 1.2 Method 2: Manually Install the Inference Engine and PaddleOCR
 
-To install the inference engine and PaddleOCR manually, follow the steps below.
+If you cannot use Docker, you can manually install PaddlePaddle and PaddleOCR. The required Python version is 3.8–3.13.
 
 **We strongly recommend installing PaddleOCR-VL in a virtual environment to avoid dependency conflicts.** For example, use the Python venv standard library to create a virtual environment:
 

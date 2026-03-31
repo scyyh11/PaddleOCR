@@ -2,14 +2,14 @@
 comments: true
 ---
 
-# PaddleOCR-VL Hygon DCU Usage Tutorial
+# PaddleOCR-VL Intel Arc GPU Usage Tutorial
 
 > INFO:
 > Unless otherwise specified, the term "PaddleOCR-VL" in this tutorial refers to the PaddleOCR-VL model series (e.g., PaddleOCR-VL-1.5). References specific to the PaddleOCR-VL v1 version will be explicitly noted.
 
-This tutorial is a guide for using PaddleOCR-VL on Hygon DCU covering the complete workflow from environment preparation to service deployment.
+This tutorial is a guide for using PaddleOCR-VL on Intel Arc GPU covering the complete workflow from environment preparation to service deployment.
 
-PaddleOCR-VL has been verified for accuracy and speed on the Hygon K100AI. However, due to hardware diversity, compatibility with other Hygon DCUs has not yet been confirmed. We welcome the community to test on different hardware setups and share your results.
+PaddleOCR-VL has been verified for accuracy and speed on the Intel Arc B60 Pro. However, due to hardware diversity, compatibility with other Intel Arc GPUs has not yet been confirmed. We welcome the community to test on different hardware setups and share your results.
 
 > TIP:
 > Before reading this hardware-specific tutorial, we recommend first reading the [Process Guide](./PaddleOCR-VL.en.md#process-guide) in the main [PaddleOCR-VL Usage Tutorial](./PaddleOCR-VL.en.md) to determine which chapters apply to your goal, and then returning here to read the corresponding sections.
@@ -30,29 +30,21 @@ We recommend using the official Docker image (requires Docker version >= 19.03):
 
 ```shell
 docker run -it \
-  --rm \
   --user root \
-  --privileged \
-  --device /dev/kfd \
-  --device /dev/dri \
-  --device /dev/mkfd \
-  --group-add video \
-  --cap-add SYS_PTRACE \
-  --security-opt seccomp=unconfined \
-  -v /opt/hyhal/:/opt/hyhal/:ro \
+  --device /dev:/dev \
   --shm-size 64g \
   --network host \
-  ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-vl:latest-hygon-dcu \
+  ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-vl:latest-intel-gpu \
   /bin/bash
 # Call PaddleOCR CLI or Python API in the container
 ```
 
-If you wish to start the service in an environment without internet access, replace `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-vl:latest-hygon-dcu` (image size approximately 22 GB) in the above command with the offline version image `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-vl:latest-hygon-dcu-offline` (image size approximately 24 GB).
+If you wish to start the service in an environment without internet access, replace `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-vl:latest-intel-gpu` (image size approximately 31 GB) in the above command with the offline version image `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-vl:latest-intel-gpu-offline` (image size approximately 33 GB).
 
 > TIP:
 > Images with the `latest-xxx` tag correspond to the latest version of PaddleOCR. If you want to use a specific version of the PaddleOCR image, you can replace `latest` in the tag with the desired version number: `paddleocr<major>.<minor>`.
 > For example:
-> `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-vl:paddleocr3.3-hygon-dcu-offline`
+> `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-vl:paddleocr3.4-intel-gpu-offline`
 
 ### 1.2 Method 2: Manually Install PaddlePaddle and PaddleOCR
 
@@ -70,7 +62,7 @@ source .venv_paddleocr/bin/activate
 Execute the following commands to complete the installation:
 
 ```shell
-python -m pip install paddlepaddle-dcu==3.2.1 -i https://www.paddlepaddle.org.cn/packages/stable/dcu/
+python -m pip install paddlepaddle==3.2.1 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
 python -m pip install -U "paddleocr[doc-parser]"
 ```
 
@@ -78,7 +70,7 @@ python -m pip install -U "paddleocr[doc-parser]"
 
 ## 2. Quick Start
 
-Please refer to [PaddleOCR-VL Usage Tutorial - 2. Quick Start](./PaddleOCR-VL.en.md#2-quick-start), making sure to specify `device="dcu"`.
+Please refer to [PaddleOCR-VL Usage Tutorial - 2. Quick Start](./PaddleOCR-VL.en.md#2-quick-start).
 
 ## 3. Improving Inference Performance with VLM Inference Services
 
@@ -90,52 +82,38 @@ PaddleOCR provides a Docker image for quickly starting the vLLM inference servic
 
 ```shell
 docker run -it \
+  --name paddleocr_vllm \
   --user root \
-  --privileged \
-  --device /dev/kfd \
-  --device /dev/dri \
-  --device /dev/mkfd \
-  --group-add video \
-  --cap-add SYS_PTRACE \
-  --security-opt seccomp=unconfined \
-  -v /opt/hyhal/:/opt/hyhal/:ro \
+  --device /dev:/dev \
   --shm-size 64g \
   --network host \
-  ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-hygon-dcu \
+  ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-intel-gpu \
   paddleocr genai_server --model_name PaddleOCR-VL-1.5-0.9B --host 0.0.0.0 --port 8118 --backend vllm
 ```
 
-If you wish to start the service in an environment without internet access, replace `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-hygon-dcu` (image size approximately 25 GB) in the above command with the offline version image `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-hygon-dcu-offline` (image size approximately 27 GB).
+If you wish to start the service in an environment without internet access, replace `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-intel-gpu` (image size approximately 30 GB) in the above command with the offline version image `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-intel-gpu-offline` (image size approximately 32 GB).
 
 When launching the vLLM inference service, we provide a set of default parameter settings. If you need to adjust parameters such as GPU memory usage, you can configure additional parameters yourself. Please refer to [3.3.1 Server-side Parameter Adjustment](./PaddleOCR-VL.en.md#331-server-side-parameter-adjustment) to create a configuration file, then mount the file into the container and specify the configuration file using `backend_config` in the command to start the service, for example:
 
 ```shell
 docker run -it \
-  --rm \
+  --name paddleocr_vllm \
   --user root \
-  --privileged \
-  --device /dev/kfd \
-  --device /dev/dri \
-  --device /dev/mkfd \
-  --group-add video \
-  --cap-add SYS_PTRACE \
-  --security-opt seccomp=unconfined \
-  -v /opt/hyhal/:/opt/hyhal/:ro \
-  -v vllm_config.yml:/tmp/vllm_config.yml \
+  --device /dev:/dev \
   --shm-size 64g \
   --network host \
-  ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-dcu \
+  ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:latest-intel-gpu \
   paddleocr genai_server --model_name PaddleOCR-VL-1.5-0.9B --host 0.0.0.0 --port 8118 --backend vllm --backend_config /tmp/vllm_config.yml
 ```
 
 > TIP:
 > Images with the `latest-xxx` tag correspond to the latest version of PaddleOCR. If you want to use a specific version of the PaddleOCR image, you can replace `latest` in the tag with the desired version number: `paddleocr<major>.<minor>`.
 > For example:
-> `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:paddleocr3.3-hygon-dcu-offline`
+> `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:paddleocr3.4-intel-gpu-offline`
 
 ### 3.2 Client Usage Method
 
-For client-side invocation methods, please refer to [PaddleOCR-VL Usage Tutorial - 3.2 Client Usage Methods](./PaddleOCR-VL.en.md#32-client-usage-methods). If you run the client on this hardware, make sure to specify `device="dcu"`.
+For client-side invocation methods, please refer to [PaddleOCR-VL Usage Tutorial - 3.2 Client Usage Methods](./PaddleOCR-VL.en.md#32-client-usage-methods).
 
 ### 3.3 Performance Tuning
 
@@ -149,7 +127,7 @@ Please refer to [PaddleOCR-VL Usage Tutorial - 3.3 Performance Tuning](./PaddleO
 
 This step mainly introduces how to use Docker Compose to deploy PaddleOCR-VL as a service and call it. The specific process is as follows:
 
-1. Download the Compose file and the environment variable configuration file separately from [here](https://github.com/PaddlePaddle/PaddleOCR/blob/main/deploy/paddleocr_vl_docker/accelerators/hygon-dcu/compose.yaml) and [here](https://github.com/PaddlePaddle/PaddleOCR/blob/main/deploy/paddleocr_vl_docker/accelerators/hygon-dcu/.env) to your local machine.
+1. Download the Compose file and the environment variable configuration file separately from [here](https://github.com/PaddlePaddle/PaddleOCR/blob/main/deploy/paddleocr_vl_docker/accelerators/intel-gpu/compose.yaml) and [here](https://github.com/PaddlePaddle/PaddleOCR/blob/main/deploy/paddleocr_vl_docker/accelerators/intel-gpu/.env) to your local machine.
     
 2. Execute the following command in the directory where the `compose.yaml` and `.env` files are located to start the server, which listens on port **8080** by default:
 
@@ -200,20 +178,20 @@ Edit <code>paddleocr-vl-api.ports</code> in the <code>compose.yaml</code> file t
 </details>
 
 <details>
-<summary>2. Specify the DCU used by the PaddleOCR-VL service</summary>
+<summary>2. Specify the GPU used by the PaddleOCR-VL service</summary>
 
-Edit <code>environment</code> in the <code>compose.yaml</code> file to change the DCU used. For example, if you need to use card 1 for deployment, make the following modifications:
+Edit <code>environment</code> in the <code>compose.yaml</code> file to change the GPU used. For example, if you need to use card 1 for deployment, make the following modifications:
 
 ```diff
   paddleocr-vl-api:
     ...
     environment:
-+     - HIP_VISIBLE_DEVICES: 1
++     - XPU_AFFINITY_MASK: 1
     ...
   paddleocr-vlm-server:
     ...
     environment:
-+     - HIP_VISIBLE_DEVICES: 1
++     - XPU_AFFINITY_MASK: 1
     ...
 ```
 
