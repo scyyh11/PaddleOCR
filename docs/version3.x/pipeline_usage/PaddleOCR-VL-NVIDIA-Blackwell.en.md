@@ -4,6 +4,9 @@ comments: true
 
 # PaddleOCR-VL NVIDIA Blackwell-Architecture GPUs Usage Tutorial
 
+> INFO:
+> Unless otherwise specified, the term "PaddleOCR-VL" in this tutorial refers to the PaddleOCR-VL model series (e.g., PaddleOCR-VL-1.5). References specific to the PaddleOCR-VL v1 version will be explicitly noted.
+
 This tutorial provides guidance on using PaddleOCR-VL on NVIDIA Blackwell-architecture GPUs, covering the complete workflow from environment preparation to service deployment.
 
 NVIDIA Blackwell-architecture GPUs include, but are not limited to:

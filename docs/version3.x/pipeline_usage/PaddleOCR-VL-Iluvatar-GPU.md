@@ -4,6 +4,9 @@ comments: true
 
 # PaddleOCR-VL 天数 GPU 使用教程
 
+> INFO:
+> 除非另有说明，本教程中提到的 “PaddleOCR-VL” 均指 PaddleOCR-VL 系列模型（如 PaddleOCR-VL-1.5 等）；若特指 PaddleOCR-VL v1 版本，将另行明确标注。
+
 本教程是 PaddleOCR-VL 在天数 GPU 上的使用指南，涵盖了从环境准备到服务化部署的完整流程。
 
 目前 PaddleOCR-VL 已在天数天垓 150 上完成精度、速度验证；鉴于硬件环境的多样性，其他天数 GPU 的兼容性尚未验证。我们诚挚欢迎社区用户在不同硬件上进行测试并反馈您的运行结果。

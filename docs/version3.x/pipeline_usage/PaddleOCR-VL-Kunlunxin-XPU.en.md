@@ -4,6 +4,9 @@ comments: true
 
 # PaddleOCR-VL Kunlunxin XPU Usage Tutorial
 
+> INFO:
+> Unless otherwise specified, the term "PaddleOCR-VL" in this tutorial refers to the PaddleOCR-VL model series (e.g., PaddleOCR-VL-1.5). References specific to the PaddleOCR-VL v1 version will be explicitly noted.
+
 This tutorial is a guide for using PaddleOCR-VL on Kunlunxin XPU, covering the complete workflow from environment preparation to service deployment.
 
 PaddleOCR-VL has been verified for accuracy and speed on the Kunlunxin P800. However, due to hardware diversity, compatibility with other Kunlunxin XPUs has not yet been confirmed. We welcome the community to test on different hardware setups and share your results.

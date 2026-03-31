@@ -4,6 +4,9 @@ comments: true
 
 # PaddleOCR-VL Apple Silicon 使用教程
 
+> INFO:
+> 除非另有说明，本教程中提到的 “PaddleOCR-VL” 均指 PaddleOCR-VL 系列模型（如 PaddleOCR-VL-1.5 等）；若特指 PaddleOCR-VL v1 版本，将另行明确标注。
+
 本教程是 PaddleOCR-VL 在 Apple Silicon 上的使用指南，涵盖了从环境准备到服务化部署的完整流程。
 
 Apple Silicon 包括但不限于以下几种：
