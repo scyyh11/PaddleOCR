@@ -980,4 +980,4 @@ sudo apt-get install libfreetype6-dev libharfbuzz-dev
 2. 如果遇到 `Model name mismatch, please input the correct model dir. model dir is xxx, but model name is xxx` 的报错，说明指定的模型名称和传入模型不匹配。比如文本识别模型指定名称是 `PP-OCRv5_server_rec `，但传入模型是 `PP-OCRv5_mobile_rec`。
 解决：需要调整模型名称或传入的模型。例如上述例子，可以使用 `--text_recognition_model_name PP-OCRv5_mobile_rec` 指定和传入模型匹配的模型名称。
 
-2. 在 Windows 的控制台中输出出现乱码，原因可能是 Windows 控制台的字符编码是 GBK，请设置为 UTF-8 编码。
+3. 在 Windows 的控制台中输出出现乱码，原因可能是 Windows 控制台的字符编码是 GBK，请设置为 UTF-8 编码。
