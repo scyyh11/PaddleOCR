@@ -1303,6 +1303,10 @@ You're not viewing the latest version.
       
         
       
+        
+      
+        
+      
     
     
     
@@ -2030,6 +2034,62 @@ You're not viewing the latest version.
     
   
     PaddleOCR-VL Apple Silicon 使用教程
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="PaddleOCR-VL-AMD-GPU.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PaddleOCR-VL AMD GPU 使用教程
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="PaddleOCR-VL-Intel-Arc-GPU.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PaddleOCR-VL Intel Arc GPU 使用教程
   
 
     
@@ -5069,6 +5129,8 @@ PaddleOCR 为 PaddleOCR-VL 系列模型提供了统一的接口，方便用户�
     <th>华为昇腾 NPU</th>
     <th>x64 CPU</th>
     <th>Apple Silicon</th>
+    <th>AMD GPU</th>
+    <th>Intel Arc GPU</th>
   </tr>
 </thead>
 <tbody>
@@ -5082,6 +5144,8 @@ PaddleOCR 为 PaddleOCR-VL 系列模型提供了统一的接口，方便用户�
     <td>🚧</td>
     <td>✅</td>
     <td>✅</td>
+    <td>✅</td>
+    <td>✅</td>
   </tr>
   <tr style="text-align: center;">
     <td>PaddlePaddle + vLLM</td>
@@ -5093,6 +5157,8 @@ PaddleOCR 为 PaddleOCR-VL 系列模型提供了统一的接口，方便用户�
     <td>✅</td>
     <td>-</td>
     <td>-</td>
+    <td>✅</td>
+    <td>✅</td>
   </tr>
   <tr style="text-align: center;">
     <td>PaddlePaddle + SGLang</td>
@@ -5104,6 +5170,8 @@ PaddleOCR 为 PaddleOCR-VL 系列模型提供了统一的接口，方便用户�
     <td>🚧</td>
     <td>-</td>
     <td>-</td>
+    <td>🚧</td>
+    <td>🚧</td>
   </tr>
   <tr style="text-align: center;">
     <td>PaddlePaddle + FastDeploy</td>
@@ -5115,6 +5183,8 @@ PaddleOCR 为 PaddleOCR-VL 系列模型提供了统一的接口，方便用户�
     <td>🚧</td>
     <td>-</td>
     <td>-</td>
+    <td>🚧</td>
+    <td>🚧</td>
   </tr>
   <tr style="text-align: center;">
     <td>PaddlePaddle + MLX-VLM</td>
@@ -5126,6 +5196,8 @@ PaddleOCR 为 PaddleOCR-VL 系列模型提供了统一的接口，方便用户�
     <td>-</td>
     <td>-</td>
     <td>✅</td>
+    <td>-</td>
+    <td>-</td>
   </tr>
   <tr style="text-align: center;">
     <td>PaddlePaddle + llama.cpp</td>
@@ -5136,6 +5208,8 @@ PaddleOCR 为 PaddleOCR-VL 系列模型提供了统一的接口，方便用户�
     <td>🚧</td>
     <td>🚧</td>
     <td>✅</td>
+    <td>🚧</td>
+    <td>🚧</td>
     <td>🚧</td>
   </tr>
 </tbody>
@@ -5202,6 +5276,14 @@ PaddleOCR 为 PaddleOCR-VL 系列模型提供了统一的接口，方便用户�
 <tr>
 <td>Apple Silicon</td>
 <td><a href="PaddleOCR-VL-Apple-Silicon.html">PaddleOCR-VL Apple Silicon 使用教程</a></td>
+</tr>
+<tr>
+<td>AMD GPU</td>
+<td><a href="PaddleOCR-VL-AMD-GPU.html">PaddleOCR-VL AMD GPU 使用教程</a></td>
+</tr>
+<tr>
+<td>Intel Arc GPU</td>
+<td><a href="PaddleOCR-VL-Intel-Arc-GPU.html">PaddleOCR-VL Intel Arc GPU 使用教程</a></td>
 </tr>
 </tbody>
 </table>
@@ -6708,7 +6790,7 @@ PaddleOCR 为 PaddleOCR-VL 系列模型提供了统一的接口，方便用户�
 </span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="33">3.3 性能调优<a class="headerlink" href="#33" title="Permanent link">&para;</a></h3>
-<p>默认配置是在单张 NVIDIA A100 上进行调优的，并假设客户端独占服务，因此可能不适用于其他环境。如果用户在实际使用中遇到性能问题，可以尝试以下优化方法。</p>
+<p>默认配置无法保证在所有环境中取得最优性能。如果用户在实际使用中遇到性能问题，可以尝试以下优化方法。</p>
 <h4 id="331">3.3.1 服务端参数调整<a class="headerlink" href="#331" title="Permanent link">&para;</a></h4>
 <p>不同推理加速框架支持的参数不同，可参考各自官方文档了解可用参数及其调整时机：</p>
 <ul>
