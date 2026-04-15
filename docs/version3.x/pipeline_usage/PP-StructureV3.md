@@ -3164,6 +3164,12 @@ for item in markdown_images:
 <td>否</td>
 </tr>
 <tr>
+<td><code>outputFormats</code></td>
+<td><code>array</code> | <code>null</code></td>
+<td>可选。附加导出格式列表，默认不返回。当前仅支持 <code>"docx"</code>。</td>
+<td>否</td>
+</tr>
+<tr>
 <td><code>visualize</code></td>
 <td><code>boolean</code> | <code>null</code></td>
 <td>是否返回可视化结果图以及处理过程中的中间图像等。
@@ -3178,12 +3184,6 @@ for item in markdown_images:
 </code></pre>
 将默认不返回图像，通过请求体中的<code>visualize</code>参数可以覆盖默认行为。如果请求体和配置文件中均未设置（或请求体传入<code>null</code>、配置文件中未设置），则默认返回图像。
 </td>
-<td>否</td>
-</tr>
-<tr>
-<td><code>outputFormats</code></td>
-<td><code>array</code> | <code>null</code></td>
-<td>可选。附加导出格式列表，默认不返回。当前仅支持 <code>"docx"</code>。</td>
 <td>否</td>
 </tr>
 </tbody>

@@ -3279,6 +3279,12 @@ To remove the page limit, please add the following configuration to the pipeline
 <td>No</td>
 </tr>
 <tr>
+<td><code>outputFormats</code></td>
+<td><code>array</code> | <code>null</code></td>
+<td>Optional list of extra formats to return. Currently only <code>"docx"</code> is supported.</td>
+<td>No</td>
+</tr>
+<tr>
 <td><code>visualize</code></td>
 <td><code>boolean</code> | <code>null</code></td>
 <td>
@@ -3296,12 +3302,6 @@ For example, adding the following setting to the pipeline config file:<br/>
 will disable image return by default. This behavior can be overridden by explicitly setting the <code>visualize</code> parameter in the request.<br/>
 If neither the request body nor the configuration file is set (If <code>visualize</code> is set to <code>null</code> in the request and  not defined in the configuration file), the image is returned by default.
 </td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>outputFormats</code></td>
-<td><code>array</code> | <code>null</code></td>
-<td>Optional list of extra formats to return. Currently only <code>"docx"</code> is supported.</td>
 <td>No</td>
 </tr>
 </tbody>

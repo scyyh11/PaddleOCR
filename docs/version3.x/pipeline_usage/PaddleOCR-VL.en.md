@@ -2446,6 +2446,12 @@ Below are the API reference and examples of multi-language service invocation:
 <td>No</td>
 </tr>
 <tr>
+<td><code>outputFormats</code></td>
+<td><code>array</code> | <code>null</code></td>
+<td>Optional. List of extra document formats to return. By default, no extra formats are returned. Currently only <code>"docx"</code> is supported.</td>
+<td>No</td>
+</tr>
+<tr>
 <td><code>visualize</code></td>
 <td><code>boolean</code>|<code>null</code></td>
 <td>Whether to return visualization result images and intermediate images during the processing.<ul style="margin: 0 0 0 1em; padding-left: 0em;">
@@ -2456,12 +2462,6 @@ Below are the API reference and examples of multi-language service invocation:
 <br/>For example, add the following field in the configuration file:<br/>
 <pre><code>Serving:
   visualize: False</code></pre>Images will not be returned by default, and the default behavior can be overridden by the <code>visualize</code> parameter in the request body. If this parameter is not set in either the request body or the configuration file (or <code>null</code> is passed in the request body and the configuration file is not set), images will be returned by default.</td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>outputFormats</code></td>
-<td><code>array</code> | <code>null</code></td>
-<td>Optional. List of extra document formats to return. By default, no extra formats are returned. Currently only <code>"docx"</code> is supported.</td>
 <td>No</td>
 </tr>
 </tbody>

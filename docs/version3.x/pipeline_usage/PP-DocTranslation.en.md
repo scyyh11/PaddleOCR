@@ -2998,6 +2998,12 @@ Below are the API references for basic serving and examples of multi-language se
 <td>No</td>
 </tr>
 <tr>
+<td><code>outputFormats</code></td>
+<td><code>array</code> | <code>null</code></td>
+<td>Optional. Additional export formats; currently only <code>"docx"</code> is supported.</td>
+<td>No</td>
+</tr>
+<tr>
 <td><code>visualize</code></td>
 <td><code>boolean</code> | <code>null</code></td>
 <td>Whether to return visualization result images and intermediate images during processing.
@@ -3012,12 +3018,6 @@ Below are the API references for basic serving and examples of multi-language se
 </code></pre>
 By default, images will not be returned; the <code>visualize</code> parameter in the request body can override this default behavior. If neither the request body nor the config file sets it (or the request body passes <code>null</code> and the config file does not set it), images will be returned by default.
 </td>
-<td>No</td>
-</tr>
-<tr>
-<td><code>outputFormats</code></td>
-<td><code>array</code> | <code>null</code></td>
-<td>Optional. Additional export formats; currently only <code>"docx"</code> is supported.</td>
 <td>No</td>
 </tr>
 </tbody>
@@ -3199,12 +3199,6 @@ By default, images will not be returned; the <code>visualize</code> parameter in
 <td>Please refer to the <code>chat_bot_config</code> parameter description in the <code>translate</code> method of the pipeline object.</td>
 <td>No</td>
 </tr>
-<tr>
-<td><code>outputFormats</code></td>
-<td><code>array</code> | <code>null</code></td>
-<td>Optional. Additional export formats; currently only <code>"docx"</code> is supported.</td>
-<td>No</td>
-</tr>
 </tbody>
 </table>
 <ul>
@@ -3245,11 +3239,6 @@ By default, images will not be returned; the <code>visualize</code> parameter in
 <td><code>markdown</code></td>
 <td><code>object</code></td>
 <td>Markdown result; same shape as <code>markdown</code> returned by <code>analyzeImages</code>.</td>
-</tr>
-<tr>
-<td><code>exports</code></td>
-<td><code>object</code> | <code>null</code></td>
-<td>Optional translated <code>docx</code> export when <code>outputFormats</code> is requested. The <code>content</code> field is Base64-encoded file bytes.</td>
 </tr>
 </tbody>
 </table>
