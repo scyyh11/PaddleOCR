@@ -161,6 +161,9 @@ paddleocr install_genai_server_deps <inference acceleration framework name>
 
 Currently supported framework names are `vllm` and `sglang`, corresponding to vLLM and SGLang, respectively.
 
+> WARNING:
+> The transformers library versions required by vLLM, SGLang and Transformers engine are currently incompatible, so Transformers engine and vLLM cannot be installed together with vLLM or SGLang in the same environment. If using Transformers + vLLM or Transformers + SGLang inference, please deploy the layout detection model and VLM service in different environments.
+
 After installation, you can start the service using the `paddleocr genai_server` command:
 
 ```shell

@@ -117,6 +117,8 @@ PaddleOCR-VL currently provides multiple inference methods, and the supported in
     <td>🚧</td>
     <td>✅</td>
     <td>🚧</td>
+    <td>🚧</td>
+    <td>🚧</td>
   </tr>
   <tr style="text-align: center;">
     <td>PaddlePaddle + vLLM</td>
@@ -193,6 +195,8 @@ PaddleOCR-VL currently provides multiple inference methods, and the supported in
     <td>🚧</td>
     <td>-</td>
     <td>-</td>
+    <td>🚧</td>
+    <td>🚧</td>
   </tr>
   <tr style="text-align: center;">
     <td>Transformers + SGLang</td>
@@ -204,6 +208,8 @@ PaddleOCR-VL currently provides multiple inference methods, and the supported in
     <td>🚧</td>
     <td>-</td>
     <td>-</td>
+    <td>🚧</td>
+    <td>🚧</td>
   </tr>
   <tr style="text-align: center;">
     <td>Transformers + FastDeploy</td>
@@ -215,6 +221,8 @@ PaddleOCR-VL currently provides multiple inference methods, and the supported in
     <td>🚧</td>
     <td>-</td>
     <td>-</td>
+    <td>🚧</td>
+    <td>🚧</td>
   </tr>
   <tr style="text-align: center;">
     <td>Transformers + MLX-VLM</td>
@@ -225,7 +233,9 @@ PaddleOCR-VL currently provides multiple inference methods, and the supported in
     <td>-</td>
     <td>-</td>
     <td>-</td>
-    <td>🚧</td>
+    <td>✅</td>
+    <td>-</td>
+    <td>-</td>
   </tr>
   <tr style="text-align: center;">
     <td>Transformers + llama.cpp</td>
@@ -236,6 +246,8 @@ PaddleOCR-VL currently provides multiple inference methods, and the supported in
     <td>🚧</td>
     <td>🚧</td>
     <td>✅</td>
+    <td>🚧</td>
+    <td>🚧</td>
     <td>🚧</td>
   </tr>
 </tbody>
@@ -1798,7 +1810,7 @@ Currently supported framework names are `vllm`, `sglang`, and `fastdeploy`, corr
 Both vLLM and SGLang installed through `paddleocr install_genai_server_deps` are **CUDA 12.6** versions. Please ensure that your local NVIDIA driver supports this version or a later one.
 
 > WARNING:
-> The transformers library versions required by vLLM and Transformers engine are incompatible, so Transformers engine and vLLM cannot be installed together in the same environment. If using Transformers + vLLM inference, please deploy the layout detection model and VLM service in different environments.
+> The transformers library versions required by vLLM, SGLang and Transformers engine are currently incompatible, so Transformers engine and vLLM cannot be installed together with vLLM or SGLang in the same environment. If using Transformers + vLLM or Transformers + SGLang inference, please deploy the layout detection model and VLM service in different environments.
 
 After installation, you can launch the service using the `paddleocr genai_server` command:
 
