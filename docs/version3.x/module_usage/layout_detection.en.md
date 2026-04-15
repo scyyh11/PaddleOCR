@@ -723,13 +723,14 @@ If you want to use the `paddle_dynamic` or `transformers` engine with the traine
 
 ## 5. Inference Engine
 
-For detailed descriptions, values, compatibility rules, and examples of the inference engine, please refer to <a href="../inference_engine.md">Inference Engine and Configuration Description.
+For detailed descriptions, values, compatibility rules, and examples of the inference engine, please refer to <a href="../inference_engine.md">Inference Engine and Configuration Description</a>.
 
 ### 5.1 Speed Data
 
 <table border="1">
     <thead>
         <tr>
+            <th>model</th>
             <th>engine</th>
             <th>Preprocessing (ms)</th>
             <th>Inference (ms)</th>
@@ -739,25 +740,48 @@ For detailed descriptions, values, compatibility rules, and examples of the infe
     </thead>
     <tbody>
         <tr>
+            <td rowspan="3">PP-DocLayout_plus-L</td>
             <td>paddle_static</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>10.92</td>
+            <td>26.11</td>
+            <td>0.16</td>
+            <td>37.38</td>
         </tr>
         <tr>
             <td>paddle_dynamic</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>11.09</td>
+            <td>72.91</td>
+            <td>0.16</td>
+            <td>85.10</td>
         </tr>
         <tr>
             <td>transformers</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>12.65</td>
+            <td>37.91</td>
+            <td>0.75</td>
+            <td>52.24</td>
+        </tr>
+        <tr>
+            <td rowspan="3">PP-DocBlockLayout</td>
+            <td>paddle_static</td>
+            <td>9.51</td>
+            <td>27.59</td>
+            <td>0.08</td>
+            <td>37.41</td>
+        </tr>
+        <tr>
+            <td>paddle_dynamic</td>
+            <td>8.94</td>
+            <td>70.77</td>
+            <td>0.07</td>
+            <td>80.73</td>
+        </tr>
+        <tr>
+            <td>transformers</td>
+            <td>11.37</td>
+            <td>37.95</td>
+            <td>0.75</td>
+            <td>50.96</td>
         </tr>
     </tbody>
 </table>

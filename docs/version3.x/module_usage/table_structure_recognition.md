@@ -459,13 +459,14 @@ python3 -m paddle.distributed.launch --gpus '0,1,2,3' tools/train.py \
 
 ## 五、推理引擎
 
-关于推理引擎的详细说明、取值、兼容性规则与示例请参见 <a href="../inference_engine.md">推理引擎与配置说明。
+关于推理引擎的详细说明、取值、兼容性规则与示例请参见 <a href="../inference_engine.md">推理引擎与配置说明</a>。
 
 ### 5.1 速度数据
 
 <table border="1">
     <thead>
         <tr>
+            <th>model</th>
             <th>engine</th>
             <th>Preprocessing (ms)</th>
             <th>Inference (ms)</th>
@@ -475,25 +476,48 @@ python3 -m paddle.distributed.launch --gpus '0,1,2,3' tools/train.py \
     </thead>
     <tbody>
         <tr>
+            <td rowspan="3">SLANeXt_wired</td>
             <td>paddle_static</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>1.50</td>
+            <td>30.91</td>
+            <td>0.23</td>
+            <td>32.77</td>
         </tr>
         <tr>
             <td>paddle_dynamic</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>1.71</td>
+            <td>57.44</td>
+            <td>0.91</td>
+            <td>60.23</td>
         </tr>
         <tr>
             <td>transformers</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>4.03</td>
+            <td>45.14</td>
+            <td>0.74</td>
+            <td>51.12</td>
+        </tr>
+        <tr>
+            <td rowspan="3">SLANeXt_wireless</td>
+            <td>paddle_static</td>
+            <td>1.67</td>
+            <td>30.49</td>
+            <td>0.22</td>
+            <td>32.51</td>
+        </tr>
+        <tr>
+            <td>paddle_dynamic</td>
+            <td>1.68</td>
+            <td>57.24</td>
+            <td>0.96</td>
+            <td>60.05</td>
+        </tr>
+        <tr>
+            <td>transformers</td>
+            <td>4.30</td>
+            <td>45.51</td>
+            <td>0.75</td>
+            <td>51.76</td>
         </tr>
     </tbody>
 </table>

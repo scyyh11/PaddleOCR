@@ -275,13 +275,14 @@ Currently, this module supports inference only and does not yet support fine-tun
 
 ## 5. Inference Engine
 
-For detailed descriptions, values, compatibility rules, and examples of the inference engine, please refer to <a href="../inference_engine.md">Inference Engine and Configuration Description.
+For detailed descriptions, values, compatibility rules, and examples of the inference engine, please refer to <a href="../inference_engine.md">Inference Engine and Configuration Description</a>.
 
 ### 5.1 Speed Data
 
 <table border="1">
     <thead>
         <tr>
+            <th>model</th>
             <th>engine</th>
             <th>Preprocessing (ms)</th>
             <th>Inference (ms)</th>
@@ -291,25 +292,20 @@ For detailed descriptions, values, compatibility rules, and examples of the infe
     </thead>
     <tbody>
         <tr>
-            <td>paddle_static</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-        </tr>
-        <tr>
+            <td>PP-Chart2Table</td>
             <td>paddle_dynamic</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>53.00</td>
+            <td>17863.95</td>
+            <td>0.30</td>
+            <td>17917.78</td>
         </tr>
         <tr>
+            <td>PP-Chart2Table</td>
             <td>transformers</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>23.95</td>
+            <td>12217.37</td>
+            <td>0.47</td>
+            <td>12269.98</td>
         </tr>
     </tbody>
 </table>

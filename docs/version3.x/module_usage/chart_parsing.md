@@ -271,13 +271,14 @@ for res in results:
 
 ## 五、推理引擎
 
-关于推理引擎的详细说明、取值、兼容性规则与示例请参见 <a href="../inference_engine.md">推理引擎与配置说明。
+关于推理引擎的详细说明、取值、兼容性规则与示例请参见 <a href="../inference_engine.md">推理引擎与配置说明</a>。
 
 ### 5.1 速度数据
 
 <table border="1">
     <thead>
         <tr>
+            <th>model</th>
             <th>engine</th>
             <th>Preprocessing (ms)</th>
             <th>Inference (ms)</th>
@@ -287,18 +288,20 @@ for res in results:
     </thead>
     <tbody>
         <tr>
+            <td>PP-Chart2Table</td>
             <td>paddle_dynamic</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>53.00</td>
+            <td>17863.95</td>
+            <td>0.30</td>
+            <td>17917.78</td>
         </tr>
         <tr>
+            <td>PP-Chart2Table</td>
             <td>transformers</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>23.95</td>
+            <td>12217.37</td>
+            <td>0.47</td>
+            <td>12269.98</td>
         </tr>
     </tbody>
 </table>

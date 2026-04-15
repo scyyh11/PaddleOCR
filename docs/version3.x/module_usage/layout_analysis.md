@@ -431,13 +431,14 @@ for res in output:
 
 ## 四、推理引擎
 
-关于推理引擎的详细说明、取值、兼容性规则与示例请参见 <a href="../inference_engine.md">推理引擎与配置说明。
+关于推理引擎的详细说明、取值、兼容性规则与示例请参见 <a href="../inference_engine.md">推理引擎与配置说明</a>。
 
 ### 4.1 速度数据
 
 <table border="1">
     <thead>
         <tr>
+            <th>model</th>
             <th>engine</th>
             <th>Preprocessing (ms)</th>
             <th>Inference (ms)</th>
@@ -447,25 +448,48 @@ for res in output:
     </thead>
     <tbody>
         <tr>
+            <td rowspan="3">PP-DocLayoutV3</td>
             <td>paddle_static</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>10.95</td>
+            <td>47.99</td>
+            <td>12.97</td>
+            <td>72.33</td>
         </tr>
         <tr>
             <td>paddle_dynamic</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>11.33</td>
+            <td>84.48</td>
+            <td>1.31</td>
+            <td>98.01</td>
         </tr>
         <tr>
             <td>transformers</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>16.94</td>
+            <td>47.11</td>
+            <td>13.83</td>
+            <td>78.97</td>
+        </tr>
+        <tr>
+            <td rowspan="3">PP-DocLayoutV2</td>
+            <td>paddle_static</td>
+            <td>10.48</td>
+            <td>30.94</td>
+            <td>1.33</td>
+            <td>42.93</td>
+        </tr>
+        <tr>
+            <td>paddle_dynamic</td>
+            <td>11.07</td>
+            <td>86.38</td>
+            <td>1.33</td>
+            <td>99.80</td>
+        </tr>
+        <tr>
+            <td>transformers</td>
+            <td>16.76</td>
+            <td>49.08</td>
+            <td>2.43</td>
+            <td>69.30</td>
         </tr>
     </tbody>
 </table>

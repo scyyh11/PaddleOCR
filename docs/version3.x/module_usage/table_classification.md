@@ -366,13 +366,14 @@ for res in output:
 
 ## 五、推理引擎
 
-关于推理引擎的详细说明、取值、兼容性规则与示例请参见 <a href="../inference_engine.md">推理引擎与配置说明。
+关于推理引擎的详细说明、取值、兼容性规则与示例请参见 <a href="../inference_engine.md">推理引擎与配置说明</a>。
 
 ### 5.1 速度数据
 
 <table border="1">
     <thead>
         <tr>
+            <th>model</th>
             <th>engine</th>
             <th>Preprocessing (ms)</th>
             <th>Inference (ms)</th>
@@ -382,25 +383,26 @@ for res in output:
     </thead>
     <tbody>
         <tr>
+            <td rowspan="3">PP-LCNet_x1_0_table_cls</td>
             <td>paddle_static</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>3.56</td>
+            <td>3.38</td>
+            <td>0.06</td>
+            <td>7.11</td>
         </tr>
         <tr>
             <td>paddle_dynamic</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>3.57</td>
+            <td>7.77</td>
+            <td>0.07</td>
+            <td>11.52</td>
         </tr>
         <tr>
             <td>transformers</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>9.30</td>
+            <td>3.72</td>
+            <td>0.15</td>
+            <td>14.05</td>
         </tr>
     </tbody>
 </table>

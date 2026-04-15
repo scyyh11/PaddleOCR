@@ -378,13 +378,14 @@ for res in output:
 
 ## 五、推理引擎
 
-关于推理引擎的详细说明、取值、兼容性规则与示例请参见 <a href="../inference_engine.md">推理引擎与配置说明。
+关于推理引擎的详细说明、取值、兼容性规则与示例请参见 <a href="../inference_engine.md">推理引擎与配置说明</a>。
 
 ### 5.1 速度数据
 
 <table border="1">
     <thead>
         <tr>
+            <th>model</th>
             <th>engine</th>
             <th>Preprocessing (ms)</th>
             <th>Inference (ms)</th>
@@ -394,25 +395,26 @@ for res in output:
     </thead>
     <tbody>
         <tr>
+            <td rowspan="3">UVDoc</td>
             <td>paddle_static</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>14.96</td>
+            <td>18.60</td>
+            <td>1.93</td>
+            <td>36.66</td>
         </tr>
         <tr>
             <td>paddle_dynamic</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>10.90</td>
+            <td>27.59</td>
+            <td>1.96</td>
+            <td>40.94</td>
         </tr>
         <tr>
             <td>transformers</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>13.54</td>
+            <td>6.74</td>
+            <td>0.91</td>
+            <td>33.07</td>
         </tr>
     </tbody>
 </table>

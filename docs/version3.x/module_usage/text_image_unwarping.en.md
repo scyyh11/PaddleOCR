@@ -383,13 +383,14 @@ The current module does not support fine-tuning training and only supports infer
 
 ## 5. Inference Engine
 
-For detailed descriptions, values, compatibility rules, and examples of the inference engine, please refer to <a href="../inference_engine.md">Inference Engine and Configuration Description.
+For detailed descriptions, values, compatibility rules, and examples of the inference engine, please refer to <a href="../inference_engine.md">Inference Engine and Configuration Description</a>.
 
 ### 5.1 Speed Data
 
 <table border="1">
     <thead>
         <tr>
+            <th>model</th>
             <th>engine</th>
             <th>Preprocessing (ms)</th>
             <th>Inference (ms)</th>
@@ -399,25 +400,26 @@ For detailed descriptions, values, compatibility rules, and examples of the infe
     </thead>
     <tbody>
         <tr>
+            <td rowspan="3">UVDoc</td>
             <td>paddle_static</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>14.96</td>
+            <td>18.60</td>
+            <td>1.93</td>
+            <td>36.66</td>
         </tr>
         <tr>
             <td>paddle_dynamic</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>10.90</td>
+            <td>27.59</td>
+            <td>1.96</td>
+            <td>40.94</td>
         </tr>
         <tr>
             <td>transformers</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>13.54</td>
+            <td>6.74</td>
+            <td>0.91</td>
+            <td>33.07</td>
         </tr>
     </tbody>
 </table>

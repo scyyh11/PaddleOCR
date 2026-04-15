@@ -382,13 +382,14 @@ model = DocImgOrientationClassification(
 
 ## 五、推理引擎
 
-关于推理引擎的详细说明、取值、兼容性规则与示例请参见 <a href="../inference_engine.md">推理引擎与配置说明。
+关于推理引擎的详细说明、取值、兼容性规则与示例请参见 <a href="../inference_engine.md">推理引擎与配置说明</a>。
 
 ### 5.1 速度数据
 
 <table border="1">
     <thead>
         <tr>
+            <th>model</th>
             <th>engine</th>
             <th>Preprocessing (ms)</th>
             <th>Inference (ms)</th>
@@ -398,25 +399,26 @@ model = DocImgOrientationClassification(
     </thead>
     <tbody>
         <tr>
+            <td rowspan="3">PP-LCNet_x1_0_doc_ori</td>
             <td>paddle_static</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>2.21</td>
+            <td>3.36</td>
+            <td>0.06</td>
+            <td>5.74</td>
         </tr>
         <tr>
             <td>paddle_dynamic</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>2.15</td>
+            <td>7.54</td>
+            <td>0.07</td>
+            <td>9.87</td>
         </tr>
         <tr>
             <td>transformers</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>4.46</td>
+            <td>3.44</td>
+            <td>0.14</td>
+            <td>8.36</td>
         </tr>
     </tbody>
 </table>

@@ -908,13 +908,14 @@ Global.save_inference_dir="./PP-OCRv5_server_rec_infer/"
 
 ## 五、推理引擎
 
-关于推理引擎的详细说明、取值、兼容性规则与示例请参见 <a href="../inference_engine.md">推理引擎与配置说明。
+关于推理引擎的详细说明、取值、兼容性规则与示例请参见 <a href="../inference_engine.md">推理引擎与配置说明</a>。
 
 ### 5.1 速度数据
 
 <table border="1">
     <thead>
         <tr>
+            <th>model</th>
             <th>engine</th>
             <th>Preprocessing (ms)</th>
             <th>Inference (ms)</th>
@@ -924,25 +925,48 @@ Global.save_inference_dir="./PP-OCRv5_server_rec_infer/"
     </thead>
     <tbody>
         <tr>
+            <td rowspan="3">PP-OCRv5_mobile_rec</td>
             <td>paddle_static</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>1.94</td>
+            <td>6.69</td>
+            <td>1.00</td>
+            <td>9.76</td>
         </tr>
         <tr>
             <td>paddle_dynamic</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>1.97</td>
+            <td>35.38</td>
+            <td>1.11</td>
+            <td>38.60</td>
         </tr>
         <tr>
             <td>transformers</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>3.31</td>
+            <td>17.70</td>
+            <td>0.50</td>
+            <td>21.68</td>
+        </tr>
+        <tr>
+            <td rowspan="3">PP-OCRv5_server_rec</td>
+            <td>paddle_static</td>
+            <td>1.98</td>
+            <td>11.37</td>
+            <td>1.21</td>
+            <td>14.69</td>
+        </tr>
+        <tr>
+            <td>paddle_dynamic</td>
+            <td>1.98</td>
+            <td>23.89</td>
+            <td>1.32</td>
+            <td>27.34</td>
+        </tr>
+        <tr>
+            <td>transformers</td>
+            <td>3.99</td>
+            <td>11.69</td>
+            <td>0.51</td>
+            <td>16.36</td>
         </tr>
     </tbody>
 </table>

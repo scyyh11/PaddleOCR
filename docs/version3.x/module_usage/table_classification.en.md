@@ -365,13 +365,14 @@ If you want to use the `paddle_dynamic` or `transformers` engine with the traine
 
 ## 5. Inference Engine
 
-For detailed descriptions, values, compatibility rules, and examples of the inference engine, please refer to <a href="../inference_engine.md">Inference Engine and Configuration Description.
+For detailed descriptions, values, compatibility rules, and examples of the inference engine, please refer to <a href="../inference_engine.md">Inference Engine and Configuration Description</a>.
 
 ### 5.1 Speed Data
 
 <table border="1">
     <thead>
         <tr>
+            <th>model</th>
             <th>engine</th>
             <th>Preprocessing (ms)</th>
             <th>Inference (ms)</th>
@@ -381,25 +382,26 @@ For detailed descriptions, values, compatibility rules, and examples of the infe
     </thead>
     <tbody>
         <tr>
+            <td rowspan="3">PP-LCNet_x1_0_table_cls</td>
             <td>paddle_static</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>3.56</td>
+            <td>3.38</td>
+            <td>0.06</td>
+            <td>7.11</td>
         </tr>
         <tr>
             <td>paddle_dynamic</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>3.57</td>
+            <td>7.77</td>
+            <td>0.07</td>
+            <td>11.52</td>
         </tr>
         <tr>
             <td>transformers</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
+            <td>9.30</td>
+            <td>3.72</td>
+            <td>0.15</td>
+            <td>14.05</td>
         </tr>
     </tbody>
 </table>
