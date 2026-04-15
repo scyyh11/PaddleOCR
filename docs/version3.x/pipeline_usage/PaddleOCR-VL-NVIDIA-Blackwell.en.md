@@ -132,7 +132,7 @@ docker run \
 
 #### 3.1.2 Method 2: Installation and Usage via PaddleOCR CLI
 
-Due to potential dependency conflicts between inference acceleration frameworks and PaddlePaddle, it is recommended to install them in a virtual environment:
+Since inference acceleration frameworks may conflict with packages already installed in the current environment, it is recommended to install them in a virtual environment:
 
 ```shell
 # If a virtual environment is currently activated, deactivate it first using `deactivate`

@@ -267,6 +267,7 @@ PaddleOCR-VL currently provides multiple inference methods, and the supported in
 > >  - Common GPUs with CC ≥ 8 include RTX 30/40/50 series and A10/A100, etc. For more models, refer to [CUDA GPU Compute Capability](https://developer.nvidia.com/cuda-gpus)
 > - vLLM compatibility note: Although vLLM can be launched on NVIDIA GPUs with CC 7.x such as T4/V100, timeout or OOM issues may occur, and its use is not recommended.
 > - vLLM, SGLang, and FastDeploy cannot run natively on Windows. Please use the Docker images we provide.
+> - Due to dependency conflicts between different libraries, when using mixed inference methods like Transformers + vLLM, the layout detection model and VLM service must be deployed in different environments.
 
 ## 1. Environment Preparation
 
