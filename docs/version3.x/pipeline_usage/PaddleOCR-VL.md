@@ -1754,6 +1754,9 @@ paddleocr install_genai_server_deps <推理加速框架名称>
 
 通过 `paddleocr install_genai_server_deps` 安装的 vLLM 与 SGLang 均为 **CUDA 12.6** 版本，请确保本地英伟达驱动与此版本一致或更高。
 
+> WARNING:
+> 目前 vLLM 与 Transformers Engine 所需的 transformers 库版本存在冲突。同一环境下仅支持使用其中一种推理方式。
+
 安装完成后，可通过 `paddleocr genai_server` 命令启动服务：
 
 ```shell

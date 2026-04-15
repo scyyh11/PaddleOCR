@@ -1797,6 +1797,9 @@ Currently supported framework names are `vllm`, `sglang`, and `fastdeploy`, corr
 
 Both vLLM and SGLang installed through `paddleocr install_genai_server_deps` are **CUDA 12.6** versions. Please ensure that your local NVIDIA driver supports this version or a later one.
 
+> WARNING:
+> The transformers library versions required by vLLM and Transformers Engine are incompatible. Only one inference method can be used in the same environment.
+
 After installation, you can launch the service using the `paddleocr genai_server` command:
 
 ```shell
