@@ -100,6 +100,15 @@ Common fields include:
 - `processor_kwargs`: extra arguments passed to the processor / image processor loading API;
 - `tokenizer_kwargs`: a compatibility-preserved field that is merged with `processor_kwargs`.
 
+#### 4.2.1 Flat vs. bucketed `engine_config`
+
+At the same level `engine_config` may be:
+
+- **Flat**: a dict whose keys are only those required by the **resolved** engine (for example, when using static graph only, top-level keys such as `run_mode` and `cpu_threads`).
+- **Bucketed**: top-level keys are **only** registered engine names (e.g. `paddle_static`, `paddle_dynamic`, `transformers`), each mapping to a nested dict. You **must not** mix bucket keys with flat keys at the same level (e.g. `{"paddle_static": {...}, "run_mode": "paddle"}` is invalid).
+
+When an engine is resolved, only the corresponding config is used: flat configs are validated as a whole; bucketed configs take the entry for that engine.
+
 ### 4.3 Priority and Override Rules
 
 - For pipelines, `engine` and `engine_config` passed through CLI arguments or Python API initialization arguments take precedence over fields with the same names in the pipeline configuration file.

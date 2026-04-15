@@ -100,6 +100,15 @@ python -m pip install transformers
 - `processor_kwargs`：传给 processor / image processor 加载接口的额外参数；
 - `tokenizer_kwargs`：兼容保留字段，会与 `processor_kwargs` 合并使用。
 
+#### 4.2.1 扁平与分桶 `engine_config`
+
+同一层级的 `engine_config` 可以是：
+
+- **扁平**：只包含**当前解析得到的引擎**所需的字段（例如仅使用静态图时，顶层直接是 `run_mode`、`cpu_threads` 等）。
+- **分桶**：顶层键**仅**为 PaddleX 已注册的引擎名（如 `paddle_static`、`paddle_dynamic`、`transformers` 等），每个键对应一个嵌套字典。**不得**在同一层级混用「分桶键」与扁平字段（例如 `{"paddle_static": {...}, "run_mode": "paddle"}` 会报错）。
+
+解析为某一引擎时，只会使用与该引擎对应的一份配置：扁平形式直接参与校验；分桶形式则取出对应键下的字典。
+
 ### 4.3 优先级与覆盖规则
 
 - 对于产线，命令行参数或 Python API 初始化参数中传入的 `engine`、`engine_config`，优先级高于产线配置文件中的同名字段；
