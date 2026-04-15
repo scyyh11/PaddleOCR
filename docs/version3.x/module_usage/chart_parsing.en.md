@@ -87,8 +87,6 @@ for res in results:
     res.save_to_json(f"./output/res.json")
 ```
 
-If you want to use the trained model with the `paddle_dynamic` or `transformers` engine, refer to the [Weight Conversion](#52-weight-conversion) section in the [Inference Engine](#5-inference-engine) section below to convert the model from the `pdparams` format to the `safetensors` format using PaddleX.
-
 The output result will be:
 
 ```bash
@@ -332,9 +330,5 @@ For detailed descriptions, values, compatibility rules, and examples of the infe
         </ul>
     </li>
 </ul>
-
-### 5.2 Weight Conversion
-
-When using the inference engine, the system will automatically download the official pre-trained model. If you need to use a self-trained model with the `paddle_dynamic` or `transformers` engine, please refer to the [PaddleX Chart Parsing Module Weight Conversion](https://paddlepaddle.github.io/PaddleX/latest/en/module_usage/tutorials/ocr_modules/chart_parsing.html#52) section to convert the model from the `pdparams` format to the `safetensors` format using PaddleX. This allows seamless integration into the PaddleOCR API for inference.
 
 ## 6. FAQ

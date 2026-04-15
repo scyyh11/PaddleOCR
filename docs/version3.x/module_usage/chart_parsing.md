@@ -87,8 +87,6 @@ for res in results:
     res.save_to_json(f"./output/res.json")
 ```
 
-训练后的模型如果想使用 `paddle_dynamic` 或 `transformers` 引擎，请参考后文 [推理引擎](#五推理引擎) 中的 [权重转换](#52-权重转换) 部分将模型由 `pdparams` 格式通过 PaddleX 转换为 `safetensors` 格式。
-
 运行后，得到的结果为：
 
 ```bash
@@ -321,9 +319,5 @@ for res in results:
         </ul>
     </li>
 </ul>
-
-### 5.2 权重转换
-
-使用推理引擎时，系统会自动下载官方预训练模型。若需使用自训练模型配合 `paddle_dynamic` 或 `transformers` 引擎，请参考 [PaddleX 图表解析模块权重转换](https://paddlepaddle.github.io/PaddleX/latest/module_usage/tutorials/vlm_modules/chart_parsing.html#52) 部分，将 `pdparams` 格式通过 PaddleX 转换为 `safetensors` 格式，即可无缝集成到 PaddleOCR 的 API 中进行推理。
 
 ## 六、FAQ

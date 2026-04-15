@@ -489,4 +489,4 @@ for res in output:
 
 ### 4.2 权重转换
 
-使用推理引擎时，系统会自动下载官方预训练模型。若需使用自训练模型配合 `paddle_dynamic` 或 `transformers` 引擎，请参考 [PaddleX 版面分析模块权重转换](https://paddlepaddle.github.io/PaddleX/main/module_usage/tutorials/ocr_modules/layout_analysis.html#52) 部分，将 `pdparams` 格式通过 PaddleX 转换为 `safetensors` 格式，即可无缝集成到 PaddleOCR 的 API 中进行推理。
+使用推理引擎时，系统会自动下载官方预训练模型。若需使用自训练模型配合 `paddle_dynamic` 或 `transformers` 引擎，请参考 [PaddleX 版面分析模块权重转换](https://paddlepaddle.github.io/PaddleX/main/module_usage/tutorials/ocr_modules/layout_analysis.html#442) 部分，将 `pdparams` 格式通过 PaddleX 转换为 `safetensors` 格式，即可无缝集成到 PaddleOCR 的 API 中进行推理。

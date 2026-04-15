@@ -137,8 +137,6 @@ for res in output:
     res.save_to_json(save_path="./output/res.json")
 ```
 
-If you want to use the trained model with the `paddle_dynamic` or `transformers` engine, refer to the [Weight Conversion](#52-weight-conversion) section in the [Inference Engine](#5-inference-engine) section below to convert the model from the `pdparams` format to the `safetensors` format using PaddleX.
-
 After running, the result obtained is:
 
 ```bash
@@ -383,8 +381,6 @@ Positive integer.</td>
 
 The current module does not support fine-tuning training and only supports inference integration. Concerning fine-tuning training for this module, there are plans to support it in the future.
 
-If you want to use the `paddle_dynamic` or `transformers` engine with the trained model, please refer to the [Weight Conversion](#52-weight-conversion) section in [Inference Engine](#五推理引擎) later in this document to convert the model from the `pdparams` format to the `safetensors` format using PaddleX.
-
 ## 5. Inference Engine
 
 For detailed descriptions, values, compatibility rules, and examples of the inference engine, please refer to <a href="../inference_engine.md">Inference Engine and Configuration Description.
@@ -442,9 +438,5 @@ For detailed descriptions, values, compatibility rules, and examples of the infe
         </ul>
     </li>
 </ul>
-
-### 5.2 Weight Conversion
-
-When using the inference engine, the system will automatically download the official pre-trained model. If you need to use a self-trained model with the `paddle_dynamic` or `transformers` engine, please refer to the [PaddleX Text Image Orientation Classification Module Weight Conversion](https://paddlepaddle.github.io/PaddleX/latest/en/module_usage/tutorials/ocr_modules/text_image_unwarping.html#52) section to convert the model from the `pdparams` format to the `safetensors` format using PaddleX. This allows seamless integration into the PaddleOCR API for inference.
 
 ## 6. FAQ
