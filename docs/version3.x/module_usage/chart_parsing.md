@@ -288,7 +288,7 @@ for res in results:
     </thead>
     <tbody>
         <tr>
-            <td>PP-Chart2Table</td>
+            <td rowspan="3">PP-Chart2Table</td>
             <td>paddle_dynamic</td>
             <td>53.00</td>
             <td>17863.95</td>
@@ -296,7 +296,6 @@ for res in results:
             <td>17917.78</td>
         </tr>
         <tr>
-            <td>PP-Chart2Table</td>
             <td>transformers</td>
             <td>23.95</td>
             <td>12217.37</td>
