@@ -1069,7 +1069,7 @@ paddleocr pp_structurev3 -i ./pp_structure_v3_demo.png --device gpu
 
 ```bash
 # 使用 transformers 引擎进行推理
-# 部分模型尚在支持中，推理时需指定额外参数，请使用以下命令：
+# 部分模型尚在支持中，推理时需关闭公式识别功能并更换无线表格结构识别模型，请使用以下命令：
 paddleocr pp_structurev3 -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/pp_structure_v3_demo.png \
     --engine transformers --use_formula_recognition False --wireless_table_structure_recognition_model_name SLANeXt_wireless
 ```
@@ -1668,7 +1668,7 @@ for res in output:
 ```python
 from paddleocr import PPStructureV3
 
-# 部分模型尚在支持中，推理时需指定额外参数，请使用以下代码：
+# 部分模型尚在支持中，推理时需关闭公式识别功能并更换无线表格结构识别模型，请使用以下代码：
 pipeline = PPStructureV3(
     engine="transformers",
     use_formula_recognition=False,
