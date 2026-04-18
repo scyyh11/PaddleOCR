@@ -288,7 +288,7 @@ for res in results:
     </thead>
     <tbody>
         <tr>
-            <td rowspan="3">PP-Chart2Table</td>
+            <td rowspan="2">PP-Chart2Table</td>
             <td>paddle_dynamic</td>
             <td>53.00</td>
             <td>17863.95</td>

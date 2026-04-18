@@ -987,7 +987,7 @@ paddleocr pp_chatocrv4_doc -i vehicle_certificate-1.png -k 驾驶室准乘人数
 paddleocr pp_chatocrv4_doc -i vehicle_certificate-1.png -k 驾驶室准乘人数 --qianfan_api_key your_api_key --invoke_mllm True --pp_docbee_base_url http://127.0.0.1:8080/
 ```
 
-The examples above use the Paddle inference engine by default. To run them, first install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
+The examples above use the Paddle inference engine by default. To run them, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
 
@@ -1532,12 +1532,12 @@ vector_info = pipeline.build_vector(
 )
 mllm_predict_res = pipeline.mllm_pred(
     input="vehicle_certificate-1.png",
-    key_list=["Cab Seating Capacity"], # Translated: 驾驶室准乘人数
+    key_list=["驾驶室准乘人数"],
     mllm_chat_bot_config=mllm_chat_bot_config,
 )
 mllm_predict_info = mllm_predict_res["mllm_res"]
 chat_result = pipeline.chat(
-    key_list=["Cab Seating Capacity"], # Translated: 驾驶室准乘人数
+    key_list=["驾驶室准乘人数"],
     visual_info=visual_info_list,
     vector_info=vector_info,
     mllm_predict_info=mllm_predict_info,
@@ -1548,7 +1548,7 @@ print(chat_result)
 
 ```
 
-The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
+The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
 
@@ -1602,12 +1602,12 @@ vector_info = pipeline.build_vector(
 )
 mllm_predict_res = pipeline.mllm_pred(
     input="vehicle_certificate-1.png",
-    key_list=["Cab Seating Capacity"], # Translated: 驾驶室准乘人数
+    key_list=["驾驶室准乘人数"],
     mllm_chat_bot_config=mllm_chat_bot_config,
 )
 mllm_predict_info = mllm_predict_res["mllm_res"]
 chat_result = pipeline.chat(
-    key_list=["Cab Seating Capacity"], # Translated: 驾驶室准乘人数
+    key_list=["驾驶室准乘人数"],
     visual_info=visual_info_list,
     vector_info=vector_info,
     mllm_predict_info=mllm_predict_info,

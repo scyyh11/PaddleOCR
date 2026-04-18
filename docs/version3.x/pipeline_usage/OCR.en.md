@@ -712,7 +712,7 @@ pip install "paddleocr[all]"
 
 #### 2.0.2 Install Dependencies by Execution Mode
 
-- If you use the Paddle inference engine, install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
+- If you use the Paddle inference engine, install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 - If you use the `transformers` inference engine, install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md).
 
 #### 2.0.3 Environment Verification
@@ -754,7 +754,7 @@ paddleocr ocr -i ./general_ocr_002.png --ocr_version PP-OCRv4
 
 ```
 
-The examples above use the Paddle inference engine by default. To run them, first install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
+The examples above use the Paddle inference engine by default. To run them, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
 
@@ -1092,18 +1092,6 @@ If MKL-DNN is unavailable or the model does not support MKL-DNN acceleration, ac
 <td><code>str</code></td>
 <td></td>
 </tr>
-
-<tr>
-<td><code>doc_orientation_classify_model_dir</code></td>
-<td><b>Meaning:</b>Directory path of the document orientation classification model. <br/>
-<b>Description:</b>
-If set to <code>None</code>, the official model will be downloaded.</td>
-<td><code>str|None</code></td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><code>doc_unwarping_model_name</code></td>
-<td><b>Meaning:</b>Name of the text image unwarping model. <br/>
 </tbody>
 </table>
 
@@ -1267,6 +1255,22 @@ In the above Python script, the following steps are performed:
 <tr>
 <td><code>doc_orientation_classify_model_name</code></td>
 <td><b>Meaning:</b>Name of the document orientation classification model. <br/>
+<b>Description:</b>
+If set to <code>None</code>, the pipeline's default model will be used.</td>
+<td><code>str|None</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>doc_orientation_classify_model_dir</code></td>
+<td><b>Meaning:</b>Directory path of the document orientation classification model. <br/>
+<b>Description:</b>
+If set to <code>None</code>, the official model will be downloaded.</td>
+<td><code>str|None</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>doc_unwarping_model_name</code></td>
+<td><b>Meaning:</b>Name of the text image unwarping model. <br/>
 <b>Description:</b>
 If set to <code>None</code>, the pipeline's default model will be used.</td>
 <td><code>str|None</code></td>
@@ -2538,7 +2542,7 @@ pipeline = PaddleOCR(text_detection_model_dir="./your_det_model_path")
 
 ```
 
-The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
+The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
 

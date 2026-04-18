@@ -695,7 +695,7 @@ You can download the [test file](https://paddle-model-ecology.bj.bcebos.com/padd
 paddleocr pp_doctranslation -i vehicle_certificate-1.png --target_language en --qianfan_api_key your_api_key
 ```
 
-The examples above use the Paddle inference engine by default. To run them, first install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
+The examples above use the Paddle inference engine by default. To run them, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
 
@@ -1329,11 +1329,6 @@ If MKL-DNN is unavailable or the model does not support MKL-DNN acceleration, ac
 <td><code>str</code></td>
 <td></td>
 </tr>
-
-<td><b>Meaning:</b>Path to PaddleX pipeline configuration file.</td>
-<td><code>str</code></td>
-<td></td>
-</tr>
 </tbody>
 </table>
 </details>
@@ -1377,7 +1372,7 @@ else:
         use_doc_unwarping=False,
         use_common_ocr=True,
         use_seal_recognition=True,
-use_table_recognition=True,
+        use_table_recognition=True,
     )
 
     ori_md_info_list = []
@@ -1404,7 +1399,7 @@ for tgt_md_info in tgt_md_info_list:
     tgt_md_info.save_to_markdown(output_path)
 ```
 
-The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
+The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
 
@@ -1442,7 +1437,7 @@ else:
         use_doc_unwarping=False,
         use_common_ocr=True,
         use_seal_recognition=True,
-use_table_recognition=True,
+        use_table_recognition=True,
     )
 
     ori_md_info_list = []

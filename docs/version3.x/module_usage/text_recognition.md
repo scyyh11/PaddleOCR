@@ -906,7 +906,7 @@ Global.save_inference_dir="./PP-OCRv5_server_rec_infer/"
 
 训练后的模型如果想使用 `paddle_dynamic` 或 `transformers` 引擎，请参考后文 [推理引擎](#五推理引擎) 中的 [权重转换](#52-权重转换) 部分将模型由 `pdparams` 格式通过 PaddleX 转换为 `safetensors` 格式。
 
-## 五、推理引擎
+## 五、推理引擎 {#五推理引擎}
 
 关于推理引擎的详细说明、取值、兼容性规则与示例请参见 <a href="../inference_engine.md">推理引擎与配置说明</a>。
 
@@ -988,7 +988,7 @@ Global.save_inference_dir="./PP-OCRv5_server_rec_infer/"
     </li>
 </ul>
 
-### 5.2 权重转换
+### 5.2 权重转换 {#52-权重转换}
 
 使用推理引擎时，系统会自动下载官方预训练模型。若需使用自训练模型配合 `paddle_dynamic` 或 `transformers` 引擎，请参考 [PaddleX 文字识别模块权重转换](https://paddlepaddle.github.io/PaddleX/latest/module_usage/tutorials/ocr_modules/text_recognition.html#442) 部分，将 `pdparams` 格式通过 PaddleX 转换为 `safetensors` 格式，即可无缝集成到 PaddleOCR 的 API 中进行推理。
 

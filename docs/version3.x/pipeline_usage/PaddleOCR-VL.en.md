@@ -749,7 +749,7 @@ Supports specifying specific card numbers:<ul>
 <td><code>enable_hpi</code></td>
 <td><b>Meaning:</b> Whether to enable high-performance inference.</td>
 <td><code>bool</code></td>
-<td></td>
+<td><code>None</code></td>
 </tr>
 <tr>
 <td><code>use_tensorrt</code></td>

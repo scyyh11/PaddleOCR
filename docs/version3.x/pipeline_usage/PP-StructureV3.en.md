@@ -983,7 +983,7 @@ paddleocr pp_structurev3 -i ./pp_structure_v3_demo.png --use_textline_orientatio
 paddleocr pp_structurev3 -i ./pp_structure_v3_demo.png --device gpu
 ```
 
-The examples above use the Paddle inference engine by default. To run them, first install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
+The examples above use the Paddle inference engine by default. To run them, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
 
@@ -1634,11 +1634,6 @@ If MKL-DNN is unavailable or the model does not support MKL-DNN acceleration, ac
 <td><code>str</code></td>
 <td></td>
 </tr>
-
-<td><b>Meaning:</b>Path to the PaddleX pipeline configuration file.</td>
-<td><code>str</code></td>
-<td></td>
-</tr>
 </tbody>
 </table>
 </details>
@@ -1694,7 +1689,7 @@ for res in output:
     res.save_to_markdown(save_path="output") ## Save the current image's result in Markdown format
 ```
 
-The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
+The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
 
