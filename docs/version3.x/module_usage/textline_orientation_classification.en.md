@@ -107,7 +107,7 @@ paddleocr textline_orientation_classification -i https://paddle-model-ecology.bj
 To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
 
 ```bash
-# 使用 transformers 引擎进行推理
+# Use the transformers engine for inference
 paddleocr textline_orientation_classification -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/textline_rot180_demo.jpg \
     --engine transformers
 ```
