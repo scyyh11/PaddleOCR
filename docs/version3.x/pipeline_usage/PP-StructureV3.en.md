@@ -21,6 +21,7 @@ Layout analysis is a technique used to extract structured information from docum
 In this pipeline, you can choose the model to use based on the benchmark data below.
 
 > The inference time only includes the model inference time and does not include the time for pre- or post-processing.
+> In the inference time columns labeled [Standard Mode / High-Performance Mode], [Normal Mode / High-Performance Mode], or [Regular Mode / High-Performance Mode], the Standard Mode, Normal Mode, and Regular Mode values correspond to the local `paddle_static` inference engine.
 
 <details>
 <summary><b>Document Image Orientation Classification Module :</b></summary>
@@ -922,7 +923,7 @@ devanagari_PP-OCRv3_mobile_rec_infer.tar">Inference Model</a>/<a href="https://p
               <li><strong>Software Environment:</strong>
                   <ul>
                       <li>Ubuntu 20.04 / CUDA 11.8 / cuDNN 8.9 / TensorRT 8.6.1.6</li>
-                      <li>paddlepaddle 3.0.0 / paddleocr 3.0.3</li>
+                      <li>paddlepaddle-gpu 3.0.0 / paddleocr 3.0.3</li>
                   </ul>
               </li>
           </ul>
@@ -944,7 +945,7 @@ devanagari_PP-OCRv3_mobile_rec_infer.tar">Inference Model</a>/<a href="https://p
             <td>Normal Mode</td>
             <td>FP32 Precision / No TRT Acceleration</td>
             <td>FP32 Precision / 8 Threads</td>
-            <td>PaddleInference</td>
+            <td><code>paddle_static</code></td>
         </tr>
         <tr>
             <td>High-Performance Mode</td>
@@ -983,9 +984,9 @@ paddleocr pp_structurev3 -i ./pp_structure_v3_demo.png --use_textline_orientatio
 paddleocr pp_structurev3 -i ./pp_structure_v3_demo.png --device gpu
 ```
 
-The examples above use the Paddle inference engine by default. To run them, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
+The examples above use the local `paddle_static` inference engine by default. To run them, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
-To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
+If you choose `transformers` as the inference engine, make sure the Transformers environment is configured by following [Inference Engine and Configuration](../inference_engine.en.md), and then run the following command:
 
 ```bash
 # Use the transformers engine for inference
@@ -993,6 +994,8 @@ To run inference with the `transformers` engine, first install the required depe
 paddleocr pp_structurev3 -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/pp_structure_v3_demo.png \
     --engine transformers --use_formula_recognition False --wireless_table_structure_recognition_model_name SLANeXt_wireless
 ```
+
+In most scenarios, the default `paddle_static` inference engine delivers better inference performance and is the recommended first choice.
 
 <details><summary><b>Command line supports more parameters. Click to expand for detailed parameter descriptions</b></summary>
 <table>
@@ -1690,9 +1693,9 @@ for res in output:
     res.save_to_word(save_path="output") ## Save the current image's result in Word format
 ```
 
-The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
+The example above uses the local `paddle_static` inference engine by default. To run it, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
-To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
+If you choose `transformers` as the inference engine, make sure the Transformers environment is configured by following [Inference Engine and Configuration](../inference_engine.en.md), and then run the following code:
 
 ```python
 from paddleocr import PPStructureV3
@@ -1714,6 +1717,8 @@ for res in output:
     res.save_to_json(save_path="output") ## Save the current image's structured result in JSON format
     res.save_to_markdown(save_path="output") ## Save the current image's result in Markdown format
 ```
+
+In most scenarios, the default `paddle_static` inference engine delivers better inference performance and is the recommended first choice.
 
 For PDF files, each page will be processed individually and generate a separate Markdown file. If you want to convert the entire PDF to a single Markdown file, use the following method:
 
