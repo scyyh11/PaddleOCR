@@ -104,13 +104,36 @@ You can quickly experience the functionality with a single command:
 paddleocr textline_orientation_classification -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/textline_rot180_demo.jpg
 ```  
 
+To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
+
+```bash
+# 使用 transformers 引擎进行推理
+paddleocr textline_orientation_classification -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/textline_rot180_demo.jpg \
+    --engine transformers
+```
+
 <b>Note: </b>The official models would be download from HuggingFace by default. If can't access to HuggingFace, please set the environment variable <code>PADDLE_PDX_MODEL_SOURCE="BOS"</code> to change the model source to BOS. In the future, more model sources will be supported.
 
 You can also integrate the text line orientation classification model into your project. Run the following code after downloading the [example image](https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/textline_rot180_demo.jpg) to your local machine. 
 
-```bash
+```python
 from paddleocr import TextLineOrientationClassification
 model = TextLineOrientationClassification(model_name="PP-LCNet_x0_25_textline_ori")
+output = model.predict("textline_rot180_demo.jpg",  batch_size=1)
+for res in output:
+    res.print(json_format=False)
+    res.save_to_img("./output/demo.png")
+    res.save_to_json("./output/res.json")
+```
+
+To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
+
+```python
+from paddleocr import TextLineOrientationClassification
+model = TextLineOrientationClassification(
+    model_name="PP-LCNet_x0_25_textline_ori",
+    engine="transformers",
+)
 output = model.predict("textline_rot180_demo.jpg",  batch_size=1)
 for res in output:
     res.print(json_format=False)

@@ -51,10 +51,16 @@ comments: true
 
 > ❗ 在快速开始前，请先安装 PaddleOCR 的 wheel 包，详细请参考 [安装教程](../installation.md)。
 
+使用一行命令即可快速体验：
+
+```bash
+paddleocr layout_detection -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/layout.jpg --model_name PP-DocLayoutV3
+```
+
 也可以通过 CLI 使用 `transformers` 引擎进行推理（需要参考[文档](../inference_engine.md)安装必要依赖）：
 
 ```bash
-paddleocr layout_detection -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/layout.jpg --model_name PP-DocLayoutV2 \
+paddleocr layout_detection -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/layout.jpg --model_name PP-DocLayoutV3 \
     --engine transformers
 ```
 

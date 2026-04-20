@@ -146,14 +146,6 @@ paddleocr formula_recognition -i https://paddle-model-ecology.bj.bcebos.com/padd
 
 The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
-To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
-
-```bash
-# Use the transformers engine for inference
-paddleocr formula_recognition -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/general_formula_rec_001.png \
-    --engine transformers
-```
-
 <b>Note: </b>The official models would be download from HuggingFace by default. If can't access to HuggingFace, please set the environment variable `PADDLE_PDX_MODEL_SOURCE="BOS"` to change the model source to BOS. In the future, more model sources will be supported.
 
 You can also integrate the model inference from the formula recognition module into your own project.Before running the code below, please download the [example image](https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/general_formula_rec_001.png) locally.
@@ -169,21 +161,6 @@ for res in output:
 ```
 
 The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
-
-To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
-
-```python
-from paddleocr import FormulaRecognition
-model = FormulaRecognition(
-    model_name="PP-FormulaNet_plus-M",
-    engine="transformers",
-)
-output = model.predict(input="general_formula_rec_001.png", batch_size=1)
-for res in output:
-    res.print()
-    res.save_to_img(save_path="./output/")
-    res.save_to_json(save_path="./output/res.json")
-```
 
 After running, the output is:
 ```bash

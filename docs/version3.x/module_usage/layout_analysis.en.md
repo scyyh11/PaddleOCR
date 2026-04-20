@@ -94,14 +94,18 @@ The following table only presents the layout detection accuracy of PP-DocLayoutV
 
 > ❗ Before quick integration, please install the PaddleOCR wheel package. For detailed instructions, refer to [PaddleOCR Local Installation Tutorial](../installation.en.md)。
 
+You can quickly try it out with a single command:
+
+```bash
+paddleocr layout_detection -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/layout.jpg --model_name PP-DocLayoutV3
+```
+
 You can also run inference with the `transformers` engine through the CLI (install the required dependencies by following the [documentation](../inference_engine.en.md)):
 
 ```bash
-paddleocr layout_detection -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/layout.jpg --model_name PP-DocLayoutV2 \
+paddleocr layout_detection -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/layout.jpg --model_name PP-DocLayoutV3 \
     --engine transformers
 ```
-
-
 
 <b>Note: </b>The official models would be download from HuggingFace by default. If can't access to HuggingFace, please set the environment variable <code>PADDLE_PDX_MODEL_SOURCE="BOS"</code> to change the model source to BOS. In the future, more model sources will be supported.
 
