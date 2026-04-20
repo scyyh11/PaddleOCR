@@ -696,11 +696,16 @@ devanagari_PP-OCRv3_mobile_rec_infer.tar">Inference Model</a>/<a href="https://p
 
 ## 2. Quick Start  
 
-Before using the general OCR pipeline locally, ensure you have installed the wheel package by following the [Installation Guide](../installation.en.md). After that, install the dependencies required by your chosen execution mode, and then you can try the pipeline through the command line or Python integration.  
+Before using the general OCR pipeline locally, install the dependencies for your chosen inference engine first, then install the `paddleocr` package. See the [Installation Guide](../installation.en.md) for the full procedure. After installation, you can use the command line or Python integration.
 
 ### 2.0 Environment Preparation
 
-#### 2.0.1 Install PaddleOCR
+#### 2.0.1 Install the inference engine
+
+- If you use the Paddle inference engine, install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
+- If you use the `transformers` inference engine, install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md).
+
+#### 2.0.2 Install paddleocr
 
 ```bash
 # Install the basic package (OCR only)
@@ -709,11 +714,6 @@ pip install paddleocr
 # Install the full package (all features)
 pip install "paddleocr[all]"
 ```
-
-#### 2.0.2 Install Dependencies by Execution Mode
-
-- If you use the Paddle inference engine, install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
-- If you use the `transformers` inference engine, install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md).
 
 #### 2.0.3 Environment Verification
 

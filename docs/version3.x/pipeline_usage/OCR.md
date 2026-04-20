@@ -702,7 +702,7 @@ devanagari_PP-OCRv3_mobile_rec_infer.tar">推理模型</a>/<a href="https://padd
 
 ## 2. 快速开始
 
-在本地使用通用OCR产线前，请先根据所选推理引擎安装对应依赖，再安装 PaddleOCR 推理包。完整安装说明请参考[安装教程](../installation.md)。安装完成后，即可在本地使用命令行体验或 Python 集成。
+在本地使用通用 OCR 产线前，请先根据所选推理引擎安装对应依赖，再安装 `paddleocr` Python 包。完整安装说明请参考[安装教程](../installation.md)。安装完成后，即可在本地使用命令行体验或 Python 集成。
 
 **请注意，如果在执行过程中遇到程序失去响应、程序异常退出、内存资源耗尽、推理速度极慢等问题，请尝试参考文档调整配置，例如关闭不需要使用的功能或使用更轻量的模型。**
 
@@ -713,7 +713,7 @@ devanagari_PP-OCRv3_mobile_rec_infer.tar">推理模型</a>/<a href="https://padd
 - 如需使用 Paddle 推理引擎，请参考[飞桨框架安装说明](../paddlepaddle_installation.md)安装 PaddlePaddle。
 - 如需使用 `transformers` 推理引擎，请参考[推理引擎文档](../inference_engine.md)安装相关依赖。
 
-#### 2.0.2 安装推理库
+#### 2.0.2 安装 paddleocr
 
 ```bash
 # 安装基础版本（仅包含OCR功能）
