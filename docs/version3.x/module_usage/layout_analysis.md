@@ -69,7 +69,7 @@ paddleocr layout_detection -i https://paddle-model-ecology.bj.bcebos.com/paddlex
 ```python
 from paddleocr import LayoutDetection
 
-model = LayoutDetection(model_name="PP-DocLayoutV2")
+model = LayoutDetection(model_name="PP-DocLayoutV3")
 output = model.predict("layout.jpg", batch_size=1, layout_nms=True)
 for res in output:
     res.print()
@@ -85,7 +85,7 @@ for res in output:
 from paddleocr import LayoutDetection
 
 model = LayoutDetection(
-    model_name="PP-DocLayoutV2",
+    model_name="PP-DocLayoutV3",
     engine="transformers",
 )
 output = model.predict("layout.jpg", batch_size=1, layout_nms=True)
