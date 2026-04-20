@@ -983,7 +983,7 @@ paddleocr pp_structurev3 -i ./pp_structure_v3_demo.png --use_textline_orientatio
 paddleocr pp_structurev3 -i ./pp_structure_v3_demo.png --device gpu
 ```
 
-The examples above use the Paddle inference engine by default. To run them, first install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
+The examples above use the Paddle inference engine by default. To run them, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
 
@@ -1579,7 +1579,7 @@ You can specify a device ID:
 </tr>
 <tr>
 <td><code>engine</code></td>
-<td><b>Meaning:</b> Inference engine.<br/><b>Description:</b> Supports <code>paddle</code>, <code>paddle_static</code>, <code>paddle_dynamic</code>, and <code>transformers</code>. For detailed descriptions, supported values, compatibility rules, and examples, see <a href="../inference_engine.en.md">Inference Engine and Configuration</a>.</td>
+<td><b>Meaning:</b> Inference engine.<br/><b>Description:</b> Supports <code>None</code> (the default), <code>paddle</code>, <code>paddle_static</code>, <code>paddle_dynamic</code>, and <code>transformers</code>. When left as <code>None</code>, PaddleOCR preserves the behavior of earlier versions, which in most configurations is equivalent to <code>paddle</code>. For detailed descriptions, supported values, compatibility rules, and examples, see <a href="../inference_engine.en.md">Inference Engine and Configuration</a>.</td>
 <td><code>str|None</code></td>
 <td><code>None</code></td>
 </tr>
@@ -1631,11 +1631,6 @@ If MKL-DNN is unavailable or the model does not support MKL-DNN acceleration, ac
 <tr>
 <td><code>paddlex_config</code></td>
 <td><b>Meaning:</b> Path to the PaddleX pipeline configuration file.</td>
-<td><code>str</code></td>
-<td></td>
-</tr>
-
-<td><b>Meaning:</b>Path to the PaddleX pipeline configuration file.</td>
 <td><code>str</code></td>
 <td></td>
 </tr>
@@ -1694,7 +1689,7 @@ for res in output:
     res.save_to_markdown(save_path="output") ## Save the current image's result in Markdown format
 ```
 
-The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
+The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
 
@@ -2382,7 +2377,7 @@ Supports specifying device ID:
 </tr>
 <tr>
 <td><code>engine</code></td>
-<td><b>Meaning:</b> Inference engine.<br/><b>Description:</b> Supports <code>paddle</code>, <code>paddle_static</code>, <code>paddle_dynamic</code>, and <code>transformers</code>. For detailed descriptions, supported values, compatibility rules, and examples, see <a href="../inference_engine.en.md">Inference Engine and Configuration</a>.</td>
+<td><b>Meaning:</b> Inference engine.<br/><b>Description:</b> Supports <code>None</code> (the default), <code>paddle</code>, <code>paddle_static</code>, <code>paddle_dynamic</code>, and <code>transformers</code>. When left as <code>None</code>, PaddleOCR preserves the behavior of earlier versions, which in most configurations is equivalent to <code>paddle</code>. For detailed descriptions, supported values, compatibility rules, and examples, see <a href="../inference_engine.en.md">Inference Engine and Configuration</a>.</td>
 <td><code>str|None</code></td>
 <td><code>None</code></td>
 </tr>
