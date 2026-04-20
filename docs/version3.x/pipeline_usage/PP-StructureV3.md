@@ -1659,6 +1659,7 @@ for res in output:
     res.print() ## 打印预测的结构化输出
     res.save_to_json(save_path="output") ## 保存当前图像的结构化json结果
     res.save_to_markdown(save_path="output") ## 保存当前图像的markdown格式的结果
+    res.save_to_word(save_path="output") ## 保存当前图像的Word格式的结果
 ```
 
 上述代码使用飞桨框架作为默认推理引擎，请在运行前确保相关依赖已经安装。
@@ -2674,6 +2675,14 @@ for item in markdown_images:
 <td><code>save_path</code></td>
 <td><code>str</code></td>
 <td>保存的文件路径，支持目录或文件路径。</td>
+<td>无</td>
+</tr>
+<tr>
+<td><code>save_to_word()</code></td>
+<td>将版面解析结果保存为Word (.docx) 格式的文件</td>
+<td><code>save_path</code></td>
+<td><code>str</code></td>
+<td>保存的文件路径，支持目录或文件路径</td>
 <td>无</td>
 </tr>
 <tr>

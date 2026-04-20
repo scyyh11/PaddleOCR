@@ -339,6 +339,7 @@ for res in output:
     res.print() ## 打印预测的结构化输出
     res.save_to_json(save_path=output_dir) ## 保存当前图像的结构化json结果
     res.save_to_markdown(save_path=output_dir) ## 保存当前图像的markdown格式的结果
+    res.save_to_word(save_path=output_dir) ## 保存当前图像的Word格式的结果
 ```
 
 若需切换到 `transformers` 引擎，可参考以下示例：
@@ -357,6 +358,7 @@ for res in output:
     res.print() ## 打印预测的结构化输出
     res.save_to_json(save_path=output_dir) ## 保存当前图像的结构化json结果
     res.save_to_markdown(save_path=output_dir) ## 保存当前图像的markdown格式的结果
+    res.save_to_word(save_path=output_dir) ## 保存当前图像的Word格式的结果
 ```
 
 如果是 PDF 文件，会将 PDF 的每一页单独处理，每一页的 Markdown 文件也会对应单独的结果。如果您希望对多页的推理结果进行跨页表格合并、重建多级标题和合并多页结果等需求，可以通过如下方式实现：
