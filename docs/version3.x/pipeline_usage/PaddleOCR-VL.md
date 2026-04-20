@@ -492,7 +492,8 @@ paddleocr doc_parser -i ./paddleocr_vl_demo.png --engine transformers --save_pat
 <li><b>large</b>，设置为large时，表示在模型输出的检测框中，对于互相重叠包含的检测框，只保留外部最大的框，删除重叠的内部框；</li>
 <li><b>small</b>，设置为small，表示在模型输出的检测框中，对于互相重叠包含的检测框，只保留内部被包含的小框，删除重叠的外部框；</li>
 <li><b>union</b>，不进行框的过滤处理，内外框都保留；</li>
-</ul>如果不设置，将使用初始化的参数值。
+</ul>
+如果不设置，将使用初始化的参数值。
 </td>
 <td><code>str</code></td>
 <td></td>
@@ -705,7 +706,8 @@ paddleocr doc_parser -i ./paddleocr_vl_demo.png --engine transformers --save_pat
 <li><b>DCU</b>：如 <code>dcu:0</code> 表示使用第 1 块 DCU 进行推理；</li>
 <li><b>沐曦 GPU</b>：如 <code>metax_gpu:0</code> 表示使用第 1 块沐曦 GPU 进行推理；</li>
 <li><b>天数 GPU</b>：如 <code>iluvatar_gpu:0</code> 表示使用第 1 块天数 GPU 进行推理；</li>
-</ul>如果不设置，将使用初始化的默认值，初始化时，会优先使用本地的 GPU 0号设备，如果没有，则使用 CPU 设备。
+</ul>
+如果不设置，将使用初始化的默认值，初始化时，会优先使用本地的 GPU 0号设备，如果没有，则使用 CPU 设备。
 </td>
 <td><code>str</code></td>
 <td></td>
@@ -1322,7 +1324,7 @@ output = pipeline.predict(["imgs/file1.png", "imgs/file2.png", "imgs/file3.png"]
 </tr>
 <tr>
 <td><code>prompt_label</code></td>
-<b>含义：</b>VL模型的 prompt 类型设置。<br/>
+<td><b>含义：</b>VL模型的 prompt 类型设置。<br/>
 <b>说明：</b>
 当且仅当 <code>use_layout_detection=False</code> 时生效。可填写参数为 <code>ocr</code>、<code>formula</code>、<code>table</code> 、<code>seal</code>、<code>chart</code>和 <code>spotting</code>。</td>
 <td><code>str|None</code></td>
@@ -1399,7 +1401,8 @@ output = pipeline.predict(["imgs/file1.png", "imgs/file2.png", "imgs/file3.png"]
   <li><code>formula_max_pixels</code>：公式最大分辨率</li>
   <li><code>seal_min_pixels</code>：印章最小分辨率</li>
   <li><code>seal_max_pixels</code>：印章最大分辨率</li>
-</ul></td>
+</ul>
+</td>
 <td><code>dict|None</code></td>
 <td><code>None</code></td>
 </tr>
@@ -1548,7 +1551,7 @@ output = pipeline.predict(["imgs/file1.png", "imgs/file2.png", "imgs/file3.png"]
       <li><code>input_path</code>: <code>(str)</code> 待预测图像的输入路径</li>
       <li><code>page_index</code>: <code>(Union[int, None])</code> 如果输入是PDF文件，则表示当前是PDF的第几页，否则为 <code>None</code></li>
       <li><code>model_settings</code>: <code>(Dict[str, bool])</code> 配置产线所需的模型参数
-        <ol >
+        <ol>
           <li><code>use_doc_preprocessor</code>: <code>(bool)</code> 控制是否启用文档预处理子产线</li>
           <li><code>use_layout_detection</code>: <code>(bool)</code> 控制是否启用版面检测模块</li>
           <li><code>use_chart_recognition</code>: <code>(bool)</code> 控制是否开启图表识别功能</li>
@@ -1557,8 +1560,8 @@ output = pipeline.predict(["imgs/file1.png", "imgs/file2.png", "imgs/file3.png"]
       </li>
       <li><code>doc_preprocessor_res</code>: <code>(Dict[str, Union[str, Dict[str, bool], int]])</code> 文档预处理子产线的输出结果。仅当<code>use_doc_preprocessor=True</code>时存在
         <ol>
-          <li><code>input_path</code>: <code>(str)</code> 文档预处理子接受的图像路径，当输入为<code>numpy.ndarray</code>时，保存为<code>None</code>,此处为<code>None</code></li>
-          <li><code>page_index</code>: <code> None</code> 此处的输入为<code>numpy.ndarray</code>时，所以值为<code>None</code></li>
+          <li><code>input_path</code>: <code>(str)</code> 文档预处理子接受的图像路径，当输入为<code>numpy.ndarray</code>时，保存为<code>None</code>，此处为<code>None</code></li>
+          <li><code>page_index</code>: <code>None</code> 此处的输入为<code>numpy.ndarray</code>时，所以值为<code>None</code></li>
           <li><code>model_settings</code>: <code>(Dict[str, bool])</code> 文档预处理子的模型配置参数
             <ul>
               <li><code>use_doc_orientation_classify</code>: <code>(bool)</code> 控制是否启用文档方向分类</li>
@@ -1568,23 +1571,23 @@ output = pipeline.predict(["imgs/file1.png", "imgs/file2.png", "imgs/file3.png"]
           <li><code>angle</code>: <code>(int)</code> 文档图像方向分类子模块的预测结果，启用时返回实际角度值</li>
         </ol>
       </li>
-      <li><code>parsing_res_list</code>: <code>(List[Dict])</code> 解析结果的列表，每个元素为一个字典，列表顺序为解析后的阅读顺序。</li>
+      <li><code>parsing_res_list</code>: <code>(List[Dict])</code> 解析结果的列表，每个元素为一个字典，列表顺序为解析后的阅读顺序。
         <ol>
           <li><code>block_bbox</code>: <code>(np.ndarray)</code> 版面区域的边界框。</li>
-          <li><code>block_label</code>: <code>(str)</code> 版面区域的标签，例如<code>text</code>, <code>table</code>等</li>
+          <li><code>block_label</code>: <code>(str)</code> 版面区域的标签，例如<code>text</code>、<code>table</code>等</li>
           <li><code>block_content</code>: <code>(str)</code> 内容为版面区域内的内容。</li>
           <li><code>block_id</code>: <code>(int)</code> 版面区域的索引，用于显示版面排序结果。</li>
-          <li><code>block_order</code>: <code>(int)</code> 版面区域的顺序，用于显示版面阅读顺序,对于非排序部分，默认值为 <code>None</code>。</li>
+          <li><code>block_order</code>: <code>(int)</code> 版面区域的顺序，用于显示版面阅读顺序，对于非排序部分，默认值为 <code>None</code>。</li>
         </ol>
       </li>
     </ol>
   </li>
-  <li>调用<code>save_to_json()</code> 方法会将上述内容保存到指定的<code>save_path</code>中，如果指定为目录，则保存的路径为<code>save_path/{your_img_basename}_res.json</code>，如果指定为文件，则直接保存到该文件中。由于json文件不支持保存numpy数组，因此会将其中的<code>numpy.array</code>类型转换为列表形式。json中的字段内容如下：</li>
+  <li>调用<code>save_to_json()</code> 方法会将上述内容保存到指定的<code>save_path</code>中，如果指定为目录，则保存的路径为<code>save_path/{your_img_basename}_res.json</code>；如果指定为文件，则直接保存到该文件中。由于 JSON 文件不支持保存 numpy 数组，因此会将其中的<code>numpy.array</code>类型转换为列表形式。JSON 中的字段内容如下：
     <ol start="1" type="1">
       <li><code>input_path</code>: <code>(str)</code> 待预测图像的输入路径</li>
       <li><code>page_index</code>: <code>(Union[int, None])</code> 如果输入是PDF文件，则表示当前是PDF的第几页，否则为 <code>None</code></li>
       <li><code>model_settings</code>: <code>(Dict[str, bool])</code> 配置产线所需的模型参数
-        <ol >
+        <ol>
           <li><code>use_doc_preprocessor</code>: <code>(bool)</code> 控制是否启用文档预处理子产线</li>
           <li><code>use_layout_detection</code>: <code>(bool)</code> 控制是否启用版面检测模块</li>
           <li><code>use_chart_recognition</code>: <code>(bool)</code> 控制是否开启图表识别功能</li>
@@ -1593,8 +1596,8 @@ output = pipeline.predict(["imgs/file1.png", "imgs/file2.png", "imgs/file3.png"]
       </li>
       <li><code>doc_preprocessor_res</code>: <code>(Dict[str, Union[str, Dict[str, bool], int]])</code> 文档预处理子产线的输出结果。仅当<code>use_doc_preprocessor=True</code>时存在
         <ol>
-          <li><code>input_path</code>: <code>(str)</code> 文档预处理子接受的图像路径，当输入为<code>numpy.ndarray</code>时，保存为<code>None</code>,此处为<code>None</code></li>
-          <li><code>page_index</code>: <code> None</code> 此处的输入为<code>numpy.ndarray</code>时，所以值为<code>None</code></li>
+          <li><code>input_path</code>: <code>(str)</code> 文档预处理子接受的图像路径，当输入为<code>numpy.ndarray</code>时，保存为<code>None</code>，此处为<code>None</code></li>
+          <li><code>page_index</code>: <code>None</code> 此处的输入为<code>numpy.ndarray</code>时，所以值为<code>None</code></li>
           <li><code>model_settings</code>: <code>(Dict[str, bool])</code> 文档预处理子的模型配置参数
             <ul>
               <li><code>use_doc_orientation_classify</code>: <code>(bool)</code> 控制是否启用文档方向分类</li>
@@ -1604,48 +1607,49 @@ output = pipeline.predict(["imgs/file1.png", "imgs/file2.png", "imgs/file3.png"]
           <li><code>angle</code>: <code>(int)</code> 文档图像方向分类子模块的预测结果，启用时返回实际角度值</li>
         </ol>
       </li>
-      <li><code>parsing_res_list</code>: <code>(List[Dict])</code> 解析结果的列表，每个元素为一个字典，列表顺序为解析后的阅读顺序。</li>
+      <li><code>parsing_res_list</code>: <code>(List[Dict])</code> 解析结果的列表，每个元素为一个字典，列表顺序为解析后的阅读顺序。
         <ol>
           <li><code>block_bbox</code>: <code>(np.ndarray)</code> 版面区域的边界框。</li>
-          <li><code>block_label</code>: <code>(str)</code> 版面区域的标签，例如<code>text</code>, <code>table</code>等</li>
+          <li><code>block_label</code>: <code>(str)</code> 版面区域的标签，例如<code>text</code>、<code>table</code>等</li>
           <li><code>block_content</code>: <code>(str)</code> 内容为版面区域内的内容。</li>
           <li><code>block_id</code>: <code>(int)</code> 版面区域的索引，用于显示版面排序结果。</li>
-          <li><code>block_order</code>: <code>(int)</code> 版面区域的顺序，用于显示版面阅读顺序,对于非排序部分，默认值为 <code>None</code>。</li>
+          <li><code>block_order</code>: <code>(int)</code> 版面区域的顺序，用于显示版面阅读顺序，对于非排序部分，默认值为 <code>None</code>。</li>
         </ol>
       </li>
     </ol>
   </li>
-<li>调用<code>save_to_img()</code> 方法会将可视化结果保存到指定的<code>save_path</code>中，如果指定为目录，则会将版面区域检测可视化图像、全局OCR可视化图像、版面阅读顺序可视化图像等内容保存，如果指定为文件，则直接保存到该文件中。</li>
-<li>调用<code>save_to_markdown()</code> 方法会将转化后的 Markdown 文件保存到指定的<code>save_path</code>中，保存的文件路径为<code>save_path/{your_img_basename}.md</code>，如果输入是 PDF 文件，建议直接指定目录，否责多个 markdown 文件会被覆盖。</li>
-<li>此外，也支持通过属性获取带结果的可视化图像和预测结果，具体如下：
-<table>
-<thead>
-<tr>
-<th>属性</th>
-<th>属性说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>json</code></td>
-<td>获取预测的 <code>json</code> 格式的结果</td>
-</tr>
-<tr>
-<td><code>img</code></td>
-<td>获取格式为 <code>dict</code> 的可视化图像</td>
-</tr>
-<tr>
-<td><code>markdown</code></td>
-<td>获取格式为 <code>dict</code> 的 markdown 结果</td>
-</tr>
-</tbody>
-</table>
-
-<ul>
-  <li><code>json</code> 属性获取的预测结果为dict类型的数据，相关内容与调用 <code>save_to_json()</code> 方法保存的内容一致。</li>
-  <li><code>img</code> 属性返回的预测结果是一个dict类型的数据。其中，键分别为 <code>ocr_res_img</code> 和 <code>preprocessed_img</code>，对应的值是两个 <code>Image.Image</code> 对象：一个用于显示 OCR 结果的可视化图像，另一个用于展示图像预处理的可视化图像。如果没有使用图像预处理子模块，则dict中只包含 <code>ocr_res_img</code>。</li>
+  <li>调用<code>save_to_img()</code> 方法会将可视化结果保存到指定的<code>save_path</code>中，如果指定为目录，则会将版面区域检测可视化图像、全局OCR可视化图像、版面阅读顺序可视化图像等内容保存；如果指定为文件，则直接保存到该文件中。</li>
+  <li>调用<code>save_to_markdown()</code> 方法会将转化后的 Markdown 文件保存到指定的<code>save_path</code>中，保存的文件路径为<code>save_path/{your_img_basename}.md</code>。如果输入是 PDF 文件，建议直接指定目录，否则多个 Markdown 文件会被覆盖。</li>
+  <li>此外，也支持通过属性获取带结果的可视化图像和预测结果，具体如下：
+    <table>
+      <thead>
+        <tr>
+          <th>属性</th>
+          <th>属性说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>json</code></td>
+          <td>获取预测的 <code>json</code> 格式的结果</td>
+        </tr>
+        <tr>
+          <td><code>img</code></td>
+          <td>获取格式为 <code>dict</code> 的可视化图像</td>
+        </tr>
+        <tr>
+          <td><code>markdown</code></td>
+          <td>获取格式为 <code>dict</code> 的 markdown 结果</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li><code>json</code> 属性获取的预测结果为 dict 类型的数据，相关内容与调用 <code>save_to_json()</code> 方法保存的内容一致。</li>
+      <li><code>img</code> 属性返回的预测结果是一个 dict 类型的数据。其中，键分别为 <code>ocr_res_img</code> 和 <code>preprocessed_img</code>，对应的值是两个 <code>Image.Image</code> 对象：一个用于显示 OCR 结果的可视化图像，另一个用于展示图像预处理的可视化图像。如果没有使用图像预处理子模块，则 dict 中只包含 <code>ocr_res_img</code>。</li>
+      <li><code>markdown</code> 属性获取的预测结果为 dict 类型的数据，相关内容与调用 <code>save_to_markdown()</code> 方法保存的内容一致。</li>
+    </ul>
+  </li>
 </ul>
-</li>
 </details>
 
 
