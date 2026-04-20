@@ -51,10 +51,16 @@ comments: true
 
 > ❗ 在快速开始前，请先安装 PaddleOCR 的 wheel 包，详细请参考 [安装教程](../installation.md)。
 
+使用一行命令即可快速体验：
+
+```bash
+paddleocr layout_detection -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/layout.jpg --model_name PP-DocLayoutV3
+```
+
 也可以通过 CLI 使用 `transformers` 引擎进行推理（需要参考[文档](../inference_engine.md)安装必要依赖）：
 
 ```bash
-paddleocr layout_detection -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/layout.jpg --model_name PP-DocLayoutV2 \
+paddleocr layout_detection -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/layout.jpg --model_name PP-DocLayoutV3 \
     --engine transformers
 ```
 
@@ -63,7 +69,7 @@ paddleocr layout_detection -i https://paddle-model-ecology.bj.bcebos.com/paddlex
 ```python
 from paddleocr import LayoutDetection
 
-model = LayoutDetection(model_name="PP-DocLayoutV2")
+model = LayoutDetection(model_name="PP-DocLayoutV3")
 output = model.predict("layout.jpg", batch_size=1, layout_nms=True)
 for res in output:
     res.print()
@@ -79,7 +85,7 @@ for res in output:
 from paddleocr import LayoutDetection
 
 model = LayoutDetection(
-    model_name="PP-DocLayoutV2",
+    model_name="PP-DocLayoutV3",
     engine="transformers",
 )
 output = model.predict("layout.jpg", batch_size=1, layout_nms=True)
