@@ -61,7 +61,7 @@ Clone this repository locally, then install the remaining dependencies:
 git clone https://github.com/PaddlePaddle/PaddleOCR
 
 # (Optional) Switch to a specific branch
-git checkout release/3.2
+git checkout release/3.5
 
 # If cloning fails because of network issues, you can also use the Gitee repository:
 git clone https://gitee.com/paddlepaddle/PaddleOCR

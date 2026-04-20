@@ -114,7 +114,7 @@ Quickly experience with a single command:
 paddleocr table_structure_recognition -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/table_recognition.jpg
 ```
 
-The examples above use the Paddle inference engine by default. To run them, first install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
+The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
 
@@ -137,7 +137,7 @@ for res in output:
     res.save_to_json("./output/res.json")
 ```
 
-The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
+The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
 
@@ -209,7 +209,7 @@ By default, GPU 0 is used if available; otherwise, CPU is used.</td>
 </tr>
 <tr>
 <td><code>engine</code></td>
-<td><b>Meaning:</b> Inference engine.<br/><b>Description:</b> Supports <code>paddle</code>, <code>paddle_static</code>, <code>paddle_dynamic</code>, and <code>transformers</code>. For detailed descriptions, supported values, compatibility rules, and examples, see <a href="../inference_engine.en.md">Inference Engine and Configuration</a>.</td>
+<td><b>Meaning:</b> Inference engine.<br/><b>Description:</b> Supports <code>None</code> (the default), <code>paddle</code>, <code>paddle_static</code>, <code>paddle_dynamic</code>, and <code>transformers</code>. When left as <code>None</code>, PaddleOCR preserves the behavior of earlier versions, which in most configurations is equivalent to <code>paddle</code>. For detailed descriptions, supported values, compatibility rules, and examples, see <a href="../inference_engine.en.md">Inference Engine and Configuration</a>.</td>
 <td><code>str|None</code></td>
 <td><code>None</code></td>
 </tr>
@@ -451,11 +451,11 @@ You can evaluate the trained weights, such as `output/xxx/xxx.pdparams`, using t
  ```
 At this point, secondary development is complete, and this static graph model can be directly integrated into the PaddleOCR API.
 
-If you want to use the `paddle_dynamic` or `transformers` engine with the trained model, please refer to the [Weight Conversion](#52-weight-conversion) section in [Inference Engine](#五推理引擎) later in this document to convert the model from the `pdparams` format to the `safetensors` format using PaddleX.
+If you want to use the `paddle_dynamic` or `transformers` engine with the trained model, please refer to the [Weight Conversion](#52-weight-conversion) section in [Inference Engine](#5-inference-engine) later in this document to convert the model from the `pdparams` format to the `safetensors` format using PaddleX.
 
 ## 5. Inference Engine
 
-For detailed descriptions, values, compatibility rules, and examples of the inference engine, please refer to <a href="../inference_engine.md">Inference Engine and Configuration Description</a>.
+For detailed descriptions, values, compatibility rules, and examples of the inference engine, please refer to <a href="../inference_engine.en.md">Inference Engine and Configuration Description</a>.
 
 ### 5.1 Speed Data
 
@@ -537,6 +537,6 @@ For detailed descriptions, values, compatibility rules, and examples of the infe
 
 ### 5.2 Weight Conversion
 
-When using the inference engine, the system will automatically download the official pre-trained model. If you need to use a self-trained model with the `paddle_dynamic` or `transformers` engine, please refer to the [PaddleX Text Table Structure Recognition Module Weight Conversion](https://paddlepaddle.github.io/PaddleX/latest/en/module_usage/tutorials/ocr_modules/table_structure_recognition.html#442) section to convert the model from the `pdparams` format to the `safetensors` format using PaddleX. This allows seamless integration into the PaddleOCR API for inference.
+When using the inference engine, the system will automatically download the official pre-trained model. If you need to use a self-trained model with the `paddle_dynamic` or `transformers` engine, please refer to the [PaddleX Table Structure Recognition Module Weight Conversion](https://paddlepaddle.github.io/PaddleX/latest/en/module_usage/tutorials/ocr_modules/table_structure_recognition.html#442) section to convert the model from the `pdparams` format to the `safetensors` format using PaddleX. This allows seamless integration into the PaddleOCR API for inference.
 
 ## 6. FAQ

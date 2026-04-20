@@ -104,13 +104,36 @@ You can quickly experience the functionality with a single command:
 paddleocr textline_orientation_classification -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/textline_rot180_demo.jpg
 ```  
 
+To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
+
+```bash
+# Use the transformers engine for inference
+paddleocr textline_orientation_classification -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/textline_rot180_demo.jpg \
+    --engine transformers
+```
+
 <b>Note: </b>The official models would be download from HuggingFace by default. If can't access to HuggingFace, please set the environment variable <code>PADDLE_PDX_MODEL_SOURCE="BOS"</code> to change the model source to BOS. In the future, more model sources will be supported.
 
 You can also integrate the text line orientation classification model into your project. Run the following code after downloading the [example image](https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/textline_rot180_demo.jpg) to your local machine. 
 
-```bash
+```python
 from paddleocr import TextLineOrientationClassification
 model = TextLineOrientationClassification(model_name="PP-LCNet_x0_25_textline_ori")
+output = model.predict("textline_rot180_demo.jpg",  batch_size=1)
+for res in output:
+    res.print(json_format=False)
+    res.save_to_img("./output/demo.png")
+    res.save_to_json("./output/res.json")
+```
+
+To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
+
+```python
+from paddleocr import TextLineOrientationClassification
+model = TextLineOrientationClassification(
+    model_name="PP-LCNet_x0_25_textline_ori",
+    engine="transformers",
+)
 output = model.predict("textline_rot180_demo.jpg",  batch_size=1)
 for res in output:
     res.print(json_format=False)
@@ -179,7 +202,7 @@ By default, GPU 0 is used if available; otherwise, CPU is used.
 </tr>
 <tr>
 <td><code>engine</code></td>
-<td><b>Meaning:</b> Inference engine.<br/><b>Description:</b> Supports <code>paddle</code>, <code>paddle_static</code>, <code>paddle_dynamic</code>, and <code>transformers</code>. For detailed descriptions, supported values, compatibility rules, and examples, see <a href="../inference_engine.en.md">Inference Engine and Configuration</a>.</td>
+<td><b>Meaning:</b> Inference engine.<br/><b>Description:</b> Supports <code>None</code> (the default), <code>paddle</code>, <code>paddle_static</code>, <code>paddle_dynamic</code>, and <code>transformers</code>. When left as <code>None</code>, PaddleOCR preserves the behavior of earlier versions, which in most configurations is equivalent to <code>paddle</code>. For detailed descriptions, supported values, compatibility rules, and examples, see <a href="../inference_engine.en.md">Inference Engine and Configuration</a>.</td>
 <td><code>str|None</code></td>
 <td><code>None</code></td>
 </tr>
@@ -406,11 +429,11 @@ Supporting multiple input types</td>
 
 Since PaddleOCR does not natively support training for text line orientation classification, refer to [PaddleX's Custom Development Guide](https://paddlepaddle.github.io/PaddleX/latest/en/module_usage/tutorials/ocr_modules/textline_orientation_classification.html#iv-custom-development) for training. Trained models can seamlessly integrate into PaddleOCR's API for inference.
 
-If you want to use the `paddle_dynamic` or `transformers` engine with the trained model, please refer to the [Weight Conversion](#52-weight-conversion) section in [Inference Engine](#五推理引擎) later in this document to convert the model from the `pdparams` format to the `safetensors` format using PaddleX.
+If you want to use the `paddle_dynamic` or `transformers` engine with the trained model, please refer to the [Weight Conversion](#52-weight-conversion) section in [Inference Engine](#5-inference-engine) later in this document to convert the model from the `pdparams` format to the `safetensors` format using PaddleX.
 
-## V. Inference Engine
+## 5. Inference Engine
 
-For detailed descriptions, values, compatibility rules, and examples of the inference engine, please refer to <a href="../inference_engine.md">Inference Engine and Configuration Description</a>.
+For detailed descriptions, values, compatibility rules, and examples of the inference engine, please refer to <a href="../inference_engine.en.md">Inference Engine and Configuration Description</a>.
 
 ### 5.1 Speed Data
 

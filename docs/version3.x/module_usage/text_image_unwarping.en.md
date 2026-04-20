@@ -96,7 +96,7 @@ You can quickly experience it with one command:
 paddleocr text_image_unwarping -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/doc_test.jpg
 ```
 
-The examples above use the Paddle inference engine by default. To run them, first install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
+The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
 
@@ -120,7 +120,7 @@ for res in output:
     res.save_to_json(save_path="./output/res.json")
 ```
 
-The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [Paddle Framework Installation](../paddlepaddle_installation.en.md).
+The example above uses the Paddle inference engine by default. To run it, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 To run inference with the `transformers` engine, first install the required dependencies by following [Inference Engine and Configuration](../inference_engine.en.md):
 
@@ -191,7 +191,7 @@ By default, GPU 0 will be used if available; otherwise, the CPU will be used.
 </tr>
 <tr>
 <td><code>engine</code></td>
-<td><b>Meaning:</b> Inference engine.<br/><b>Description:</b> Supports <code>paddle</code>, <code>paddle_static</code>, <code>paddle_dynamic</code>, and <code>transformers</code>. For detailed descriptions, supported values, compatibility rules, and examples, see <a href="../inference_engine.en.md">Inference Engine and Configuration</a>.</td>
+<td><b>Meaning:</b> Inference engine.<br/><b>Description:</b> Supports <code>None</code> (the default), <code>paddle</code>, <code>paddle_static</code>, <code>paddle_dynamic</code>, and <code>transformers</code>. When left as <code>None</code>, PaddleOCR preserves the behavior of earlier versions, which in most configurations is equivalent to <code>paddle</code>. For detailed descriptions, supported values, compatibility rules, and examples, see <a href="../inference_engine.en.md">Inference Engine and Configuration</a>.</td>
 <td><code>str|None</code></td>
 <td><code>None</code></td>
 </tr>
@@ -383,7 +383,7 @@ The current module does not support fine-tuning training and only supports infer
 
 ## 5. Inference Engine
 
-For detailed descriptions, values, compatibility rules, and examples of the inference engine, please refer to <a href="../inference_engine.md">Inference Engine and Configuration Description</a>.
+For detailed descriptions, values, compatibility rules, and examples of the inference engine, please refer to <a href="../inference_engine.en.md">Inference Engine and Configuration Description</a>.
 
 ### 5.1 Speed Data
 
