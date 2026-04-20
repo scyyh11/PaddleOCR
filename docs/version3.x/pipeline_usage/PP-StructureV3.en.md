@@ -21,7 +21,7 @@ Layout analysis is a technique used to extract structured information from docum
 In this pipeline, you can choose the model to use based on the benchmark data below.
 
 > The inference time only includes the model inference time and does not include the time for pre- or post-processing.
-> In the inference time columns labeled [Standard Mode / High-Performance Mode], [Normal Mode / High-Performance Mode], or [Regular Mode / High-Performance Mode], the Standard Mode, Normal Mode, and Regular Mode values correspond to the local `paddle_static` inference engine.
+> In the inference time columns labeled [Standard Mode / High-Performance Mode], [Normal Mode / High-Performance Mode], or [Regular Mode / High-Performance Mode], the Standard Mode, Normal Mode, and Regular Mode values correspond to local Paddle inference engines. Each module selects the appropriate local Paddle inference engine according to the default model name: models that support only dynamic graph use `paddle_dynamic`, while models that support both static and dynamic graph prefer `paddle_static`.
 
 <details>
 <summary><b>Document Image Orientation Classification Module :</b></summary>
@@ -945,7 +945,7 @@ devanagari_PP-OCRv3_mobile_rec_infer.tar">Inference Model</a>/<a href="https://p
             <td>Normal Mode</td>
             <td>FP32 Precision / No TRT Acceleration</td>
             <td>FP32 Precision / 8 Threads</td>
-            <td><code>paddle_static</code></td>
+            <td>Local Paddle inference engines (by default, the engine is selected according to the default model name; if both static and dynamic graph are available, <code>paddle_static</code> is preferred)</td>
         </tr>
         <tr>
             <td>High-Performance Mode</td>
@@ -984,7 +984,7 @@ paddleocr pp_structurev3 -i ./pp_structure_v3_demo.png --use_textline_orientatio
 paddleocr pp_structurev3 -i ./pp_structure_v3_demo.png --device gpu
 ```
 
-The examples above use the local `paddle_static` inference engine by default. To run them, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
+The examples above use local Paddle inference engines by default. By default, each module selects the appropriate local Paddle inference engine according to the default model name: models that support only dynamic graph use `paddle_dynamic`, while models that support both static and dynamic graph prefer `paddle_static`. To run them, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 If you choose `transformers` as the inference engine, make sure the Transformers environment is configured by following [Inference Engine and Configuration](../inference_engine.en.md), and then run the following command:
 
@@ -994,8 +994,6 @@ If you choose `transformers` as the inference engine, make sure the Transformers
 paddleocr pp_structurev3 -i https://paddle-model-ecology.bj.bcebos.com/paddlex/imgs/demo_image/pp_structure_v3_demo.png \
     --engine transformers --use_formula_recognition False --wireless_table_structure_recognition_model_name SLANeXt_wireless
 ```
-
-In most scenarios, the default `paddle_static` inference engine delivers better inference performance and is the recommended first choice.
 
 <details><summary><b>Command line supports more parameters. Click to expand for detailed parameter descriptions</b></summary>
 <table>
@@ -1693,7 +1691,7 @@ for res in output:
     res.save_to_word(save_path="output") ## Save the current image's result in Word format
 ```
 
-The example above uses the local `paddle_static` inference engine by default. To run it, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
+The example above uses local Paddle inference engines by default. By default, each module selects the appropriate local Paddle inference engine according to the default model name: models that support only dynamic graph use `paddle_dynamic`, while models that support both static and dynamic graph prefer `paddle_static`. To run it, first install PaddlePaddle by following [PaddlePaddle Framework Installation](../paddlepaddle_installation.en.md).
 
 If you choose `transformers` as the inference engine, make sure the Transformers environment is configured by following [Inference Engine and Configuration](../inference_engine.en.md), and then run the following code:
 
@@ -1717,8 +1715,6 @@ for res in output:
     res.save_to_json(save_path="output") ## Save the current image's structured result in JSON format
     res.save_to_markdown(save_path="output") ## Save the current image's result in Markdown format
 ```
-
-In most scenarios, the default `paddle_static` inference engine delivers better inference performance and is the recommended first choice.
 
 For PDF files, each page will be processed individually and generate a separate Markdown file. If you want to convert the entire PDF to a single Markdown file, use the following method:
 
