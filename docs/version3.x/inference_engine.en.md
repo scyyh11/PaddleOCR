@@ -51,7 +51,7 @@ In many cases, you also need to install the underlying inference framework. For 
 
 | Value | Meaning | Description |
 | - | - | - |
-| `None` | No explicit engine specified | Automatically determines the inference engine. In most cases, PaddlePaddle will be used. |
+| `None` | No explicit engine specified | Automatically determines the inference engine. Keep the behavior of PaddleOCR 3.4; in most cases, the PaddlePaddle framework will be used for inference. |
 | `paddle` | Unified PaddlePaddle framework entry | Automatically selects `paddle_static` or `paddle_dynamic`. |
 | `paddle_static` | Static-graph inference | Uses Paddle static-graph inference. |
 | `paddle_dynamic` | Dynamic-graph inference | Uses Paddle dynamic-graph inference. |

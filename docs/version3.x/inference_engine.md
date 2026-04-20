@@ -51,7 +51,7 @@ python -m pip install transformers
 
 | 取值 | 含义 | 说明 |
 | - | - | - |
-| `None` | 不显式指定引擎 | 自动确定推理引擎。大多数情况下会使用飞桨框架推理。 |
+| `None` | 不显式指定引擎 | 自动确定推理引擎。保持 PaddleOCR 3.4 的行为，大多数情况下会使用飞桨框架推理。 |
 | `paddle` | 飞桨框架统一入口 | 自动选择 `paddle_static` 或 `paddle_dynamic`。 |
 | `paddle_static` | 静态图推理 | 使用飞桨静态图推理。 |
 | `paddle_dynamic` | 飞桨动态图推理 | 使用飞桨动态图推理。 |
