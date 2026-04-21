@@ -79,9 +79,7 @@ jobs:
           python -m pip install 'modelscope>=1.28.0,<1.29'
           PADDLEOCR_EXTRAS="[doc2md]"
         else
-          # Match the paddle version test_gpu.yml uses; paddle 3.3.0 CPU
-          # OneDNN can't dispatch pir::ArrayAttribute<pir::DoubleAttribute>
-          # attributes in release/3.5 models.
+          # Match the paddle version test_gpu.yml uses.
           python -m pip install paddlepaddle==3.1.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
           PADDLEOCR_EXTRAS="[all]"
         fi
