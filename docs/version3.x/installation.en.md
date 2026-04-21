@@ -48,7 +48,7 @@ Besides `all`, you can enable selected optional capabilities by specifying depen
 | `doc2md` | Document-to-Markdown conversion. Quickly turns Word, Excel, and PowerPoint files into readable text |
 | `all` | Full functionality |
 
-The general OCR pipeline and the document image preprocessing pipeline require no extra dependency groups; document parsing, information extraction, document translation, and other capabilities follow the table above. See each pipeline’s documentation for its dependency group. For individual modules, install any dependency group that contains the module to use its basic functionality.
+The general OCR pipeline and the document image preprocessing pipeline require no extra dependency groups (supported on Python 3.8 and later); document parsing, information extraction, document translation, and other capabilities follow the table above. See each pipeline’s documentation for its dependency group. For individual modules, install any dependency group that contains the module to use its basic functionality.
 
 ## 2. Install training and export dependencies
 
