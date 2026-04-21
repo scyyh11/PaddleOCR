@@ -69,8 +69,14 @@ jobs:
         # all pull tokenizers, pip resolves to a version that advertises py3.8
         # via requires_python but ships no cp38 wheel, and the source build
         # via maturin fails because PyO3's abi3 minimum is >=3.9.
+        #
+        # Additional py3.8 pin: modelscope 1.29.x imports `zoneinfo`
+        # unconditionally (py3.9 stdlib). paddlex allows modelscope 1.28.x on
+        # py3.8 but pip picks the newest compatible (1.29.2). Pre-install a
+        # 1.28.x build so pip keeps it during the paddleocr/paddlex resolve.
         if [[ "${{ matrix.python-version }}" == "3.8" ]]; then
           python -m pip install paddlepaddle==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
+          python -m pip install 'modelscope>=1.28.0,<1.29'
           PADDLEOCR_EXTRAS="[doc2md]"
         else
           python -m pip install paddlepaddle==3.3.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
