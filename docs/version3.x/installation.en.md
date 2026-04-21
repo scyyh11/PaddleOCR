@@ -8,6 +8,8 @@ comments: true
 
 This section explains how to install the inference engine as needed, the `paddleocr` distribution package, and optional dependency groups by capability domain. This path covers running pretrained pipelines for inference locally, as well as auxiliary features such as document format conversion. **Model training and model export** are covered in Section 2 and are independent of the installation path above.
 
+**Python version requirement**: `paddleocr` itself supports Python 3.8 and later. The `doc-parser` dependency group (and `all`, which includes it) requires Python 3.9 or later due to upstream dependencies.
+
 ### 1.1 Install the inference engine (as needed)
 
 PaddleOCR 3.5 uses a unified inference-engine configuration and can use backends such as PaddlePaddle and Transformers. To actually run model inference, install your chosen inference engine by following [Inference Engine and Configuration](./inference_engine.en.md).
