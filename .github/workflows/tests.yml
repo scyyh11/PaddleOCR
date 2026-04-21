@@ -65,13 +65,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        # On py3.8 skip paddleocr[trans]: paddlex[trans] pulls tokenizers,
-        # pip resolves to a py3.8-advertising version, then the source build
-        # via maturin fails because PyO3's abi3 minimum is >=3.9. ie and
-        # doc2md are pure Python so we keep them.
+        # On py3.8 only paddleocr[doc2md] is installable: paddlex[ie|trans|ocr]
+        # all pull tokenizers, pip resolves to a version that advertises py3.8
+        # via requires_python but ships no cp38 wheel, and the source build
+        # via maturin fails because PyO3's abi3 minimum is >=3.9.
         if [[ "${{ matrix.python-version }}" == "3.8" ]]; then
           python -m pip install paddlepaddle==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
-          PADDLEOCR_EXTRAS="[ie,doc2md]"
+          PADDLEOCR_EXTRAS="[doc2md]"
         else
           python -m pip install paddlepaddle==3.3.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
           PADDLEOCR_EXTRAS="[all]"
@@ -87,9 +87,9 @@ jobs:
         python -c "import paddlex; print(f'Installed paddlex version: {paddlex.__version__}')"
     - name: Test with pytest
       run: |
-        # On py3.8 doc-parser and trans are not installable (see install
-        # step); skip their test files. ie is installed so PPChatOCRv4Doc
-        # stays in the run.
+        # On py3.8 only paddleocr[doc2md] is installed (see install step);
+        # skip tests for any pipeline or model that needs the ie / trans /
+        # doc-parser extras.
         if [[ "${{ matrix.python-version }}" == "3.8" ]]; then
           pytest --verbose tests/ \
             --ignore=tests/models/test_doc_vlm.py \
@@ -102,6 +102,7 @@ jobs:
             --ignore=tests/pipelines/test_doc_understanding.py \
             --ignore=tests/pipelines/test_formula_recognition.py \
             --ignore=tests/pipelines/test_patch_layout_parsing.py \
+            --ignore=tests/pipelines/test_pp_chatocrv4_doc.py \
             --ignore=tests/pipelines/test_pp_doctranslation.py \
             --ignore=tests/pipelines/test_pp_structurev3.py \
             --ignore=tests/pipelines/test_seal_rec.py \
