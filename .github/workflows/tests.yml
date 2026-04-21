@@ -65,10 +65,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        # The doc-parser extra pulls paddlex[ocr], whose safetensors>=0.7
+        # requirement blocks install on py3.8. Install the remaining extras
+        # (ie, trans, doc2md) so those task areas are still covered.
         if [[ "${{ matrix.python-version }}" == "3.8" ]]; then
           python -m pip install paddlepaddle==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
+          PADDLEOCR_EXTRAS="[ie,trans,doc2md]"
         else
           python -m pip install paddlepaddle==3.3.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
+          PADDLEOCR_EXTRAS="[all]"
         fi
         PADDLEX_SERIES=$(grep -oE 'paddlex\[[^]]+\]>=[0-9]+\.[0-9]+' pyproject.toml | head -1 | grep -oE '[0-9]+\.[0-9]+')
         if [ -z "$PADDLEX_SERIES" ]; then
@@ -77,8 +82,28 @@ jobs:
         fi
         PADDLEX_BRANCH="release/${PADDLEX_SERIES}"
         echo "Installing PaddleX from branch: ${PADDLEX_BRANCH}"
-        python -m pip install -e '.[all]' "paddlex@git+https://github.com/PaddlePaddle/PaddleX.git@${PADDLEX_BRANCH}"
+        python -m pip install -e ".${PADDLEOCR_EXTRAS}" "paddlex@git+https://github.com/PaddlePaddle/PaddleX.git@${PADDLEX_BRANCH}"
         python -c "import paddlex; print(f'Installed paddlex version: {paddlex.__version__}')"
     - name: Test with pytest
       run: |
-        pytest --verbose tests/
+        # Doc-parser tasks (PP-StructureV3, PaddleOCR-VL, table/formula/seal
+        # recognition, layout detection, etc.) require Python>=3.9; skip them on
+        # py3.8. See docs/version3.x/installation.md for the Python version matrix.
+        if [[ "${{ matrix.python-version }}" == "3.8" ]]; then
+          pytest --verbose tests/ \
+            --ignore=tests/models/test_doc_vlm.py \
+            --ignore=tests/models/test_formula_recognition.py \
+            --ignore=tests/models/test_layout_detection.py \
+            --ignore=tests/models/test_seal_text_detection.py \
+            --ignore=tests/models/test_table_cells_detection.py \
+            --ignore=tests/models/test_table_classifcation.py \
+            --ignore=tests/models/test_table_structure_recognition.py \
+            --ignore=tests/pipelines/test_doc_understanding.py \
+            --ignore=tests/pipelines/test_formula_recognition.py \
+            --ignore=tests/pipelines/test_patch_layout_parsing.py \
+            --ignore=tests/pipelines/test_pp_structurev3.py \
+            --ignore=tests/pipelines/test_seal_rec.py \
+            --ignore=tests/pipelines/test_table_recognition_v2.py
+        else
+          pytest --verbose tests/
+        fi
