@@ -8,7 +8,7 @@ comments: true
 
 本节说明如何按需安装推理引擎、`paddleocr` 分发包，以及按能力域启用的可选依赖组。这条路径适用于在本地调用预训练产线完成推理，或是使用文档格式转换等辅助功能。**模型训练与模型导出**见第 2 节，与上述安装路径相互独立。
 
-**Python 版本要求**：`paddleocr` 本体支持 Python 3.8 及以上；除 `doc2md` 之外的所有可选依赖组（`doc-parser`、`ie`、`trans`、`all`）受上游依赖限制，需要 Python 3.9 及以上。
+**Python 版本要求**：`paddleocr` 本体与 `doc2md` 依赖组支持 Python 3.8 及以上；其他可选依赖组（`doc-parser`、`ie`、`trans`、`all`）受上游依赖限制，需要 Python 3.9 及以上。
 
 ### 1.1 安装推理引擎（按需）
 
@@ -46,11 +46,13 @@ python -m pip install "paddleocr@git+https://github.com/PaddlePaddle/PaddleOCR.g
 | `doc2md` | 文档转 MarkDown，可用于将 Word、Excel、PowerPoint 文件快速转为可读文本 |
 | `all` | 完整功能 |
 
-通用 OCR 产线与文档图像预处理产线无需额外依赖组（支持 Python 3.8 及以上）；文档解析、信息抽取、文档翻译等按上表安装对应组。各产线所属依赖组见对应产线文档；单功能模块在任一包含该模块的依赖组安装后即可调用其基础能力。
+通用 OCR 产线与文档图像预处理产线无需额外依赖组；文档解析、信息抽取、文档翻译等按上表安装对应组。各产线所属依赖组见对应产线文档；单功能模块在任一包含该模块的依赖组安装后即可调用其基础能力。
 
 ## 2. 安装训练与导出依赖
 
 若要进行模型训练或模型导出，需另行安装训练相关依赖。该路径与第 1 节的 `paddleocr` 包及可选依赖组属于不同安装维度；同一环境中可同时存在，无需强制隔离。
+
+**Python 版本要求**：训练与模型导出支持 Python 3.8 及以上。
 
 训练与导出依赖飞桨框架，请先参考[飞桨框架安装](./paddlepaddle_installation.md)完成 PaddlePaddle 安装。
 

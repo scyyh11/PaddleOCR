@@ -65,10 +65,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        # On py3.8 only paddleocr[doc2md] is installable: paddlex[ie|trans|ocr]
-        # all pull tokenizers, pip resolves to a version that advertises py3.8
-        # via requires_python but ships no cp38 wheel, and the source build
-        # via maturin fails because PyO3's abi3 minimum is >=3.9.
+        # On py3.8 several paddlex transitive deps require py3.9+, so only
+        # paddleocr[doc2md] is installable. See installation.md for the
+        # supported extras-by-Python-version matrix.
         if [[ "${{ matrix.python-version }}" == "3.8" ]]; then
           python -m pip install paddlepaddle==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
           PADDLEOCR_EXTRAS="[doc2md]"
