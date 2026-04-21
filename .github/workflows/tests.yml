@@ -90,16 +90,36 @@ jobs:
         PADDLEX_BRANCH="release/${PADDLEX_SERIES}"
         echo "Installing PaddleX from branch: ${PADDLEX_BRANCH}"
         python -m pip install -e ".${PADDLEOCR_EXTRAS}" "paddlex@git+https://github.com/PaddlePaddle/PaddleX.git@${PADDLEX_BRANCH}"
-        # PaddleX release/3.5 (PR PaddlePaddle/PaddleX#5028) introduced a
-        # PEP 585 annotation in inference/models/__init__.py without
-        # `from __future__ import annotations`. The builtin generic is
-        # evaluated at runtime and crashes on py3.8. Prepend the future
-        # import so all annotations in the file become strings, which
-        # also covers any further py3.9+ annotations upstream may add.
+        # PaddleX release/3.5 (PR PaddlePaddle/PaddleX#5028) sprinkled PEP
+        # 585 annotations (tuple[...], list[...], etc.) across several
+        # inference modules without `from __future__ import annotations`.
+        # The builtin generics are evaluated at runtime and crash on py3.8.
+        # Walk the installed paddlex tree and prepend the future import to
+        # every file that uses such syntax and doesn't already have it.
         # pip show is used to avoid triggering the broken `import paddlex`.
         if [[ "${{ matrix.python-version }}" == "3.8" ]]; then
           PADDLEX_LOC=$(python -m pip show paddlex | awk '/^Location: / {print $2}')
-          sed -i '1i from __future__ import annotations' "${PADDLEX_LOC}/paddlex/inference/models/__init__.py"
+          PADDLEX_LOC="${PADDLEX_LOC}" python - <<'PYEOF'
+        import os, re, pathlib
+        root = pathlib.Path(os.environ["PADDLEX_LOC"]) / "paddlex"
+        pep585 = re.compile(r"(?:->|:)\s*(?:tuple|list|dict|set|frozenset|type)\[")
+        import_line = re.compile(r"^(?:from\s+\S+\s+import\s|import\s+\S+)")
+        for f in root.rglob("*.py"):
+            text = f.read_text(encoding="utf-8", errors="ignore")
+            if "from __future__ import annotations" in text:
+                continue
+            if not pep585.search(text):
+                continue
+            lines = text.splitlines(keepends=True)
+            for i, line in enumerate(lines):
+                if import_line.match(line):
+                    lines.insert(i, "from __future__ import annotations\n\n")
+                    break
+            else:
+                continue
+            f.write_text("".join(lines), encoding="utf-8")
+            print(f"patched: {f.relative_to(root.parent)}")
+        PYEOF
         fi
         python -c "import paddlex; print(f'Installed paddlex version: {paddlex.__version__}')"
     - name: Test with pytest
