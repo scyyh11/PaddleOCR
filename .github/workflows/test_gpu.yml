@@ -2,9 +2,9 @@ name: PaddleOCR PR Tests GPU
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "feat/engine"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "feat/engine"]
   workflow_dispatch:
 env:
   PR_ID: ${{ github.event.pull_request.number }}

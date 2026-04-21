@@ -2,9 +2,9 @@ name: PaddleOCR PR Tests
 
 on:
   push:
-    branches: ["main", "release/*"]
+    branches: ["main", "release/*", "feat/engine"]
   pull_request:
-    branches: ["main", "release/*"]
+    branches: ["main", "release/*", "feat/engine"]
     paths-ignore:
 
 
