@@ -97,8 +97,10 @@ jobs:
         # py3.8. Rewrite it to the already-imported typing.Tuple in place
         # until the upstream fix lands.
         if [[ "${{ matrix.python-version }}" == "3.8" ]]; then
-          PADDLEX_DIR=$(python -c "import os, paddlex; print(os.path.dirname(paddlex.__file__))")
-          sed -i 's/-> tuple\[str, Optional\[Path\]\]:/-> Tuple[str, Optional[Path]]:/' "${PADDLEX_DIR}/inference/models/__init__.py"
+          # Look up the install path via pip show rather than `import paddlex`
+          # — importing is exactly what fails without this patch.
+          PADDLEX_LOC=$(python -m pip show paddlex | awk '/^Location: / {print $2}')
+          sed -i 's/-> tuple\[str, Optional\[Path\]\]:/-> Tuple[str, Optional[Path]]:/' "${PADDLEX_LOC}/paddlex/inference/models/__init__.py"
         fi
         python -c "import paddlex; print(f'Installed paddlex version: {paddlex.__version__}')"
     - name: Test with pytest
