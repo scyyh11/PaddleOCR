@@ -91,16 +91,15 @@ jobs:
         echo "Installing PaddleX from branch: ${PADDLEX_BRANCH}"
         python -m pip install -e ".${PADDLEOCR_EXTRAS}" "paddlex@git+https://github.com/PaddlePaddle/PaddleX.git@${PADDLEX_BRANCH}"
         # PaddleX release/3.5 (PR PaddlePaddle/PaddleX#5028) introduced a
-        # `-> tuple[str, Optional[Path]]:` annotation in inference/models/
-        # __init__.py without `from __future__ import annotations`. The
-        # PEP 585 builtin generic is evaluated at runtime and crashes on
-        # py3.8. Rewrite it to the already-imported typing.Tuple in place
-        # until the upstream fix lands.
+        # PEP 585 annotation in inference/models/__init__.py without
+        # `from __future__ import annotations`. The builtin generic is
+        # evaluated at runtime and crashes on py3.8. Prepend the future
+        # import so all annotations in the file become strings, which
+        # also covers any further py3.9+ annotations upstream may add.
+        # pip show is used to avoid triggering the broken `import paddlex`.
         if [[ "${{ matrix.python-version }}" == "3.8" ]]; then
-          # Look up the install path via pip show rather than `import paddlex`
-          # — importing is exactly what fails without this patch.
           PADDLEX_LOC=$(python -m pip show paddlex | awk '/^Location: / {print $2}')
-          sed -i 's/-> tuple\[str, Optional\[Path\]\]:/-> Tuple[str, Optional[Path]]:/' "${PADDLEX_LOC}/paddlex/inference/models/__init__.py"
+          sed -i '1i from __future__ import annotations' "${PADDLEX_LOC}/paddlex/inference/models/__init__.py"
         fi
         python -c "import paddlex; print(f'Installed paddlex version: {paddlex.__version__}')"
     - name: Test with pytest
