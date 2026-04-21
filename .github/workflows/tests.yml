@@ -69,14 +69,8 @@ jobs:
         # all pull tokenizers, pip resolves to a version that advertises py3.8
         # via requires_python but ships no cp38 wheel, and the source build
         # via maturin fails because PyO3's abi3 minimum is >=3.9.
-        #
-        # Additional py3.8 pin: modelscope 1.29.x imports `zoneinfo`
-        # unconditionally (py3.9 stdlib). paddlex allows modelscope 1.28.x on
-        # py3.8 but pip picks the newest compatible (1.29.2). Pre-install a
-        # 1.28.x build so pip keeps it during the paddleocr/paddlex resolve.
         if [[ "${{ matrix.python-version }}" == "3.8" ]]; then
           python -m pip install paddlepaddle==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
-          python -m pip install 'modelscope>=1.28.0,<1.29'
           PADDLEOCR_EXTRAS="[doc2md]"
         else
           # Match the paddle version test_gpu.yml uses.
@@ -91,37 +85,6 @@ jobs:
         PADDLEX_BRANCH="release/${PADDLEX_SERIES}"
         echo "Installing PaddleX from branch: ${PADDLEX_BRANCH}"
         python -m pip install -e ".${PADDLEOCR_EXTRAS}" "paddlex@git+https://github.com/PaddlePaddle/PaddleX.git@${PADDLEX_BRANCH}"
-        # PaddleX release/3.5 (PR PaddlePaddle/PaddleX#5028) sprinkled PEP
-        # 585 annotations (tuple[...], list[...], etc.) across several
-        # inference modules without `from __future__ import annotations`.
-        # The builtin generics are evaluated at runtime and crash on py3.8.
-        # Walk the installed paddlex tree and prepend the future import to
-        # every file that uses such syntax and doesn't already have it.
-        # pip show is used to avoid triggering the broken `import paddlex`.
-        if [[ "${{ matrix.python-version }}" == "3.8" ]]; then
-          PADDLEX_LOC=$(python -m pip show paddlex | awk '/^Location: / {print $2}')
-          PADDLEX_LOC="${PADDLEX_LOC}" python - <<'PYEOF'
-        import os, re, pathlib
-        root = pathlib.Path(os.environ["PADDLEX_LOC"]) / "paddlex"
-        pep585 = re.compile(r"(?:->|:)\s*(?:tuple|list|dict|set|frozenset|type)\[")
-        import_line = re.compile(r"^(?:from\s+\S+\s+import\s|import\s+\S+)")
-        for f in root.rglob("*.py"):
-            text = f.read_text(encoding="utf-8", errors="ignore")
-            if "from __future__ import annotations" in text:
-                continue
-            if not pep585.search(text):
-                continue
-            lines = text.splitlines(keepends=True)
-            for i, line in enumerate(lines):
-                if import_line.match(line):
-                    lines.insert(i, "from __future__ import annotations\n\n")
-                    break
-            else:
-                continue
-            f.write_text("".join(lines), encoding="utf-8")
-            print(f"patched: {f.relative_to(root.parent)}")
-        PYEOF
-        fi
         python -c "import paddlex; print(f'Installed paddlex version: {paddlex.__version__}')"
     - name: Test with pytest
       run: |
