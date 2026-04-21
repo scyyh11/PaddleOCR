@@ -65,12 +65,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        # The doc-parser extra pulls paddlex[ocr], whose safetensors>=0.7
-        # requirement blocks install on py3.8. Install the remaining extras
-        # (ie, trans, doc2md) so those task areas are still covered.
+        # On py3.8 we cannot install paddlex extras that pull Rust-built
+        # packages like tokenizers: pip falls back to a py3.8-advertising
+        # version, then the source build via maturin fails because PyO3's
+        # abi3 minimum is >=3.9. So only the pure-Python doc2md extra is
+        # installed here.
         if [[ "${{ matrix.python-version }}" == "3.8" ]]; then
           python -m pip install paddlepaddle==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
-          PADDLEOCR_EXTRAS="[ie,trans,doc2md]"
+          PADDLEOCR_EXTRAS="[doc2md]"
         else
           python -m pip install paddlepaddle==3.3.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
           PADDLEOCR_EXTRAS="[all]"
@@ -86,9 +88,9 @@ jobs:
         python -c "import paddlex; print(f'Installed paddlex version: {paddlex.__version__}')"
     - name: Test with pytest
       run: |
-        # Doc-parser tasks (PP-StructureV3, PaddleOCR-VL, table/formula/seal
-        # recognition, layout detection, etc.) require Python>=3.9; skip them on
-        # py3.8. See docs/version3.x/installation.md for the Python version matrix.
+        # On py3.8 only paddleocr[doc2md] is installed (see install step), so
+        # skip tests for doc-parser tasks and for the ie / trans extras whose
+        # upstream deps don't cleanly build on py3.8.
         if [[ "${{ matrix.python-version }}" == "3.8" ]]; then
           pytest --verbose tests/ \
             --ignore=tests/models/test_doc_vlm.py \
@@ -101,6 +103,8 @@ jobs:
             --ignore=tests/pipelines/test_doc_understanding.py \
             --ignore=tests/pipelines/test_formula_recognition.py \
             --ignore=tests/pipelines/test_patch_layout_parsing.py \
+            --ignore=tests/pipelines/test_pp_chatocrv4_doc.py \
+            --ignore=tests/pipelines/test_pp_doctranslation.py \
             --ignore=tests/pipelines/test_pp_structurev3.py \
             --ignore=tests/pipelines/test_seal_rec.py \
             --ignore=tests/pipelines/test_table_recognition_v2.py
