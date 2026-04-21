@@ -126,9 +126,12 @@ jobs:
       run: |
         # On py3.8 only paddleocr[doc2md] is installed (see install step);
         # skip tests for any pipeline or model that needs the ie / trans /
-        # doc-parser extras.
+        # doc-parser extras. Also skip test_iaa_augment: its import chain
+        # goes through ppocr.data -> lmdb, whose py3.8 wheel references
+        # Py_SET_REFCNT (py3.9 symbol) and fails to load.
         if [[ "${{ matrix.python-version }}" == "3.8" ]]; then
           pytest --verbose tests/ \
+            --ignore=tests/test_iaa_augment.py \
             --ignore=tests/models/test_doc_vlm.py \
             --ignore=tests/models/test_formula_recognition.py \
             --ignore=tests/models/test_layout_detection.py \
