@@ -218,7 +218,10 @@ def create_predictor(args, mode, logger):
                 providers=[
                     (
                         "CUDAExecutionProvider",
-                        {"device_id": args.gpu_id, "cudnn_conv_algo_search": "HEURISTIC"},
+                        {
+                            "device_id": args.gpu_id,
+                            "cudnn_conv_algo_search": "HEURISTIC",
+                        },
                     )
                 ],
                 sess_options=sess_options,
