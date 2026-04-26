@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 env:
   PR_ID: ${{ github.event.pull_request.number }}
-  COMMIT_ID: ${{ github.event.pull_request.head.sha }}
+  COMMIT_ID: ${{ github.event.pull_request.head.sha || github.sha }}
   work_dir: /workspace/PaddleOCR
   PADDLENLP_ROOT: /workspace/PaddleOCR
   TASK: paddleocr-CI-${{ github.event.pull_request.number }}
@@ -51,8 +51,13 @@ jobs:
           cd $work_dir
           git clone --depth=1 https://github.com/PaddlePaddle/PaddleOCR.git -b main
           cd PaddleOCR
-          git fetch origin pull/${PR_ID}/head:ci_build
-          git checkout ci_build
+          if [ -n "${PR_ID}" ]; then
+            git fetch origin pull/${PR_ID}/head:ci_build
+            git checkout ci_build
+          else
+            git fetch --depth=1 origin "${COMMIT_ID}"
+            git checkout "${COMMIT_ID}"
+          fi
           docker run --gpus all --rm -i --name PaddleOCR_CI_$RANDOM \
             --shm-size=128g --net=host \
             -v $PWD:/workspace -w /workspace  \
