@@ -7,7 +7,7 @@ comments: true
 > INFO:
 > Unless otherwise specified, the term "PaddleOCR-VL" in this tutorial refers to the PaddleOCR-VL model series (e.g., PaddleOCR-VL-1.5). References specific to the PaddleOCR-VL v1 version will be explicitly noted.
 
-This tutorial is a guide for using PaddleOCR-VL on AMD GPU covering the complete workflow from environment preparation to service deployment.
+This tutorial is a guide for using PaddleOCR-VL on AMD GPU, covering the complete workflow from environment preparation to service deployment.
 
 PaddleOCR-VL has been verified for accuracy and speed on the AMD MI300X. However, due to hardware diversity, compatibility with other AMD GPUs has not yet been confirmed. We welcome the community to test on different hardware setups and share your results.
 
@@ -48,7 +48,7 @@ If you wish to start the service in an environment without internet access, repl
 
 ### 1.2 Method 2: Manually Install PaddlePaddle and PaddleOCR
 
-If you cannot use Docker, you can also manually install PaddlePaddle and PaddleOCR. Python version 3.8–3.13 is required.
+If you cannot use Docker, you can also manually install PaddlePaddle and PaddleOCR. Python version 3.9–3.13 is required.
 
 **We strongly recommend installing PaddleOCR-VL in a virtual environment to avoid dependency conflicts.** For example, use the Python venv standard library to create a virtual environment:
 
@@ -109,7 +109,7 @@ docker run -it \
 > TIP:
 > Images with the `latest-xxx` tag correspond to the latest version of PaddleOCR. If you want to use a specific version of the PaddleOCR image, you can replace `latest` in the tag with the desired version number: `paddleocr<major>.<minor>`.
 > For example:
-> `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:paddleocr3.3-amd-gpu-offline`
+> `ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-genai-vllm-server:paddleocr3.4-amd-gpu-offline`
 
 ### 3.2 Client Usage Method
 
