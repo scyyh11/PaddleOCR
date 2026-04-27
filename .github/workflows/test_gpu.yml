@@ -45,6 +45,10 @@ jobs:
           skip_gpu=true
           while IFS= read -r file; do
             [ -z "$file" ] && continue
+            if [[ "$file" == ".github/workflows/test_gpu.yml" ]]; then
+              skip_gpu=false
+              break
+            fi
             if [[ "$file" == paddleocr-js/* ]] || [[ "$file" == langchain-paddleocr/* ]] || [[ "$file" == skills/* ]] || [[ "$file" == mcp_server/* ]] || [[ "$file" == deploy/* ]] || [[ "$file" == *.md ]] || [[ "$file" == *.txt ]] || [[ "$file" == *.yml ]] || [[ "$file" == *.yaml ]]; then
               continue
             fi
