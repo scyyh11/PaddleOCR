@@ -1697,12 +1697,12 @@ You're not viewing the latest version.
   <a href="#3-vlm" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. 使用推理加速框架提升 VLM 推理性能
+        3. 使用 VLM 推理服务提升推理性能
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="3. 使用推理加速框架提升 VLM 推理性能">
+    <nav class="md-nav" aria-label="3. 使用 VLM 推理服务提升推理性能">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1931,6 +1931,12 @@ You're not viewing the latest version.
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -2095,6 +2101,34 @@ You're not viewing the latest version.
   
   
     <li class="md-nav__item">
+      <a href="../deployment/browser.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    浏览器端部署
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../deployment/mcp_server.html" class="md-nav__link">
         
   
@@ -2123,6 +2157,34 @@ You're not viewing the latest version.
   
   
     <li class="md-nav__item">
+      <a href="../deployment/skills.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Skills
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../deployment/packaging.html" class="md-nav__link">
         
   
@@ -2130,7 +2192,7 @@ You're not viewing the latest version.
   <span class="md-ellipsis">
     
   
-    打包PaddleOCR项目
+    打包 PaddleOCR 项目
   
 
     
@@ -2198,10 +2260,10 @@ You're not viewing the latest version.
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_8" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_10" >
         
           
-          <label class="md-nav__link" for="__nav_8_8" id="__nav_8_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8_10" id="__nav_8_10_label" tabindex="0">
             
   
   
@@ -2219,8 +2281,8 @@ You're not viewing the latest version.
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8_8">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2309,6 +2371,34 @@ You're not viewing the latest version.
     
   
     Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inference_engine.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    推理引擎与配置说明
   
 
     
@@ -3392,7 +3482,7 @@ You're not viewing the latest version.
   <span class="md-ellipsis">
     
   
-    配置 PaddleOCR 推理包日志系统
+    配置 paddleocr 包日志系统
   
 
     
@@ -4466,12 +4556,12 @@ You're not viewing the latest version.
   <a href="#3-vlm" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. 使用推理加速框架提升 VLM 推理性能
+        3. 使用 VLM 推理服务提升推理性能
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="3. 使用推理加速框架提升 VLM 推理性能">
+    <nav class="md-nav" aria-label="3. 使用 VLM 推理服务提升推理性能">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -4669,6 +4759,11 @@ You're not viewing the latest version.
 
 <!-- Page content -->
 <h1 id="paddleocr-vl-apple-silicon">PaddleOCR-VL Apple Silicon 使用教程<a class="headerlink" href="#paddleocr-vl-apple-silicon" title="Permanent link">&para;</a></h1>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>
+除非另有说明，本教程中提到的 “PaddleOCR-VL” 均指 PaddleOCR-VL 系列模型（如 PaddleOCR-VL-1.5 等）；若特指 PaddleOCR-VL v1 版本，将另行明确标注。</p>
+</div>
 <p>本教程是 PaddleOCR-VL 在 Apple Silicon 上的使用指南，涵盖了从环境准备到服务化部署的完整流程。</p>
 <p>Apple Silicon 包括但不限于以下几种：</p>
 <ul>
@@ -4678,6 +4773,11 @@ You're not viewing the latest version.
 <li>Apple M4</li>
 </ul>
 <p>目前 PaddleOCR-VL 已在 Apple M4 上完成精度验证；鉴于硬件环境的多样性，其他 Apple Silicon 的兼容性尚未验证。我们诚挚欢迎社区用户在不同硬件上进行测试并反馈您的运行结果。</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>
+建议先阅读 <a href="PaddleOCR-VL.html">PaddleOCR-VL 使用教程</a> 中的 <a href="PaddleOCR-VL.html#流程导览">流程导览</a>，根据您的使用目标确认应阅读哪些章节；再回到当前硬件教程阅读对应章节。</p>
+</div>
 <h2 id="1">1. 环境准备<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
 <p><strong>我们强烈推荐您在虚拟环境中安装 PaddleOCR-VL，以避免发生依赖冲突。</strong> 例如，使用 Python venv 标准库创建虚拟环境：</p>
 <div class="language-shell highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 创建虚拟环境</span>
@@ -4694,8 +4794,8 @@ You're not viewing the latest version.
 </blockquote>
 <h2 id="2">2. 快速开始<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
 <p>请参考<a href="PaddleOCR-VL.html#2">PaddleOCR-VL 使用教程 - 2. 快速开始</a>。</p>
-<h2 id="3-vlm">3. 使用推理加速框架提升 VLM 推理性能<a class="headerlink" href="#3-vlm" title="Permanent link">&para;</a></h2>
-<p>默认配置下的推理性能未经过充分优化，可能无法满足实际生产需求。此步骤主要介绍如何使用 MLX-VLM 推理加速框架来提升 PaddleOCR-VL 的推理性能。</p>
+<h2 id="3-vlm">3. 使用 VLM 推理服务提升推理性能<a class="headerlink" href="#3-vlm" title="Permanent link">&para;</a></h2>
+<p>默认配置下的推理性能未经过充分优化，可能无法满足实际生产需求。此步骤主要介绍如何通过 VLM 推理服务提升 PaddleOCR-VL 的推理性能。在当前硬件文档中，示例使用 MLX-VLM 作为 VLM 推理服务后端。</p>
 <h3 id="31-vlm">3.1 启动 VLM 推理服务<a class="headerlink" href="#31-vlm" title="Permanent link">&para;</a></h3>
 <p>安装 MLX-VLM 推理框架（v0.3.11以上版本）：</p>
 <div class="language-shell highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;mlx-vlm&gt;=0.3.11&quot;</span>
@@ -4704,6 +4804,7 @@ You're not viewing the latest version.
 <div class="language-shell highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>mlx_vlm.server<span class="w"> </span>--port<span class="w"> </span><span class="m">8111</span>
 </span></code></pre></div>
 <h3 id="32">3.2 客户端使用方法<a class="headerlink" href="#32" title="Permanent link">&para;</a></h3>
+<p>以下调用方式适用于已启动的 MLX-VLM 推理服务。</p>
 <h4 id="321-cli">3.2.1 CLI 调用<a class="headerlink" href="#321-cli" title="Permanent link">&para;</a></h4>
 <p>可通过 <code>--vl_rec_backend</code> 指定后端类型（<code>mlx-vlm-server</code>），通过 <code>--vl_rec_server_url</code> 指定服务地址，通过 <code>--vl_rec_api_model_name</code> 指定 huggingface repo id 或服务端模型权重路径，例如：</p>
 <div class="language-shell highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>paddleocr<span class="w"> </span>doc_parser<span class="w"> </span><span class="se">\</span>

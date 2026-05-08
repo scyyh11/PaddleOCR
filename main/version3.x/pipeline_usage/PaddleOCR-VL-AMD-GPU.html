@@ -1931,6 +1931,12 @@ You're not viewing the latest version.
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -2095,6 +2101,34 @@ You're not viewing the latest version.
   
   
     <li class="md-nav__item">
+      <a href="../deployment/browser.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    浏览器端部署
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../deployment/mcp_server.html" class="md-nav__link">
         
   
@@ -2123,6 +2157,34 @@ You're not viewing the latest version.
   
   
     <li class="md-nav__item">
+      <a href="../deployment/skills.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Skills
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../deployment/packaging.html" class="md-nav__link">
         
   
@@ -2130,7 +2192,7 @@ You're not viewing the latest version.
   <span class="md-ellipsis">
     
   
-    打包PaddleOCR项目
+    打包 PaddleOCR 项目
   
 
     
@@ -2198,10 +2260,10 @@ You're not viewing the latest version.
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_8" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8_10" >
         
           
-          <label class="md-nav__link" for="__nav_8_8" id="__nav_8_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8_10" id="__nav_8_10_label" tabindex="0">
             
   
   
@@ -2219,8 +2281,8 @@ You're not viewing the latest version.
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8_8">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2309,6 +2371,34 @@ You're not viewing the latest version.
     
   
     Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inference_engine.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    推理引擎与配置说明
   
 
     
@@ -3392,7 +3482,7 @@ You're not viewing the latest version.
   <span class="md-ellipsis">
     
   
-    配置 PaddleOCR 推理包日志系统
+    配置 paddleocr 包日志系统
   
 
     
@@ -4679,7 +4769,7 @@ You're not viewing the latest version.
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>
-建议先阅读 <a href="PaddleOCR-VL.html">PaddleOCR-VL 使用教程</a> 中的 <a href="PaddleOCR-VL.html">流程导览</a>，根据您的使用目标确认应阅读哪些章节；再回到当前硬件教程阅读对应章节。</p>
+建议先阅读 <a href="PaddleOCR-VL.html">PaddleOCR-VL 使用教程</a> 中的 <a href="PaddleOCR-VL.html#流程导览">流程导览</a>，根据您的使用目标确认应阅读哪些章节；再回到当前硬件教程阅读对应章节。</p>
 </div>
 <h2 id="1">1. 环境准备<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
 <p>此步骤主要介绍如何搭建 PaddleOCR-VL 的运行环境，有以下两种方式，任选一种即可：</p>
@@ -4712,7 +4802,7 @@ You're not viewing the latest version.
 <code>ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddleocr-vl:paddleocr3.4-amd-gpu-offline</code></p>
 </div>
 <h3 id="12-paddlepaddle-paddleocr">1.2 方法二：手动安装 PaddlePaddle 和 PaddleOCR<a class="headerlink" href="#12-paddlepaddle-paddleocr" title="Permanent link">&para;</a></h3>
-<p>如果您无法使用 Docker，也可以手动安装 PaddlePaddle 和 PaddleOCR。要求 Python 版本为 3.8–3.12。</p>
+<p>如果您无法使用 Docker，也可以手动安装 PaddlePaddle 和 PaddleOCR。本文档验证过的 Python 版本范围为 3.9–3.13。</p>
 <p><strong>我们强烈推荐您在虚拟环境中安装 PaddleOCR-VL，以避免发生依赖冲突。</strong> 例如，使用 Python venv 标准库创建虚拟环境：</p>
 <div class="language-shell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 创建虚拟环境</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv_paddleocr
@@ -4786,7 +4876,7 @@ You're not viewing the latest version.
 </span></code></pre></div>
 </li>
 </ol>
-<p>此方式基于 FastDeploy 框架对 VLM 推理进行加速，更适合生产环境部署。</p>
+<p>此方式基于 vLLM 框架对 VLM 推理进行加速，更适合生产环境部署。</p>
 <p>此外，使用此方式启动服务器后，除拉取镜像外，无需连接互联网。如需在离线环境中部署，可先在联网机器上拉取 Compose 文件中涉及的镜像，导出并传输至离线机器中导入，即可在离线环境下启动服务。</p>
 <p>Docker Compose 通过读取 <code>.env</code> 和 <code>compose.yaml</code> 文件中配置，先后启动 2 个容器，分别运行底层 VLM 推理服务，以及 PaddleOCR-VL 服务（产线服务）。</p>
 <p><code>.env</code> 文件中包含的各环境变量含义如下：</p>
